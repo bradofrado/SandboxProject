@@ -1,6 +1,6 @@
 import { Menu, Transition } from "@headlessui/react"
 import { Fragment, useState, type PropsWithChildren, useEffect } from "react"
-import { CheckIcon, ChevronDown, type IconComponent } from "./icons"
+import { CheckIcon, ChevronDown, type IconComponent } from "../icons.tsx/icons"
 
 export interface DropdownItem<T> {
 	name: React.ReactNode,
