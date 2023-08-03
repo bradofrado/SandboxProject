@@ -5,6 +5,7 @@ import { api } from "~/utils/api";
 import Head from 'next/head';
 import {SideNav} from '~/utils/components/navigation/sidenav';
 import "~/styles/globals.css";
+import { Navbar } from "~/utils/components/navigation/navbar";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -18,7 +19,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col">
-        <SideNav>
+        <Navbar/>
+        <SideNav className="pt-20">
           <Component {...pageProps} />
         </SideNav>
       </main>

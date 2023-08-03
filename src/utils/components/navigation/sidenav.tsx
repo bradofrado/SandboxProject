@@ -10,10 +10,11 @@ export interface SideNavItems {
     href: string,
     notifyLabelItem?: NotifyLabelProps
 }
-export type SideNavProps = {
-    items: SideNavItems[]
+export type SideNavComponentProps = {
+    items: SideNavItems[],
+    className?: string
 } & React.PropsWithChildren
-export const SideNavComponent = ({children, items}: SideNavProps) => {
+export const SideNavComponent = ({children, items, className}: SideNavComponentProps) => {
     return <>
 
     <button data-drawer-target="default-sidebar" data-drawer-toggle="default-sidebar" aria-controls="default-sidebar" type="button" className="inline-flex items-center p-2 mt-2 ml-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
@@ -21,7 +22,7 @@ export const SideNavComponent = ({children, items}: SideNavProps) => {
         <HamburgerIcon className="w-6 h-6"/>
     </button>
 
-    <aside id="default-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+    <aside id="default-sidebar" className={`${className || ''} fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0`} aria-label="Sidebar">
     <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
         <ul className="space-y-2 font-medium">
             {items.map((item, i) => {
@@ -47,7 +48,10 @@ export const SideNavComponent = ({children, items}: SideNavProps) => {
     </>
 }
 
-export const SideNav = ({children}: React.PropsWithChildren) => {
+export type SideNavProps = {
+    className?: string
+} & React.PropsWithChildren
+export const SideNav = ({children, className}: SideNavProps) => {
     const items: SideNavItems[] = [
         {
             label: 'Patients',
@@ -66,7 +70,7 @@ export const SideNav = ({children}: React.PropsWithChildren) => {
         },
     ]
     return <>
-        <SideNavComponent items={items}>
+        <SideNavComponent className={className} items={items}>
             {children}
         </SideNavComponent>
     </>
