@@ -20,7 +20,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       </Head>
       <main className="flex min-h-screen flex-col">
         <Navbar/>
-        <SideNav className="pt-20">
+        <SideNav className="top-20">
           <Component {...pageProps} />
         </SideNav>
       </main>
