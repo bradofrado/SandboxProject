@@ -3,6 +3,7 @@ import { BagIcon, DashboardIcon, EditDocumentIcon, HamburgerIcon, IconComponent,
 import { CogIcon } from "@heroicons/react/outline"
 import Link from "next/link"
 import { NotifyLabelProps, NotifyLabel } from "../base/notify-label"
+import { useRouter } from "next/router"
 
 export interface SideNavItems {
     label: string,
@@ -15,6 +16,7 @@ export type SideNavComponentProps = {
     className?: string
 } & React.PropsWithChildren
 export const SideNavComponent = ({children, items, className}: SideNavComponentProps) => {
+    const router = useRouter();
     return <>
 
     <button data-drawer-target="default-sidebar" data-drawer-toggle="default-sidebar" aria-controls="default-sidebar" type="button" className="inline-flex items-center p-2 mt-2 ml-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
@@ -27,9 +29,10 @@ export const SideNavComponent = ({children, items, className}: SideNavComponentP
         <ul className="space-y-2 font-medium">
             {items.map((item, i) => {
                 const Icon = item.icon;
+                const selected = router.asPath.includes(item.href);
                 return <>
                     <li key={i}>
-                        <Link href={item.href} className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <Link href={item.href} className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group aria-selected:bg-gray-300" aria-selected={selected}>
                             {Icon && <Icon className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"/>}
                             <span className="ml-3 flex-1">{item.label}</span>
                             {item.notifyLabelItem && <NotifyLabel {...item.notifyLabelItem}/>}
@@ -61,12 +64,12 @@ export const SideNav = ({children, className}: SideNavProps) => {
         {
             label: 'Partners',
             icon: UsersGroupIcon,
-            href: '/dashboard'
+            href: '/partners'
         },
         {
             label: 'Reporting',
             icon: DashboardIcon,
-            href: '/dashboard'
+            href: '/reports'
         },
     ]
     return <>
