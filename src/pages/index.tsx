@@ -1,9 +1,4 @@
-import { GetStaticProps, type NextPage } from "next";
-import { signIn, signOut, useSession } from "next-auth/react";
-import Head from "next/head";
-import Link from "next/link";
-import { api } from "~/utils/api";
-import { SideNav } from "~/utils/components/navigation/sidenav";
+import { type GetStaticProps, type NextPage } from "next";
 
 export const getStaticProps: GetStaticProps = () => {
   return {props: {}};
