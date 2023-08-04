@@ -18,6 +18,8 @@ export type SidePanelProps = {
 } & React.PropsWithChildren
 export const SidePanel = ({className, items, children, onBodyClick}: SidePanelProps) => {
     const router = useRouter();
+    if (!router.isReady) return <></>
+    
     const queryToString = (query: ParsedUrlQueryInput) => {
         return Object.entries(query).map(values => values.join('=')).join('&');
     }
