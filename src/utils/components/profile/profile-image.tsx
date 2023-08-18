@@ -1,4 +1,4 @@
-import { UserCircleIcon } from "../icons.tsx/icons"
+import { UserCircleIcon } from "../icons/icons"
 
 export type ProfileImageProps = {
     image: string | undefined,

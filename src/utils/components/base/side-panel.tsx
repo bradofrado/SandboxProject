@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { type ParsedUrlQueryInput } from 'querystring';
 import React from 'react';
 import {NotifyLabel, type NotifyLabelProps} from '~/utils/components/base/notify-label';
-import {type IconComponent} from '~/utils/components/icons.tsx/icons';
+import {type IconComponent} from '~/utils/components/icons/icons';
 
 export interface SidePanelItems {
     label: string,

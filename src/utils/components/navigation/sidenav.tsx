@@ -1,5 +1,5 @@
 import React from "react"
-import { DashboardIcon, HamburgerIcon, UserIcon, UsersGroupIcon } from "../icons.tsx/icons"
+import { DashboardIcon, HamburgerIcon, UserIcon, UsersGroupIcon } from "../icons/icons"
 import { useExpand } from "~/utils/hooks/useExpand"
 import { SidePanel, type SidePanelItems } from "../base/side-panel"
 

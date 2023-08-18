@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import {UserCircleIcon} from '~/utils/components/icons.tsx/icons';
+import {UserCircleIcon} from '~/utils/components/icons/icons';
 import Link from "next/link";
 import { useExpand } from "~/utils/hooks/useExpand";
 import React from "react";

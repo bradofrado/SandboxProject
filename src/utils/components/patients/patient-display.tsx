@@ -3,8 +3,11 @@ import { ProfileImage } from "../profile/profile-image"
 import Header from "../base/header"
 import { Pill } from "../base/pill"
 import { useGetPatient } from "~/utils/services/patient";
-import {DateRangePicker, RangeCalendar} from '~/utils/components/base/date-picker';
+import { RangeCalendar } from '~/utils/components/base/date-picker';
 import dayjs from "dayjs";
+import Input from "../base/input";
+import Label from "../base/label";
+import { Attachment } from "../base/attachment";
 
 export type PatientDisplayProps = {
     patient: Patient
@@ -25,6 +28,14 @@ export const PatientDisplay = ({patient}: PatientDisplayProps) => {
             </div>
             <div>
                 <RangeCalendar/>
+            </div>
+            <div>
+                <Input className="w-full" label="Notes" type='textarea'/>
+            </div>
+            <div>
+                <Label label="Documents">
+                    <Attachment label="Birth Certificate" link=""/>
+                </Label>
             </div>
         </div>
     </>

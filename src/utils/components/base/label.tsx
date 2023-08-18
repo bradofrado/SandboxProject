@@ -4,7 +4,7 @@ type LabelProps = {
 } & React.PropsWithChildren;
 const Label = ({children, className, label}: LabelProps) => {
     return <div className={className}>
-        <label className="block">{label}</label>
+        <label className="block text-sm font-medium">{label}</label>
         <div className="mt-1">{children}</div>
     </div>
 }
