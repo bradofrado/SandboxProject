@@ -32,8 +32,8 @@ export const SidePanel = ({className, items, children, onBodyClick}: SidePanelPr
                                 const selected = router.asPath.includes(item.href.pathname ?? queryToString(item.href.query));
                                 const link = item.href;
                                 return <li key={i}>
-                                        <Link href={link} className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 group aria-selected:bg-gray-300 dark:aria-selected:bg-gray-500" aria-selected={selected}>
-                                            {Icon && <Icon className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white dark:group-aria-selected:text-white"/>}
+                                        <Link href={link} className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-primary-light dark:hover:bg-primary-light group aria-selected:bg-primary-light dark:aria-selected:bg-primary-light" aria-selected={selected}>
+                                            {Icon && <Icon className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-primary dark:group-hover:text-white group-aria-selected:text-primary dark:group-aria-selected:text-white"/>}
                                             <span className="ml-3 flex-1">{item.label}</span>
                                             {item.notifyLabelItem && <NotifyLabel {...item.notifyLabelItem}/>}
                                         </Link>

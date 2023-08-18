@@ -47,13 +47,13 @@ const Dropdown = <T,>({children, initialValue, onChange, items,
 				leaveTo="transform opacity-0 scale-95"
 			>
 				<Menu.Items className="absolute left-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-					<div className="px-1 py-1 ">
+					<div className="py-2">
 						{items.map((item, i) => 
 						<Menu.Item key={i}>
 							{({ active }) => (
 								<button
 									className={`${
-										active ? 'bg-primary text-white' : 'text-gray-900'
+										active ? 'bg-primary-light' : 'text-gray-900'
 									} group flex w-full items-center rounded-md px-2 py-2 text-sm`}
 									onClick={() => onClick(item, i)}
 								>
@@ -97,7 +97,7 @@ type DropdownIconProps<T> = Omit<DropdownProps<T>, "chevron"> & {
 export const DropdownIcon = <T,>({icon, className, ...rest}: DropdownIconProps<T>) => {
 	const Icon = icon;
 	return <>
-		<Dropdown className={`rounded-md bg-slate-50 hover:bg-slate-300 p-1 ${className || ''}`} 
+		<Dropdown className={`hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1.5 ${className || ''}`} 
 				{...rest} chevron={false}>
 			<Icon className="h-5 w-5"/>
 		</Dropdown>
