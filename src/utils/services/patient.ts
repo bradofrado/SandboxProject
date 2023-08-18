@@ -20,9 +20,15 @@ const patients: Patient[] = [
     {
         name: 'John Doe',
         id: '1',
+        dateOfBirth: new Date(),
+        dateOfLoss: new Date(),
+        status: 'In Legation'
     },
     {
         name: 'Jennifer Johnson',
-        id: '2'
+        id: '2',
+        dateOfBirth: new Date(),
+        dateOfLoss: new Date(),
+        status: 'Dead'
     }
 ]

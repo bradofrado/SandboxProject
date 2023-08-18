@@ -3,4 +3,5 @@ export interface Patient {
     id: string,
     dateOfBirth: Date,
     dateOfLoss: Date,
+    status: string
 }
