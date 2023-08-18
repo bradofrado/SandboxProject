@@ -20,3 +20,12 @@ const partner: Partner[] = [
         id: '1'
     }
 ]
+
+const Partners: NextPage = () => {
+    return (
+        <>
+        </>
+    );
+};
+
+export default Partners;
