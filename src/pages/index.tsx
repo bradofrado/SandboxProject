@@ -1,8 +1,4 @@
-import { type GetStaticProps, type NextPage } from "next";
-
-export const getStaticProps: GetStaticProps = () => {
-  return {props: {}};
-}
+import { type NextPage } from "next";
 
 const Home: NextPage = () => {
   return (

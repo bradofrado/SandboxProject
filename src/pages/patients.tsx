@@ -1,36 +1,25 @@
-import {type GetStaticProps, type NextPage} from 'next';
+import { type NextPage} from 'next';
 import { useRouter } from 'next/router';
-import Header from '~/utils/components/base/header';
 import { SidePanel, type SidePanelItems } from '~/utils/components/base/side-panel';
+import { PatientDisplayId } from '~/utils/components/patients/patient-display';
+import { useGetPatients } from '~/utils/services/patient';
 
-export const getStaticProps: GetStaticProps = () => {
-    return {props: {}}
-}
-
-interface Patient {
-    name: string,
-    id: string
-}
-
-const patients: Patient[] = [
-    {
-        name: 'Bob',
-        id: '1',
-    },
-    {
-        name: 'Jennifer',
-        id: '2'
-    }
-]
 
 const Patients: NextPage = () => {
     const router = useRouter();
+    const query = useGetPatients();
+    if (query.isLoading || query.isError) {
+        return <>Loading...</>
+    }
+    const patients = query.data;
+
     const items: SidePanelItems[] = patients.map(patient => ({label: patient.name, href: {query: {id: patient.id}}}))
 
-    const active = patients.find(x => router.query.id == x.id);
     return <>
         <SidePanel items={items}>
-            {active && <Header>Hello {active.name}</Header>}
+            {typeof router.query.id == 'string' && <div className="p-8">
+                <PatientDisplayId id={router.query.id}/>
+            </div>}
         </SidePanel>
     </>
 }
