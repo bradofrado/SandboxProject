@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import {UserCircleIcon} from '~/utils/components/icons.tsx/icons';
+import {UserCircleIcon} from '~/utils/components/icons/icons';
 import Link from "next/link";
 import { useExpand } from "~/utils/hooks/useExpand";
 import React from "react";
@@ -34,7 +34,7 @@ export const NavbarComponent = ({items, title}: NavbarComponentProps) => {
                         {items.map((item, i) => {
                             const selected = router.asPath.includes(item.link); 
                             return <li key={i}>
-                                    <Link href={item.link} className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-500 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent aria-selected:text-blue-700 dark:aria-selected:text-blue-500" aria-current="page" aria-selected={selected}>{item.label}</Link>
+                                    <Link href={item.link} className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-primary md:p-0 dark:text-white md:dark:hover:text-primary dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent aria-selected:text-blue-700 dark:aria-selected:text-blue-500" aria-current="page" aria-selected={selected}>{item.label}</Link>
                                 </li>
                         })}
                     </ul>
