@@ -5,19 +5,18 @@ import { Pill } from "../base/pill"
 import { useGetPatient } from "~/utils/services/patient";
 import { RangeCalendar } from '~/utils/components/base/date-picker';
 import dayjs from "dayjs";
-import Input from "../base/input";
-import Label from "../base/label";
 import { Attachment } from "../base/attachment";
 import { Card } from "../base/card";
-import {EditableText, Emitter} from '~/utils/components/edit/editable-text';
-import { useEffect, useState } from "react";
+import {EditableText} from '~/utils/components/edit/editable-text';
+import { useState } from "react";
+import { useSubscriber } from "~/utils/hooks/useSubscriber";
 
 export type PatientDisplayProps = {
     patient: Patient
 }
 export const PatientDisplay = ({patient}: PatientDisplayProps) => {
     const [notes, setNotes] = useState('Hello there');
-    const [editEmitter] = useState(new Emitter<() => void>());
+    const {subscriber, emit} = useSubscriber();
 
 
     const displayDate = (date: Date) => {
@@ -41,8 +40,8 @@ export const PatientDisplay = ({patient}: PatientDisplayProps) => {
                     <div className="text-sm">DOB: {displayDate(patient.dateOfBirth)} | DOL: {displayDate(patient.dateOfLoss)}</div>
                 </div>
             </Card>
-            <Card label="Notes" items={[{name: 'Edit', id: 'edit'}]} onChange={() => editEmitter.emit()}>
-                <EditableText text={notes} editEmitter={editEmitter} onChange={onNotesSave}></EditableText>
+            <Card label="Notes" items={[{name: 'Edit', id: 'edit'}]} onChange={() => emit()}>
+                <EditableText text={notes} subscriber={subscriber} onChange={onNotesSave}></EditableText>
             </Card>
             <Card>
                 <RangeCalendar/>

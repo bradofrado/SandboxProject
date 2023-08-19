@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
 import Input from "../base/input";
 import Button from "../base/button";
+import { type Subscriber } from "~/utils/hooks/useSubscriber";
+
 
 export type EditableTextProps = {
     text: string,
-    editEmitter: Emitter<() => void>,
+    subscriber: Subscriber<() => void>,
     onChange: (value: string) => void
 }
-export const EditableText = ({text, editEmitter, onChange}: EditableTextProps) => {
+export const EditableText = ({text, subscriber, onChange}: EditableTextProps) => {
     const [isEdit, setIsEdit] = useState(false);
     const [dirtyText, setDirtyText] = useState(text);
     useEffect(() => {
-        editEmitter.subscribe(() => setIsEdit(true))
-    }, [])
+        subscriber(() => setIsEdit(true))
+    }, [subscriber, setIsEdit])
 
     const onCancel = () => {
         setDirtyText(text);
@@ -34,17 +36,4 @@ export const EditableText = ({text, editEmitter, onChange}: EditableTextProps) =
         </>: 
         <p>{text}</p>}
     </>
-}
-
-export class Emitter<T extends (...args: any) => any> {
-    private subscriptions: T[] = [];
-    public subscribe(func: T) {
-        this.subscriptions.push(func);
-    }
-
-    public emit() {
-        for (const func of this.subscriptions) {
-            func();
-        }  
-    }
 }
