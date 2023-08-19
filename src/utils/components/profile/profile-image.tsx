@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { UserCircleIcon } from "../icons/icons"
 
 export type ProfileImageProps = {
@@ -7,7 +8,7 @@ export type ProfileImageProps = {
 export const ProfileImage = ({image, className}: ProfileImageProps) => {
     return <>
         <div className={className}>
-            {image ? <img className="rounded-full w-full h-full object-cover object-center shadow-lg" src={image}/> : <UserCircleIcon className="w-full h-full"/>}
+            {image ? <img className="rounded-full w-full h-full object-cover object-center shadow-lg" src={image} alt="profile image"/> : <UserCircleIcon className="w-full h-full"/>}
         </div>
     </>
 }

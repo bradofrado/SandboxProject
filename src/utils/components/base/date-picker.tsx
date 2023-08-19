@@ -9,6 +9,8 @@ import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon, ExclamationIcon } from
 import React from "react";
 import {type DatePickerProps} from '@react-types/datepicker';
 
+const dateToCalendarDate = (date: Date): CalendarDate => new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate())
+
 export const DatePicker = <T extends DateValue>(props: DatePickerStateOptions<T>) => {
   const state = useDatePickerState(props);
   const ref = useRef<HTMLDivElement>(null);
@@ -56,8 +58,8 @@ type DateRangePickerProps = {
 export const DateRangePicker = (props: DateRangePickerProps) => {
   const options = {
     value: props.start && props.end ? {
-      start: new CalendarDate(props.start.getFullYear(), props.start.getMonth() + 1, props.start.getDate()),
-      end: new CalendarDate(props.end.getFullYear(), props.end.getMonth() + 1, props.end.getDate()),
+      start: dateToCalendarDate(props.start),
+      end: dateToCalendarDate(props.end),
     } : null,
     onChange: (range: DateRange) => {
       props.onChange(range?.start.toDate(getLocalTimeZone()), range?.end?.toDate(getLocalTimeZone()))
@@ -160,17 +162,19 @@ function DateSegment({ segment, state }: {segment: DateSegment, state: DateField
   );
 }
 
-export const Calendar = <T extends DateValue>(props: CalendarProps<T>) => {
+
+export const Calendar = <T extends DateValue>(props: CalendarProps<T> | {value: Date}) => {
+  const options = props.value && 'getDate' in props.value ? {value: dateToCalendarDate(props.value)} : props as CalendarProps<DateValue>;
   const { locale } = useLocale();
   const state = useCalendarState({
-    ...props,
+    ...options,
     locale,
     createCalendar
   });
 
   const ref = useRef<HTMLDivElement>(null);
   const { calendarProps, prevButtonProps, nextButtonProps, title } = useCalendar(
-    props,
+    options,
     state,
     //ref
   );

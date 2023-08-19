@@ -1,4 +1,4 @@
-import { Patient } from "../types/patient"
+import { type Patient } from "../types/patient"
 
 export const useGetPatients = () => {
     return {
@@ -22,13 +22,17 @@ const patients: Patient[] = [
         id: '1',
         dateOfBirth: new Date(),
         dateOfLoss: new Date(),
-        status: 'In Legation'
+        status: 'In Legation',
+        notes: 'This here is a patient alright',
+        appointments: [new Date()]
     },
     {
         name: 'Jennifer Johnson',
         id: '2',
         dateOfBirth: new Date(),
         dateOfLoss: new Date(),
-        status: 'Dead'
+        status: 'Dead',
+        notes: 'Another patient in the grave',
+        appointments: [new Date()]
     }
-]
+];

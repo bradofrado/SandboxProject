@@ -23,8 +23,8 @@ export const SidePanel = ({className, items, children, onBodyClick}: SidePanelPr
     const queryToString = (query: ParsedUrlQueryInput) => {
         return Object.entries(query).map(values => values.join('=')).join('&');
     }
-    return <div className="flex">
-            <div className={`${className || ''}  z-40 w-64 h-screen transition-transform sm:translate-x-0`}>
+    return <div className="flex flex-1">
+            <div className={`${className || ''}  z-40 w-64 h-full transition-transform sm:translate-x-0`}>
                     <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-700 border-r border-gray-200 dark:border-gray-600">
                         <ul className="space-y-2 font-medium">
                             {items.map((item, i) => {
