@@ -79,7 +79,7 @@ export const PatientDisplay = ({patient}: PatientDisplayProps) => {
                     <Attachment label="Birth Certificate" link=""/>
                 </Card>
                 <Card label="Messages">
-                    <ChatBox user={{id: '0'}} />
+                    <ChatBox user={{id: '0', name: 'Bob', image: '/braydon.jpeg'}} />
                 </Card>
             </div>
         </div>

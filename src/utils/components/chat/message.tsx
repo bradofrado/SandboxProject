@@ -1,6 +1,6 @@
 import React from "react";
-import { useAuth } from "~/utils/services/auth";
 import { ProfileImage } from "../profile/profile-image";
+import { type Message } from "~/utils/types/message";
 
 export type ChatMessageProps = {
     message: Message,
@@ -17,13 +17,5 @@ const ChatMessage = ({ message, isUser }: ChatMessageProps) => {
     </div>
   );
 };
-
-export interface Message {
-  id: string,
-  userId: string,
-  avatar: string,
-  name: string,
-  text: string
-}
 
 export default ChatMessage;
