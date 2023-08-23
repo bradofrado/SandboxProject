@@ -7,15 +7,22 @@ export type ChatMessageProps = {
     isUser: boolean
 }
 const ChatMessage = ({ message, isUser }: ChatMessageProps) => {
-  return (
-    <div className={`flex mb-5  gap-1 items-center p-4 w-[max-content] max-w-[calc(100% - 50px)] shadow-sm ${isUser ? "ml-auto rounded-t-3xl rounded-l-3xl bg-white" : "bg-primary rounded-r-3xl rounded-t-3xl"}`}>
-      <ProfileImage image={message.avatar} className="w-9 h-9"/>
-      <div>
-        <p className="font-medium mb-1 text-sm">{message.name}</p>
-        <p className="break-all">{message.text}</p>
+  return <>
+  <div className={`flex flex-col gap-1 w-[max-content] ${isUser ? 'ml-auto': ''}`}>
+    <div className="flex items-center gap-2">
+      {!isUser && <ProfileImage image={message.avatar} className="w-9 h-9"/>}
+      <div className={` rounded-3xl ${isUser ? 'rounded-br-sm bg-[#00000066]': 'bg-[#343434] rounded-bl-sm'}`}>
+        
+        <div className="text-white py-2 px-4">
+          <p className="break-all">{message.text}</p>
+        </div>
       </div>
     </div>
-  );
+    <div className={`text-[#72767e] text-sm ${isUser ? '' : 'ml-10'}`}>
+      <span>{!isUser ? message.name: ''} Today at 2:06 pm</span>
+    </div>
+    </div>
+  </>
 };
 
 export default ChatMessage;
