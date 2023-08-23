@@ -11,6 +11,7 @@ import {EditableText} from '~/utils/components/edit/editable-text';
 import { useState } from "react";
 import { useSubscriber } from "~/utils/hooks/useSubscriber";
 import Label from "../base/label";
+import { ChatBox } from "../chat/chat-box";
 
 export type PatientDisplayProps = {
     patient: Patient
@@ -76,6 +77,9 @@ export const PatientDisplay = ({patient}: PatientDisplayProps) => {
                 
                 <Card label="Documents">
                     <Attachment label="Birth Certificate" link=""/>
+                </Card>
+                <Card label="Messages">
+                    <ChatBox user={{id: '0'}} />
                 </Card>
             </div>
         </div>
