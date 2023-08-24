@@ -53,6 +53,6 @@ export const Navbar = () => {
         },
       ]
     return <>
-        <NavbarComponent items={items} title="Sandbox Thing"/>
+        <NavbarComponent items={items} title="Nexa"/>
     </>
 }
