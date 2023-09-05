@@ -1,59 +1,48 @@
 import { Tab } from '@headlessui/react'
+import { useState } from 'react'
 
 function classNames(...classes: (string | undefined)[]) {
-  return classes.filter(Boolean).join(' ')
+    return classes.filter(Boolean).join(' ')
 }
 
 export interface TabItem {
 	label: string,
 	component: React.ReactElement,
-	className?: string
+	id: string | number
 }
 
 type TabControlProps = {
 	items: TabItem[],
-  className?: string
+    className?: string
 }
 
 export default function TabControl({items, className}: TabControlProps) {
-  return (
-    <div className={className}>
-      <Tab.Group>
-        <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1">
-          {items.map((item, i) => (
-            <Tab
-              key={i}
-              className={({ selected }) =>
-                classNames(
-                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-primary',
-                  'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
-                  selected
-                    ? 'bg-white shadow'
-                    : 'text-blue-100 hover:bg-white/[0.12] hover:text-white'
-                )
-              }
-            >
-              {item.label}
-            </Tab>
-          ))}
-        </Tab.List>
-        <Tab.Panels className="mt-2">
-          {items.map((item, idx) => {
-						return (
-							<Tab.Panel
-								key={idx}
-								className={classNames(
-									'rounded-xl p-3',
-									item.className,
-									'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2'
-								)}
-							>
-								{item.component}
-							</Tab.Panel>
-						)
-					})}
-        </Tab.Panels>
-      </Tab.Group>
-    </div>
-  )
+	const [selected, setSelected] = useState<string | number>(items[0]?.label ?? -1);
+
+	const selectedComponent = items.find(item => item.id == selected)?.component ?? <>no</>
+
+	const onTabSelect = (id: string | number) => {
+		setSelected(id);
+	}
+
+    return (
+        <div className={className}>
+            <div className='text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700'>
+				<ul className="flex flex-wrap -mb-px">
+					{items.map((item, i) => <li key={i} className="mr-2">
+						<button className={classNames("inline-block p-4 border-b-2 border-transparent rounded-t-lg", 
+							selected == item.id ? 
+								"text-primary border-b-2 border-primary rounded-t-lg active dark:text-primary-light dark:border-primary-light" : 
+								"hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300")}
+							onClick={() => onTabSelect(item.id)}>
+									{item.label}
+						</button>
+					</li>)}
+				</ul>
+			</div>
+			<div className="mt-2">
+				{selectedComponent}
+			</div>
+        </div>
+    )
 }

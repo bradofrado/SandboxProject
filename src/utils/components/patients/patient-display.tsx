@@ -12,6 +12,7 @@ import { useState } from "react";
 import { useSubscriber } from "~/utils/hooks/useSubscriber";
 import Label from "../base/label";
 import { ChatBox } from "../chat/chat-box";
+import TabControl, { type TabItem } from "../base/tab";
 
 export type PatientDisplayProps = {
     patient: Patient
@@ -30,10 +31,12 @@ export const PatientDisplay = ({patient}: PatientDisplayProps) => {
         setNotes(value);
     }
 
-    return <>
-        <div className="flex gap-8 flex-wrap">
-            <div className="flex flex-col gap-4">
-                <Card className="max-w-lg">
+	const tabItems: TabItem[] = [
+		{
+			id: 0,
+			label: 'Personal',
+			component: <div className="flex flex-col gap-4">
+				<Card className="max-w-lg">
                     <div className="flex flex-col gap-4">
                         <ProfileImage className='w-28 h-28' image="/braydon.jpeg"/>
                         <div className="flex gap-16 items-center">
@@ -53,9 +56,13 @@ export const PatientDisplay = ({patient}: PatientDisplayProps) => {
                 <Card label="Notes" items={[{name: 'Edit', id: 'edit'}]} onChange={() => emit()}>
                     <EditableText text={notes} subscriber={subscriber} onChange={onNotesSave}></EditableText>
                 </Card>
-            </div>
-            <div className="flex flex-col gap-4">
-                <Card>
+			</div>
+		},
+		{
+			id: 1,
+			label: 'Other',
+			component: <div className="flex flex-col gap-4">
+				<Card>
                     <div className="flex gap-4">
                     <Calendar value={new Date()}/>
                     <Label label="Apointments">
@@ -81,7 +88,13 @@ export const PatientDisplay = ({patient}: PatientDisplayProps) => {
                 <Card label="Messages">
                     <ChatBox user={{id: '0', name: 'Bob', image: '/braydon.jpeg'}} />
                 </Card>
-            </div>
+			</div>
+		}
+	]
+
+    return <>
+        <div className="flex gap-8 flex-wrap">
+			<TabControl items={tabItems}/>
         </div>
     </>
 }
