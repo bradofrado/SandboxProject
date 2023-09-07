@@ -1,14 +1,7 @@
-import { type HexColor } from "~/utils/types/base/colors"
+import { type GraphComponent, type GraphComponentProps } from "./base-graph";
 
-export type ProgressBarValue = {
-	value: number,
-	fill: HexColor
-}
-export type ProgressBarMultiValueProps = {
-	values: ProgressBarValue[],
-	total: number
-}
-export const ProgressBarMultiValue = ({values, total}: ProgressBarMultiValueProps) => {
+export type ProgressBarMultiValueProps = GraphComponentProps
+export const ProgressBarMultiValue: GraphComponent = ({values, total}: ProgressBarMultiValueProps) => {
 	const sortedValues = values.sort((a, b) => a.value - b.value);
 	let lastValue = 0;
 	return <>

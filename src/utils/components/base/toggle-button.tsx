@@ -1,16 +1,16 @@
 import Button from "./button"
 
-export type ToggleButtonType = {
+export type ToggleButtonType<T> = {
 	buttons: {
-		id: number,
+		id: T,
 		label: string
 	}[],
-	selected: number,
-	setSelected: (selected: number) => void
+	selected: T,
+	setSelected: (selected: T) => void
 }
-export const ToggleButton = ({buttons, selected, setSelected}: ToggleButtonType) => {
+export const ToggleButton = <T,>({buttons, selected, setSelected}: ToggleButtonType<T>) => {
 	return <>
-		<div className="flex">
+		<div className="flex gap-2">
 			{buttons.map((button, i) => <Button key={i} mode={selected == button.id ? 'primary' : 'secondary'} onClick={() => setSelected(button.id)}>{button.label}</Button>)}
 		</div>
 	</>

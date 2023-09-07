@@ -7,7 +7,7 @@ import { ProfileImage } from "~/utils/components/profile/profile-image";
 import { type HexColor } from "~/utils/types/base/colors";
 import { StatusLaneContainer } from "~/utils/components/reporting/base/status-lane";
 import { formatDollarAmount } from "~/utils/utils";
-import { PieChart } from "~/utils/components/reporting/base/pie-chart";
+import { PieChart } from "~/utils/components/reporting/base/graphs/pie-chart";
 import Button from "~/utils/components/base/button";
 
 

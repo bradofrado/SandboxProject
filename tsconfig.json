@@ -28,6 +28,6 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs"
-, "src/utils/components/icons"  ],
+, "src/utils/components/icons", "src/utils/components/reporting/base/graphs/base-graph.ts"  ],
   "exclude": ["node_modules"]
 }
