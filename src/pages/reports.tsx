@@ -7,6 +7,8 @@ import { ProfileImage } from "~/utils/components/profile/profile-image";
 import { type HexColor } from "~/utils/types/base/colors";
 import { StatusLaneContainer } from "~/utils/components/reporting/base/status-lane";
 import { formatDollarAmount } from "~/utils/utils";
+import { PieChart } from "~/utils/components/reporting/base/pie-chart";
+import Button from "~/utils/components/base/button";
 
 
 interface ARClient {
@@ -27,7 +29,8 @@ interface ARCategory {
 
 const ReportingPage: NextPage = () => {
 	const [items, setItems] = useState<ARClient[]>([{name: 'Bob Jones', description: 'thing', amount: 500, status: 'Follow up', profileImage: 'braydon.jpeg', id: 3, columnId: 0}, {name: 'Jennifer Jones', description: 'thing', amount: 2000, status: 'Follow up', profileImage: 'braydon.jpeg', id: 10, columnId: 0}, {name: 'Job Jones', description: 'thing', amount: 1000, status: 'Follow up', profileImage: 'braydon.jpeg', id: 5, columnId: 0}])
-
+	const [value, setValue] = useState(.5);
+	
 	const columns: ARCategory[] = [
 		{
 			id: 0,
@@ -55,6 +58,8 @@ const ReportingPage: NextPage = () => {
 			<StatusLaneContainer items={items} setItems={setItems} columns={columns} columnsToIncludeInProgressBar={columnsToIncludeInProgressBar} >
 				{(item, isDragging) => <ARClientCard {...item} outline={isDragging} />}
 			</StatusLaneContainer>
+
+			<Button onClick={() => setValue(.75)}>Click Me</Button>
 		</div>
 	</>
 }

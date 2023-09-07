@@ -5,6 +5,7 @@ import { ProgressBarMultiValue, type ProgressBarValue } from "./progressbar-mult
 import { type HexColor } from "~/utils/types/base/colors"
 import Header from "../../base/header"
 import React from "react"
+import { PieChart } from "./pie-chart"
 
 export type StatusLane = {
 	id: UniqueIdentifier,
@@ -38,7 +39,7 @@ export const StatusLaneContainer = <T extends StatusLaneItem>({items, setItems, 
 		<SortableContainerContext items={items} setItems={setItems}>
 			{({activeItem, items}) => 
 			<div className="mt-5">
-				<ProgressBarMultiValue values={values} total={totalValue}/>
+				<PieChart values={values} total={totalValue}/>
 				<div className="mt-5 flex gap-4">
 					{columns.map((column, i) => <>
 						<StatusLane key={i} {...column} items={items.filter(item => item.columnId == column.id)}>
