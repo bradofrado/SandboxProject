@@ -10,7 +10,7 @@
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
-import prisma from 'db/lib/prisma';
+import {prisma} from 'db/lib/prisma';
 
 
 
@@ -33,7 +33,7 @@ import prisma from 'db/lib/prisma';
  *
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
-const createInnerTRPCContext = () => {
+const createInnerTRPCContext = (): {prisma: typeof prisma} => {
   return {
     prisma,
   };
@@ -45,7 +45,7 @@ const createInnerTRPCContext = () => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = async () => {
+export const createTRPCContext = (): {prisma: typeof prisma} => {
   return createInnerTRPCContext();
 };
 
