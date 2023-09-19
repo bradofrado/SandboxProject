@@ -12,6 +12,7 @@
 		"persistent": true,
 		"dependsOn": ["^db:generate"]
 	  },
+	  "format": {},
 	  "db:push": {
 		"cache": false
 	  },
@@ -24,5 +25,5 @@
 		"outputs": ["packages/db/lib/generated"]
 	  }
 	},
-	"globalEnv": ["PORT", "DATABASE_URL"]
+	"globalEnv": ["PORT", "DATABASE_URL", "VERCEL_URL", "NODE_ENV"]
 }

@@ -8,11 +8,9 @@
  */
 
 import { initTRPC } from "@trpc/server";
+import { prisma } from "db/lib/prisma";
 import superjson from "superjson";
 import { ZodError } from "zod";
-import {prisma} from 'db/lib/prisma';
-
-
 
 /**
  * 1. CONTEXT
@@ -21,7 +19,6 @@ import {prisma} from 'db/lib/prisma';
  *
  * These allow you to access things when processing a request, like the database, the session, etc.
  */
-
 
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
@@ -33,7 +30,7 @@ import {prisma} from 'db/lib/prisma';
  *
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
-const createInnerTRPCContext = (): {prisma: typeof prisma} => {
+const createInnerTRPCContext = (): { prisma: typeof prisma } => {
   return {
     prisma,
   };
@@ -45,7 +42,7 @@ const createInnerTRPCContext = (): {prisma: typeof prisma} => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = (): {prisma: typeof prisma} => {
+export const createTRPCContext = (): { prisma: typeof prisma } => {
   return createInnerTRPCContext();
 };
 
