@@ -1,12 +1,14 @@
 import { type AppType } from "next/app";
 import Head from 'next/head';
-import { api } from "../util/api";
 import "ui/styles.css";
-import { NavItem, NavbarComponent } from "ui/components/feature/navigation/navbar";
+import type { NavItem} from "ui/components/feature/navigation/navbar";
+import { NavbarComponent } from "ui/components/feature/navigation/navbar";
 import { SideNavComponent } from "ui/components/feature/navigation/sidenav";
 import { DashboardIcon, UserCircleIcon, UserIcon, UsersGroupIcon } from "ui/components/core/icons";
 import { useRouter } from "next/router";
-import { SidePanelItems } from "ui/components/core/side-panel";
+import type { SidePanelItems } from "ui/components/core/side-panel";
+import React from "react";
+import { api } from "../util/api";
 
 const MyApp: AppType = ({
   Component,
@@ -28,7 +30,7 @@ const MyApp: AppType = ({
   );
 };
 
-export const Navbar = () => {
+export const Navbar: React.FunctionComponent = () => {
 	const router = useRouter();
     const items: NavItem[] = [
         {
@@ -44,7 +46,7 @@ export const Navbar = () => {
 export type SideNavProps = {
     className?: string
 } & React.PropsWithChildren
-export const SideNav = ({children, className}: SideNavProps) => {
+export const SideNav: React.FunctionComponent<SideNavProps> = ({children, className}: SideNavProps) => {
 	const router = useRouter();
     const items: SidePanelItems[] = [
         {
@@ -63,11 +65,9 @@ export const SideNav = ({children, className}: SideNavProps) => {
             href: {pathname: '/reports'}
         },
     ]
-    return <>
-        <SideNavComponent className={className} items={items} path={router.asPath}>
+    return <SideNavComponent className={className} items={items} path={router.asPath}>
             {children}
         </SideNavComponent>
-    </>
 }
 
 export default api.withTRPC(MyApp);

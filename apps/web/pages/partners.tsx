@@ -4,7 +4,7 @@ export const getStaticProps: GetStaticProps = () => {
     return {props: {}}
 }
 
-interface Partner {
+export interface Partner {
     name: string,
     id: string,
     // nickname: string,
