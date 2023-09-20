@@ -45,10 +45,10 @@ export const SortableContainerContext = <T extends SortableContainerItem>({items
 
 		if (isOverATask) {
 			setItems((items) => {
-				const activeIndex = items.findIndex(item => item.id == activeId);
-				const overIndex = items.findIndex(item => item.id == overId);
+				const activeIndex = items.findIndex(item => item.id === activeId);
+				const overIndex = items.findIndex(item => item.id === overId);
 				
-				if (items[activeIndex]?.columnId != items[overIndex]?.columnId) {
+				if (items[activeIndex]?.columnId !== items[overIndex]?.columnId) {
 					const activeItem = items[activeIndex];
 					const overItem = items[overIndex];
 					if (!activeItem || !overItem) {
@@ -75,7 +75,7 @@ export const SortableContainerContext = <T extends SortableContainerItem>({items
 		}
 	}
 
-	const activeItem = items.find(item => item.id == activeId);
+	const activeItem = items.find(item => item.id === activeId);
 
 	return <>
 		<DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOver={onDragOver}>

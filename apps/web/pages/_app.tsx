@@ -1,12 +1,12 @@
 import { type AppType } from "next/app";
 import Head from 'next/head';
 import "ui/styles.css";
-import type { NavItem} from "ui/components/feature/navigation/navbar";
-import { NavbarComponent } from "ui/components/feature/navigation/navbar";
-import { SideNavComponent } from "ui/components/feature/navigation/sidenav";
-import { DashboardIcon, UserCircleIcon, UserIcon, UsersGroupIcon } from "ui/components/core/icons";
+import type { NavItem} from "ui/src/components/feature/navigation/navbar";
+import { NavbarComponent } from "ui/src/components/feature/navigation/navbar";
+import { SideNavComponent } from "ui/src/components/feature/navigation/sidenav";
+import { DashboardIcon, UserCircleIcon, UserIcon, UsersGroupIcon } from "ui/src/components/core/icons";
 import { useRouter } from "next/router";
-import type { SidePanelItems } from "ui/components/core/side-panel";
+import type { SidePanelItems } from "ui/src/components/core/side-panel";
 import React from "react";
 import { api } from "../util/api";
 

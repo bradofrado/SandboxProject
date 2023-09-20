@@ -1,9 +1,9 @@
 import { type NextPage} from 'next';
 import { useRouter } from 'next/router';
-import type { SidePanelItems} from 'ui/components/core/side-panel';
-import { SidePanel } from 'ui/components/core/side-panel';
-import {useGetPatients} from 'ui/services/patient';
-import {PatientViewId} from 'ui/components/view/patient/patient-view';
+import type { SidePanelItems} from 'ui/src/components/core/side-panel';
+import { SidePanel } from 'ui/src/components/core/side-panel';
+import {useGetPatients} from 'ui/src/services/patient';
+import {PatientViewId} from 'ui/src/components/view/patient/patient-view';
 
 
 const Patients: NextPage = () => {
