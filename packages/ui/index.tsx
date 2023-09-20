@@ -1,2 +1,3 @@
 // component exports
-export { Card } from "./card";
+export {NavbarComponent} from './components/feature/navigation/navbar';
+export {SideNavComponent} from './components/feature/navigation/sidenav';

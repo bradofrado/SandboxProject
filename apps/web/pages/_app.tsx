@@ -1,7 +1,12 @@
 import { type AppType } from "next/app";
 import Head from 'next/head';
 import { api } from "../util/api";
-import "../styles/globals.css";
+import "ui/styles.css";
+import { NavItem, NavbarComponent } from "ui/components/feature/navigation/navbar";
+import { SideNavComponent } from "ui/components/feature/navigation/sidenav";
+import { DashboardIcon, UserCircleIcon, UserIcon, UsersGroupIcon } from "ui/components/core/icons";
+import { useRouter } from "next/router";
+import { SidePanelItems } from "ui/components/core/side-panel";
 
 const MyApp: AppType = ({
   Component,
@@ -14,10 +19,55 @@ const MyApp: AppType = ({
 		<link href="/favicon.ico" rel="icon" />
 	</Head>
 	<main className="flex min-h-screen flex-col">
-		<Component {...pageProps} />
+		<Navbar/>
+        <SideNav className="top-20">
+          <Component {...pageProps} />
+        </SideNav>
 	</main>
 	</>
   );
 };
+
+export const Navbar = () => {
+	const router = useRouter();
+    const items: NavItem[] = [
+        {
+          label: <UserCircleIcon className="w-6 h-6"/>,
+          link: '/profile'
+        },
+      ]
+    return (
+        <NavbarComponent items={items} path={router.asPath} title="Nexa"/>
+	)
+}
+
+export type SideNavProps = {
+    className?: string
+} & React.PropsWithChildren
+export const SideNav = ({children, className}: SideNavProps) => {
+	const router = useRouter();
+    const items: SidePanelItems[] = [
+        {
+            label: 'Patients',
+            icon: UserIcon,
+            href: {pathname: '/patients'}
+        },
+        {
+            label: 'Partners',
+            icon: UsersGroupIcon,
+            href: {pathname: '/partners'}
+        },
+        {
+            label: 'Reporting',
+            icon: DashboardIcon,
+            href: {pathname: '/reports'}
+        },
+    ]
+    return <>
+        <SideNavComponent className={className} items={items} path={router.asPath}>
+            {children}
+        </SideNavComponent>
+    </>
+}
 
 export default api.withTRPC(MyApp);

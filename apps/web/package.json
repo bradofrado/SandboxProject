@@ -35,7 +35,8 @@
     "tsconfig": "workspace:*",
     "typescript": "^4.5.3",
     "prettier": "^3.0.3",
-    "prettier-config": "workspace:^"
+    "prettier-config": "workspace:^",
+	"tailwindcss": "^3.3.3"
   },
   "prettier": "prettier-config"
 }
