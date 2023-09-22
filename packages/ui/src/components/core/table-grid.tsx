@@ -1,17 +1,30 @@
 import { useState } from "react"
 import { ChevronSwitch } from "./chevron-switch"
 
-export interface TableGridColumn<T extends Record<string, string>> {
+export type TableGridItemValue = string | {compareKey: string, label: React.ReactNode}
+export interface TableGridColumn<T extends Record<string, TableGridItemValue>> {
 	id: keyof T,
 	label: string
 }
-export interface TableGridProps<T extends Record<string, string>> {
+export interface TableGridProps<T extends Record<string, TableGridItemValue>> {
 	items: T[],
 	columns: TableGridColumn<T>[]
 }
-export const TableGrid = <T extends Record<string, string>>({items, columns}: TableGridProps<T>): JSX.Element => {
+export const TableGrid = <T extends Record<string, TableGridItemValue>>({items, columns}: TableGridProps<T>): JSX.Element => {
 	const [sortId, setSortId] = useState<keyof T | undefined>();
 	const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
+
+	const getCompareKey = (item: TableGridItemValue): string => {
+		if (typeof item === 'string') return item;
+
+		return item.compareKey;
+	}
+
+	const getLabel = (item: TableGridItemValue): React.ReactNode => {
+		if (typeof item === 'string') return item;
+
+		return item.label;
+	}
 
 	const sortItems = (): T[] => {
 		if (sortId) {
@@ -23,7 +36,7 @@ export const TableGrid = <T extends Record<string, string>>({items, columns}: Ta
 					second = a;
 				}
 
-				return first[sortId].localeCompare(second[sortId]);
+				return getCompareKey(first[sortId]).localeCompare(getCompareKey(second[sortId]));
 			})
 		}
 
@@ -49,7 +62,7 @@ export const TableGrid = <T extends Record<string, string>>({items, columns}: Ta
 				</thead>
 				<tbody>
 					{sorted.map((item, i) => <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700" key={i}>
-						{columns.map(({id}) => <td className="px-6 py-4" key={id.toString()}>{item[id]}</td>)}
+						{columns.map(({id}) => <td className="px-6 py-4" key={id.toString()}>{getLabel(item[id])}</td>)}
 					</tr>)}
 				</tbody>
 			</table>

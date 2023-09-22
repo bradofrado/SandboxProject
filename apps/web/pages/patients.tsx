@@ -4,6 +4,7 @@ import {useGetPatients} from 'ui/src/services/patient';
 import {TableGrid, type TableGridColumn} from 'ui/src/components/core/table-grid'
 import {Header} from 'ui/src/components/core/header';
 import {Input} from 'ui/src/components/core/input';
+import {Pill} from 'ui/src/components/core/pill';
 import { useState } from 'react';
 
 const Patients: NextPage = () => {
@@ -15,7 +16,7 @@ const Patients: NextPage = () => {
     const patients = query.data;
 
     const items: SidePanelItems[] = patients.map(patient => ({label: patient.name, href: {query: {id: patient.id}}}))
-	const columns: TableGridColumn<{lastName: string, firstName: string, lawFirm: string, primaryContact: string, lastUpdate: string, outstandingBalance: string}>[] = [
+	const columns: TableGridColumn<{lastName: string, firstName: string, lawFirm: string, primaryContact: string, lastUpdate: {compareKey: string, label: React.ReactNode}, outstandingBalance: string}>[] = [
 		{
 			id: 'lastName',
 			label: 'Last Name',
@@ -48,7 +49,7 @@ const Patients: NextPage = () => {
 			lastName: 'Abarca',
 			lawFirm: 'Siegfried and Jensen',
 			primaryContact: 'Jeremy Richards',
-			lastUpdate: '8/7/21',
+			lastUpdate: {compareKey: '8/7/21', label: <LastUpdateComponent date='8/7/22' statuses={['In Legation']}/>},
 			outstandingBalance: '$1,941.69'
 		},
 		{
@@ -56,7 +57,7 @@ const Patients: NextPage = () => {
 			lastName: 'Abbott',
 			lawFirm: 'Good Guys Law',
 			primaryContact: 'Clint Peterson',
-			lastUpdate: '9/2/23',
+			lastUpdate: {compareKey: '8/7/21', label: <LastUpdateComponent date='8/7/22' statuses={['In Legation']}/>},
 			outstandingBalance: '$3,684.38'
 		},
 		{
@@ -64,7 +65,7 @@ const Patients: NextPage = () => {
 			lastName: 'Abarca',
 			lawFirm: 'Siegfried and Jensen',
 			primaryContact: 'Jeremy Richards',
-			lastUpdate: '8/7/21',
+			lastUpdate: {compareKey: '8/7/21', label: <LastUpdateComponent date='8/7/22' statuses={['In Legation']}/>},
 			outstandingBalance: '$1,941.69'
 		},
 		{
@@ -72,7 +73,7 @@ const Patients: NextPage = () => {
 			lastName: 'Abarca',
 			lawFirm: 'Siegfried and Jensen',
 			primaryContact: 'Jeremy Richards',
-			lastUpdate: '8/7/21',
+			lastUpdate: {compareKey: '8/7/21', label: <LastUpdateComponent date='8/7/22' statuses={['In Legation']}/>},
 			outstandingBalance: '$1,941.69'
 		},
 		{
@@ -80,12 +81,12 @@ const Patients: NextPage = () => {
 			lastName: 'Abarca',
 			lawFirm: 'Siegfried and Jensen',
 			primaryContact: 'Jeremy Richards',
-			lastUpdate: '8/7/21',
+			lastUpdate: {compareKey: '8/7/22', label: <LastUpdateComponent date='8/7/22' statuses={['In Legation']}/>},
 			outstandingBalance: '$1,941.69'
 		},
 	]
 
-	const filtered = filterItems(itemss, searchKey);
+	const filtered = filterItems(itemss, searchKey, (value: {compareKey: string}) => value.compareKey.toLowerCase());
     return (
 		<div>
 			<div className="flex justify-between items-center p-2">
@@ -97,8 +98,23 @@ const Patients: NextPage = () => {
 	)
 }
 
-function filterItems<T extends Record<string, string>>(items: T[], filterKey: string): T[] {
-	const reduceItem = (item: T): string =>  Object.values(item).reduce<string>((prev, curr) => prev + curr.toLowerCase(), '')
+const LastUpdateComponent: React.FunctionComponent<{date: string, statuses: string[]}> = ({date, statuses}) => {
+	return (
+		<div className="flex flex-col gap-1">
+			<span>{date}</span>
+			{statuses.map(status => <Pill className="w-fit" key={status}>{status}</Pill>)}
+		</div>
+	)
+}
+
+function filterItems<T extends Record<string, unknown>>(items: T[], filterKey: string, getCompareKey?: (value: unknown) => string): T[] {
+	const _getCompareKey = (value: unknown): string => {
+		if (typeof value === 'string') return value.toLowerCase();
+		if (!getCompareKey) throw new Error('Must provide a compare key function for non strings');
+
+		return getCompareKey(value);
+	}
+	const reduceItem = (item: T): string =>  Object.values(item).reduce<string>((prev, curr) => prev + _getCompareKey(curr), '')
 
 	return items.filter(item => reduceItem(item).includes(filterKey));
 }
