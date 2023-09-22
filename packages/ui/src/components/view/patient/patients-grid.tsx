@@ -1,8 +1,11 @@
+import type { Patient } from "model/src/patient";
+import {displayDate, formatDollarAmount} from 'model/src/utils';
 import { Pill } from "../../core/pill";
 import { type TableGridColumn, TableGrid } from "../../core/table-grid";
 
 export interface PatientsGridProps {
-	searchKey?: string
+	searchKey?: string,
+	patients: Patient[]
 }
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- For some reason a type is needed here
 type PatientGridItem = {
@@ -14,7 +17,7 @@ type PatientGridItem = {
 	lastUpdate: {compareKey: string, label: React.ReactNode},
 	outstandingBalance: string
 }
-export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({searchKey}) => {
+export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({searchKey, patients}) => {
 	
 	const columns: TableGridColumn<PatientGridItem>[] = [
 		{
@@ -42,67 +45,25 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({search
 			label: 'Outstanding Balance',
 		},
 	]
-	const itemss: PatientGridItem[] = [
-		{
-			id: 'patients/0',
-			firstName: 'Maria',
-			lastName: 'Abarca',
-			lawFirm: 'Siegfried and Jensen',
-			primaryContact: 'Jeremy Richards',
-			lastUpdate: {compareKey: '8/7/21In Legation', label: <LastUpdateComponent date='8/7/22' statuses={['In Legation']}/>},
-			outstandingBalance: '$1,941.69'
-		},
-		{
-			id: 'patients/0',
-			firstName: 'Layne',
-			lastName: 'Abbott',
-			lawFirm: 'Good Guys Law',
-			primaryContact: 'Clint Peterson',
-			lastUpdate: {compareKey: '8/7/21', label: <LastUpdateComponent date='8/7/22' statuses={['In Legation']}/>},
-			outstandingBalance: '$3,684.38'
-		},
-		{
-			id: 'patients/0',
-			firstName: 'Maria',
-			lastName: 'Abarca',
-			lawFirm: 'Siegfried and Jensen',
-			primaryContact: 'Jeremy Richards',
-			lastUpdate: {compareKey: '8/7/21', label: <LastUpdateComponent date='8/7/22' statuses={['In Legation']}/>},
-			outstandingBalance: '$1,941.69'
-		},
-		{
-			id: 'patients/0',
-			firstName: 'Maria',
-			lastName: 'Abarca',
-			lawFirm: 'Siegfried and Jensen',
-			primaryContact: 'Jeremy Richards',
-			lastUpdate: {compareKey: '8/7/21', label: <LastUpdateComponent date='8/7/22' statuses={['In Legation']}/>},
-			outstandingBalance: '$1,941.69'
-		},
-		{
-			id: 'patients/0',
-			firstName: 'Maria',
-			lastName: 'Abarca',
-			lawFirm: 'Siegfried and Jensen',
-			primaryContact: 'Jeremy Richards',
-			lastUpdate: {compareKey: '8/7/22', label: <LastUpdateComponent date='8/7/22' statuses={['In Legation']}/>},
-			outstandingBalance: '$1,941.69'
-		},
-	]
+	const items: PatientGridItem[] = patients.map(({id, lastName, firstName, lawFirm, primaryContact, lastUpdateDate, outstandingBalance, statuses}) => ({
+		id: `patients/${id}`, lastName, firstName, lawFirm, primaryContact,
+		lastUpdate: {compareKey: lastUpdateDate ? `${displayDate(lastUpdateDate)}${statuses.join('')}` : '---', label: <LastUpdateComponent date={lastUpdateDate} statuses={statuses}/>},
+		outstandingBalance: formatDollarAmount(outstandingBalance)
+	}))
 
-	const filtered = filterItems(itemss, searchKey, (value) => (value as PatientGridItem['lastUpdate']).compareKey.toLowerCase());
+	const filtered = filterItems(items, searchKey, (value) => (value as PatientGridItem['lastUpdate']).compareKey.toLowerCase());
     return (
 		<TableGrid columns={columns} items={filtered} itemsPerPage={12} linkKey="id"/>
 	)
 }
 
-const LastUpdateComponent: React.FunctionComponent<{date: string, statuses: string[]}> = ({date, statuses}) => {
-	return (
+const LastUpdateComponent: React.FunctionComponent<{date: Date | null, statuses: string[]}> = ({date, statuses}) => {
+	return date ? (
 		<div className="flex flex-col gap-1">
-			<span>{date}</span>
+			<span>{displayDate(date)}</span>
 			{statuses.map(status => <Pill className="w-fit" key={status}>{status}</Pill>)}
 		</div>
-	)
+	) : <span>---</span>
 }
 
 function filterItems<T extends Record<string, unknown>>(items: T[], filterKey: string | undefined, getCompareKey?: (value: unknown) => string): T[] {

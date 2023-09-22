@@ -99,7 +99,7 @@ export const TableGrid = <T extends Record<string, TableGridItemValue>>({items, 
 					</tbody>
 				</table>
 			</div>
-			{itemsPerPage !== undefined ? <div className="flex flex-col mx-auto text-center">
+			{itemsPerPage !== undefined && totalPages > 1 ? <div className="flex flex-col mx-auto text-center">
 				<span>{pageNum} of {totalPages}</span>
 				<div>
 					<button className="text-primary hover:text-primary-light disabled:text-primary/50" disabled={pageNum === 1} onClick={() => {setPageNum(pageNum > 1 ? pageNum - 1 : 1)}} type="button">Prev</button>
