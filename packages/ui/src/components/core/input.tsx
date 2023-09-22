@@ -6,14 +6,16 @@ interface InputProps {
     value?: string | number | readonly string[] | undefined,
     className?: string,
     type?: "input" | "textarea",
-    label?: string
+    label?: string,
+	placeholder?: string
 }
-export const Input = ({onChange, value, className, label, type="input"}: InputProps) => {
+export const Input: React.FunctionComponent<InputProps> = ({onChange, value, className, label, type="input", placeholder}) => {
     const props = {
         className: `${className || ''} bg-gray-50 border shadow-sm rounded-md px-3 py-1.5 text-sm text-gray-900 focus:border-primary focus-visible:outline-none `,
-        onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {onChange && onChange(e.target.value)}
+        onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {onChange && onChange(e.target.value)},
+		placeholder
     }
-    const input = type === "input" ? <input {...props} value={value}/> : <textarea {...props} value={value}></textarea>
+    const input = type === "input" ? <input {...props} value={value}/> : <textarea {...props} value={value}/>
     if (label) {
         return <Label label={label}>{input}</Label>
     }

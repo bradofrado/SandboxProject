@@ -1,12 +1,14 @@
 import { type NextPage} from 'next';
-import { useRouter } from 'next/router';
 import type { SidePanelItems} from 'ui/src/components/core/side-panel';
 import {useGetPatients} from 'ui/src/services/patient';
-import {TableGrid, TableGridColumn} from 'ui/src/components/core/table-grid'
+import {TableGrid, type TableGridColumn} from 'ui/src/components/core/table-grid'
+import {Header} from 'ui/src/components/core/header';
+import {Input} from 'ui/src/components/core/input';
+import { useState } from 'react';
 
 const Patients: NextPage = () => {
-    const router = useRouter();
     const query = useGetPatients();
+	const [searchKey, setSearchKey] = useState('');
     if (query.isLoading || query.isError) {
         return <>Loading...</>
     }
@@ -82,14 +84,23 @@ const Patients: NextPage = () => {
 			outstandingBalance: '$1,941.69'
 		},
 	]
+
+	const filtered = filterItems(itemss, searchKey);
     return (
-        // <SidePanel items={items} path={router.asPath}>
-        //     {typeof router.query.id === 'string' && <div className="p-8">
-        //         <PatientViewId id={router.query.id}/>
-        //     </div>}
-        // </SidePanel>
-		<TableGrid columns={columns} items={itemss}/>
+		<div>
+			<div className="flex justify-between items-center p-2">
+				<Header level={2}>Patients</Header>
+				<Input className="h-8" onChange={setSearchKey} placeholder='Search' value={searchKey}/>
+			</div>
+			<TableGrid columns={columns} items={filtered}/>
+		</div>
 	)
+}
+
+function filterItems<T extends Record<string, string>>(items: T[], filterKey: string): T[] {
+	const reduceItem = (item: T): string =>  Object.values(item).reduce<string>((prev, curr) => prev + curr.toLowerCase(), '')
+
+	return items.filter(item => reduceItem(item).includes(filterKey));
 }
 
 export default Patients;
