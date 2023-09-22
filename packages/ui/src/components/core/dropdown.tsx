@@ -1,6 +1,6 @@
 import { Menu, Transition } from "@headlessui/react"
 import { Fragment, useState, type PropsWithChildren, useEffect } from "react"
-import { CheckIcon, ChevronDown, type IconComponent } from "./icons"
+import { CheckIcon, ChevronDownIcon, type IconComponent } from "./icons"
 
 export interface DropdownItem<T> {
 	name: React.ReactNode,
@@ -16,13 +16,13 @@ interface DropdownProps<T> extends PropsWithChildren {
 }
 
 export const Dropdown = <T,>({children, initialValue, onChange, items,
-		chevron = true, className = "inline-flex items-center w-full justify-center rounded-md bg-white shadow-sm px-3 py-1.5 border text-sm text-gray-900 focus:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"}: DropdownProps<T>) => {
+		chevron = true, className = "inline-flex items-center w-full justify-center rounded-md bg-white shadow-sm px-3 py-1.5 border text-sm text-gray-900 focus:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"}: DropdownProps<T>): JSX.Element => {
 	const [value, setValue] = useState<DropdownItem<T> | undefined>(items.find(x => x.id === initialValue));
 	useEffect(() => {
 		setValue(items.find(x => x.id === initialValue));
 	}, [initialValue, items])
 	
-	const onClick = (item: DropdownItem<T>, index: number) => {
+	const onClick = (item: DropdownItem<T>, index: number): void => {
 		setValue(item);
 		onChange && onChange(item, index)
 	}
@@ -31,10 +31,10 @@ export const Dropdown = <T,>({children, initialValue, onChange, items,
 		<Menu as="div" className="relative inline-block text-left">
 			<div>
 				<Menu.Button className={className}>
-					{initialValue && value ? value.name : children} {chevron && <ChevronDown
-              className="ml-2 -mr-1 h-4 w-4"
+					{initialValue && value ? value.name : children} {chevron ? <ChevronDownIcon
               aria-hidden="true"
-            />}
+              className="ml-2 -mr-1 h-4 w-4"
+            /> : null}
 				</Menu.Button>
 			</div>
 			<Transition
@@ -55,7 +55,7 @@ export const Dropdown = <T,>({children, initialValue, onChange, items,
 									className={`${
 										active ? 'bg-primary-light' : 'text-gray-900'
 									} group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-									onClick={() => {onClick(item, i)}}
+									onClick={() => {onClick(item, i)}} type="button"
 								>
 									{item.name}
 								</button>
@@ -79,27 +79,27 @@ interface ListItemProps<T> extends Omit<DropdownIconProps<T>, 'items'>{
 	setItems: (items: ListItem[]) => void
 }
 
-export const DropdownList = <T,>({items, setItems, ...rest}: ListItemProps<T>) => {
+export const DropdownList = <T,>({items, setItems, ...rest}: ListItemProps<T>): JSX.Element => {
 	const copy = items.slice();
-	const onSelect = (item: ListItem) => {
+	const onSelect = (item: ListItem): void => {
 		item.value = !item.value;
 		setItems(copy);
 	}
-	const dropdownItems = copy.map(item => ({ name: <span>{item.value && <CheckIcon className="w-3 h-3 inline"/>} {item.label}</span>, id: undefined }))
-	return <>
+	const dropdownItems = copy.map(item => ({ name: <span>{item.value ? <CheckIcon className="w-3 h-3 inline"/> : null} {item.label}</span>, id: undefined }))
+	return (
 		<DropdownIcon items={dropdownItems} {...rest} onChange={(item, index) => {onSelect(items[index])}}/>
-	</>
+	)
 }
 
 type DropdownIconProps<T> = Omit<DropdownProps<T>, "chevron"> & {
 	icon: IconComponent,
 }
-export const DropdownIcon = <T,>({icon, className, ...rest}: DropdownIconProps<T>) => {
+export const DropdownIcon = <T,>({icon, className, ...rest}: DropdownIconProps<T>): JSX.Element => {
 	const Icon = icon;
-	return <>
+	return (
 		<Dropdown className={`hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1.5 ${className || ''}`} 
 				{...rest} chevron={false}>
 			<Icon className="h-5 w-5"/>
 		</Dropdown>
-	</>
+	)
 }

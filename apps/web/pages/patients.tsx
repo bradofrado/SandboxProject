@@ -50,12 +50,12 @@ const Patients: NextPage = () => {
 			outstandingBalance: '$1,941.69'
 		},
 		{
-			firstName: 'Maria',
-			lastName: 'Abarca',
-			lawFirm: 'Siegfried and Jensen',
-			primaryContact: 'Jeremy Richards',
-			lastUpdate: '8/7/21',
-			outstandingBalance: '$1,941.69'
+			firstName: 'Layne',
+			lastName: 'Abbott',
+			lawFirm: 'Good Guys Law',
+			primaryContact: 'Clint Peterson',
+			lastUpdate: '9/2/23',
+			outstandingBalance: '$3,684.38'
 		},
 		{
 			firstName: 'Maria',
