@@ -2,15 +2,17 @@ import { useState } from "react"
 import { ChevronSwitch } from "./chevron-switch"
 
 export type TableGridItemValue = string | {compareKey: string, label: React.ReactNode}
+export type TableGridItem<T extends Record<string, TableGridItemValue>> = T
 export interface TableGridColumn<T extends Record<string, TableGridItemValue>> {
 	id: keyof T,
 	label: string
 }
 export interface TableGridProps<T extends Record<string, TableGridItemValue>> {
-	items: T[],
-	columns: TableGridColumn<T>[]
+	items: TableGridItem<T>[],
+	columns: TableGridColumn<T>[],
+	linkKey?: keyof T
 }
-export const TableGrid = <T extends Record<string, TableGridItemValue>>({items, columns}: TableGridProps<T>): JSX.Element => {
+export const TableGrid = <T extends Record<string, TableGridItemValue>>({items, columns, linkKey}: TableGridProps<T>): JSX.Element => {
 	const [sortId, setSortId] = useState<keyof T | undefined>();
 	const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
 
@@ -26,7 +28,7 @@ export const TableGrid = <T extends Record<string, TableGridItemValue>>({items, 
 		return item.label;
 	}
 
-	const sortItems = (): T[] => {
+	const sortItems = (): TableGridItem<T>[] => {
 		if (sortId) {
 			return items.slice().sort((a, b) => {
 				let first = a;
@@ -49,6 +51,24 @@ export const TableGrid = <T extends Record<string, TableGridItemValue>>({items, 
 		setSortOrder(newSortOrder);
 	}
 
+	const onRowClick = (item: T): void => {
+		if (linkKey) {
+			const linkKeyValue = item[linkKey];
+			if (typeof linkKeyValue !== 'string') throw new Error('Link key value on item must be a string');
+			window.location.href = `/${linkKeyValue}`;
+		}
+	}
+
+	const wrapInLink = (item: T, node: React.ReactNode): React.ReactNode => {
+		if (linkKey) {
+			const linkKeyValue = item[linkKey];
+			if (typeof linkKeyValue !== 'string') throw new Error('Link key value on item must be a string');
+			return <a className="hover:bg-gray-100 cursor-pointer" href={linkKeyValue}>{node}</a>
+		}
+
+		return node;
+	}
+
 	const sorted = sortItems();
 	return (
 		<div className="relative overflow-x-auto">
@@ -61,7 +81,7 @@ export const TableGrid = <T extends Record<string, TableGridItemValue>>({items, 
 					</tr>
 				</thead>
 				<tbody>
-					{sorted.map((item, i) => <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700" key={i}>
+					{sorted.map((item, i) => <tr className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700 ${linkKey ? 'hover:bg-gray-100 cursor-pointer' : ''}`} key={i} onClick={() => {onRowClick(item)}}>
 						{columns.map(({id}) => <td className="px-6 py-4" key={id.toString()}>{getLabel(item[id])}</td>)}
 					</tr>)}
 				</tbody>
