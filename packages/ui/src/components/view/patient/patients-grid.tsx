@@ -92,7 +92,7 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({search
 
 	const filtered = filterItems(itemss, searchKey, (value) => (value as PatientGridItem['lastUpdate']).compareKey.toLowerCase());
     return (
-		<TableGrid columns={columns} items={filtered} linkKey="id"/>
+		<TableGrid columns={columns} items={filtered} itemsPerPage={12} linkKey="id"/>
 	)
 }
 
