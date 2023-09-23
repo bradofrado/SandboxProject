@@ -170,6 +170,9 @@ importers:
 
   packages/model:
     dependencies:
+      dayjs:
+        specifier: ^1.11.9
+        version: 1.11.9
       zod:
         specifier: ^3.22.2
         version: 3.22.2
@@ -265,6 +268,12 @@ importers:
       model:
         specifier: workspace:*
         version: link:../model
+      prettier:
+        specifier: ^3.0.3
+        version: 3.0.3
+      prettier-config:
+        specifier: workspace:^
+        version: link:../../tooling/prettier-config
       react:
         specifier: ^18.2.0
         version: 18.2.0

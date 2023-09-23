@@ -1,28 +1,24 @@
 import { type NextPage} from 'next';
-import { useRouter } from 'next/router';
-import type { SidePanelItems} from 'ui/src/components/core/side-panel';
-import { SidePanel } from 'ui/src/components/core/side-panel';
+import { useState } from 'react';
+import { Header } from 'ui/src/components/core/header';
+import { Input } from 'ui/src/components/core/input';
+import {PatientsGrid} from 'ui/src/components/view/patient/patients-grid'
 import {useGetPatients} from 'ui/src/services/patient';
-import {PatientViewId} from 'ui/src/components/view/patient/patient-view';
-
 
 const Patients: NextPage = () => {
-    const router = useRouter();
-    const query = useGetPatients();
-    if (query.isLoading || query.isError) {
-        return <>Loading...</>
-    }
-    const patients = query.data;
+	const [searchKey, setSearchKey] = useState('');
+	const query = useGetPatients();
+	if (query.isError || query.isLoading) return <>Loading</>
 
-    const items: SidePanelItems[] = patients.map(patient => ({label: patient.name, href: {query: {id: patient.id}}}))
-
-    return (
-        <SidePanel items={items} path={router.asPath}>
-            {typeof router.query.id === 'string' && <div className="p-8">
-                <PatientViewId id={router.query.id}/>
-            </div>}
-        </SidePanel>
-	)
+	const items = query.data;
+    
+    return <>
+		<div className="flex justify-between items-center p-2">
+			<Header level={2}>Patients</Header>
+			<Input className="h-8" onChange={setSearchKey} placeholder='Search' value={searchKey}/>
+		</div>
+		<PatientsGrid patients={items} searchKey={searchKey}/>
+	</>
 }
 
 export default Patients;

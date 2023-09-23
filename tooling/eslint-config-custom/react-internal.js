@@ -35,6 +35,7 @@ module.exports = {
 
   rules: {
     // add specific rules configurations here
-	"react/function-component-definition": "off"
+	"react/function-component-definition": "off",
+	"react/no-array-index-key": "off"
   },
 };

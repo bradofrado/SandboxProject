@@ -1,9 +1,14 @@
 export interface Patient {
-  name: string;
   id: string;
+  firstName: string;
+  lastName: string;
   dateOfBirth: Date;
   dateOfLoss: Date;
-  status: string;
+  statuses: string[];
   notes: string;
   appointments: Date[];
+  lawFirm: string;
+  primaryContact: string;
+  lastUpdateDate: Date | null;
+  outstandingBalance: number;
 }
