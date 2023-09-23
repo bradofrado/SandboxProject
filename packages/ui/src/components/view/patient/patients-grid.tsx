@@ -14,8 +14,8 @@ type PatientGridItem = {
 	firstName: string,
 	lawFirm: string,
 	primaryContact: string,
-	lastUpdate: {compareKey: string, label: React.ReactNode},
-	outstandingBalance: string
+	lastUpdate: {compareKey: string | number, label: React.ReactNode},
+	outstandingBalance: {compareKey: string | number, label: React.ReactNode}
 }
 export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({searchKey, patients}) => {
 	
@@ -48,10 +48,10 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({search
 	const items: PatientGridItem[] = patients.map(({id, lastName, firstName, lawFirm, primaryContact, lastUpdateDate, outstandingBalance, statuses}) => ({
 		id: `patients/${id}`, lastName, firstName, lawFirm, primaryContact,
 		lastUpdate: {compareKey: lastUpdateDate ? `${displayDate(lastUpdateDate)}${statuses.join('')}` : '---', label: <LastUpdateComponent date={lastUpdateDate} statuses={statuses}/>},
-		outstandingBalance: formatDollarAmount(outstandingBalance)
+		outstandingBalance: {compareKey: outstandingBalance, label: <span className="text-primary">{formatDollarAmount(outstandingBalance)}</span>}
 	}))
 
-	const filtered = filterItems(items, searchKey, (value) => (value as PatientGridItem['lastUpdate']).compareKey.toLowerCase());
+	const filtered = filterItems(items, searchKey, (value) => (value as PatientGridItem['lastUpdate']).compareKey);
     return (
 		<TableGrid columns={columns} items={filtered} itemsPerPage={12} linkKey="id"/>
 	)
@@ -66,12 +66,17 @@ const LastUpdateComponent: React.FunctionComponent<{date: Date | null, statuses:
 	) : <span>---</span>
 }
 
-function filterItems<T extends Record<string, unknown>>(items: T[], filterKey: string | undefined, getCompareKey?: (value: unknown) => string): T[] {
-	const _getCompareKey = (value: unknown): string => {
+function filterItems<T extends Record<string, unknown>>(items: T[], filterKey: string | undefined, getCompareKey?: (value: unknown) => string | number): T[] {
+	const _getCompareKey = (value: unknown): string | number => {
 		if (typeof value === 'string') return value.toLowerCase();
 		if (!getCompareKey) throw new Error('Must provide a compare key function for non strings');
 
-		return getCompareKey(value);
+		const key = getCompareKey(value);
+		if (typeof key === 'string') {
+			return key.toLowerCase();
+		}
+
+		return key;
 	}
 	const reduceItem = (item: T): string =>  Object.values(item).reduce<string>((prev, curr) => prev + _getCompareKey(curr), '')
 

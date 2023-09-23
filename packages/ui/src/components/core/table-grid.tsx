@@ -1,7 +1,8 @@
 import { useState } from "react"
+import { compare } from "model/src/utils"
 import { ChevronSwitch } from "./chevron-switch"
 
-export type TableGridItemValue = string | {compareKey: string, label: React.ReactNode}
+export type TableGridItemValue = string | {compareKey: string | number, label: React.ReactNode}
 export type TableGridItem<T extends Record<string, TableGridItemValue>> = T
 export interface TableGridColumn<T extends Record<string, TableGridItemValue>> {
 	id: keyof T,
@@ -28,7 +29,7 @@ export const TableGrid = <T extends Record<string, TableGridItemValue>>({items, 
 		return 1;
 	})();
 
-	const getCompareKey = (item: TableGridItemValue): string => {
+	const getCompareKey = (item: TableGridItemValue): string | number => {
 		if (typeof item === 'string') return item;
 
 		return item.compareKey;
@@ -50,7 +51,7 @@ export const TableGrid = <T extends Record<string, TableGridItemValue>>({items, 
 					second = a;
 				}
 
-				return getCompareKey(first[sortId]).localeCompare(getCompareKey(second[sortId]));
+				return compare(getCompareKey(first[sortId]), getCompareKey(second[sortId]));
 			})
 		}
 
