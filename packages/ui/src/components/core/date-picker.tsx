@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary -- We will let this go for now... */
 import React, { useRef } from "react";
 import { useRangeCalendarState } from "@react-stately/calendar";
 import { useRangeCalendar } from "@react-aria/calendar";
@@ -10,7 +11,7 @@ import { ExclamationIcon, CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from
 
 const dateToCalendarDate = (date: Date): CalendarDate => new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate())
 
-export const DatePicker = <T extends DateValue>(props: DatePickerStateOptions<T>) => {
+export const DatePicker = <T extends DateValue>(props: DatePickerStateOptions<T>): JSX.Element => {
   const state = useDatePickerState(props);
   const ref = useRef<HTMLDivElement>(null);
   const {
@@ -27,7 +28,7 @@ export const DatePicker = <T extends DateValue>(props: DatePickerStateOptions<T>
       <span {...labelProps} className="text-sm text-gray-800">
         {props.label}
       </span>
-      <div {...groupProps} ref={ref} className="flex group">
+      <div {...groupProps} className="flex group" ref={ref}>
         <div className="bg-white border border-gray-300 group-hover:border-gray-400 transition-colors rounded-l-md pr-10 group-focus-within:border-primary group-focus-within:group-hover:border-primary p-1 relative flex items-center">
           <DateField {...fieldProps} />
           {state.validationState === "invalid" && (
@@ -38,13 +39,11 @@ export const DatePicker = <T extends DateValue>(props: DatePickerStateOptions<T>
           <CalendarIcon className="w-5 h-5 text-gray-700 group-focus-within:text-primary" />
         </FieldButton>
       </div>
-      {state.isOpen && (
-        <Popover triggerRef={ref} state={state} placement="bottom start">
+      {state.isOpen ? <Popover placement="bottom start" state={state} triggerRef={ref}>
           <Dialog {...dialogProps}>
             <Calendar {...calendarProps} />
           </Dialog>
-        </Popover>
-      )}
+        </Popover> : null}
     </div>
   );
 }
@@ -54,7 +53,7 @@ interface DateRangePickerProps {
   end: Date | null,
   onChange: (start: Date, end?: Date) => void
 }
-export const DateRangePicker = (props: DateRangePickerProps) => {
+export const DateRangePicker = (props: DateRangePickerProps): JSX.Element => {
   const options = {
     value: props.start && props.end ? {
       start: dateToCalendarDate(props.start),
@@ -96,18 +95,16 @@ export const DateRangePicker = (props: DateRangePickerProps) => {
           <CalendarIcon className="w-5 h-5 text-gray-700 group-focus-within:text-primary" />
         </FieldButton>
       </div>
-      {state.isOpen && (
-        <Popover triggerRef={ref} state={state} placement="bottom start">
+      {state.isOpen ? <Popover placement="bottom start" state={state} triggerRef={ref}>
           <Dialog {...dialogProps}>
             <RangeCalendar {...calendarProps} />
           </Dialog>
-        </Popover>
-      )}
+        </Popover> : null}
     </div>
   );
 }
 
-export const DateField = <T extends DateValue>(props: DatePickerProps<T>) => {
+export const DateField = <T extends DateValue>(props: DatePickerProps<T>): JSX.Element => {
   const { locale } = useLocale();
   const state = useDateFieldState({
     ...props,
@@ -119,7 +116,7 @@ export const DateField = <T extends DateValue>(props: DatePickerProps<T>) => {
   const { fieldProps } = useDateField(props, state, ref);
 
   return (
-    <div {...fieldProps} ref={ref} className="flex">
+    <div {...fieldProps} className="flex" ref={ref}>
       {state.segments.map((segment, i) => (
         <DateSegment key={i} segment={segment} state={state} />
       ))}
@@ -127,22 +124,22 @@ export const DateField = <T extends DateValue>(props: DatePickerProps<T>) => {
   );
 }
 
-function DateSegment({ segment, state }: {segment: DateSegment, state: DateFieldState}) {
+function DateSegment({ segment, state }: {segment: DateSegment, state: DateFieldState}): JSX.Element {
   const ref = useRef<HTMLDivElement>(null);
   const { segmentProps } = useDateSegment(segment, state, ref);
 
   return (
     <div
       {...segmentProps}
+      className={`px-0.5 box-content tabular-nums text-right outline-none rounded-sm focus:bg-primary focus:text-white group ${
+        !segment.isEditable ? "text-gray-500" : "text-gray-800"
+      }`}
       ref={ref}
       style={{
         ...segmentProps.style,
         minWidth:
-          segment.maxValue !== null ? `${String(segment.maxValue).length}ch` : undefined
+          segment.maxValue !== undefined ? `${String(segment.maxValue).length}ch` : undefined
       }}
-      className={`px-0.5 box-content tabular-nums text-right outline-none rounded-sm focus:bg-primary focus:text-white group ${
-        !segment.isEditable ? "text-gray-500" : "text-gray-800"
-      }`}
     >
       {/* Always reserve space for the placeholder, to prevent layout shift when editing. */}
       <span
@@ -162,7 +159,7 @@ function DateSegment({ segment, state }: {segment: DateSegment, state: DateField
 }
 
 
-export const Calendar = <T extends DateValue>(props: CalendarProps<T> | {value: Date}) => {
+export const Calendar = <T extends DateValue>(props: CalendarProps<T> | {value: Date}): JSX.Element => {
   const options = props.value && 'getDate' in props.value ? {value: dateToCalendarDate(props.value)} : props as CalendarProps<DateValue>;
   const { locale } = useLocale();
   const state = useCalendarState({
@@ -179,7 +176,7 @@ export const Calendar = <T extends DateValue>(props: CalendarProps<T> | {value: 
   );
 
   return (
-    <div {...calendarProps} ref={ref} className="inline-block text-gray-800">
+    <div {...calendarProps} className="inline-block text-gray-800" ref={ref}>
       <div className="flex items-center pb-4">
         <h2 className="flex-1 font-bold text-xl ml-2">{title}</h2>
         <CalendarButton {...prevButtonProps}>
@@ -194,7 +191,7 @@ export const Calendar = <T extends DateValue>(props: CalendarProps<T> | {value: 
   );
 }
 
-export const RangeCalendar = <T extends DateValue>(props: RangeCalendarProps<T>) => {
+export const RangeCalendar = <T extends DateValue>(props: RangeCalendarProps<T>): JSX.Element => {
   const { locale } = useLocale();
   const state = useRangeCalendarState({
     ...props,
@@ -211,7 +208,7 @@ export const RangeCalendar = <T extends DateValue>(props: RangeCalendarProps<T>)
   } = useRangeCalendar(props, state, ref);
 
   return (
-    <div {...calendarProps} ref={ref} className="inline-block">
+    <div {...calendarProps} className="inline-block" ref={ref}>
       <div className="flex items-center pb-4">
         <h2 className="flex-1 font-bold text-xl ml-2">{title}</h2>
         <CalendarButton {...prevButtonProps}>
@@ -229,7 +226,7 @@ export const RangeCalendar = <T extends DateValue>(props: RangeCalendarProps<T>)
 type CalendarGridProps = {
   state: CalendarState | RangeCalendarState
 } & AriaCalendarGridProps
-export const CalendarGrid = ({ state, ...props }: CalendarGridProps) => {
+export const CalendarGrid = ({ state, ...props }: CalendarGridProps): JSX.Element => {
   const { locale } = useLocale();
   const { gridProps, headerProps, weekDays } = useCalendarGrid(props, state);
 
@@ -248,13 +245,13 @@ export const CalendarGrid = ({ state, ...props }: CalendarGridProps) => {
         </tr>
       </thead>
       <tbody>
-        {[...new Array(weeksInMonth).keys()].map((weekIndex) => (
+        {[...new Array<number>(weeksInMonth)].map((_, weekIndex) => (
           <tr key={weekIndex}>
             {state
               .getDatesInWeek(weekIndex)
               .map((date, i) =>
                 date ? (
-                  <CalendarCell key={i} state={state} date={date} />
+                  <CalendarCell date={date} key={i} state={state} />
                 ) : (
                   <td key={i} />
                 )
@@ -270,7 +267,7 @@ interface CalendarCellProps {
   date: CalendarDate,
   state: CalendarState | RangeCalendarState
 }
-export function CalendarCell({ state, date }: CalendarCellProps) {
+export function CalendarCell({ state, date }: CalendarCellProps): JSX.Element {
   const ref = useRef<HTMLDivElement>(null);
   const {
     cellProps,
@@ -284,10 +281,10 @@ export function CalendarCell({ state, date }: CalendarCellProps) {
 
   // The start and end date of the selected range will have
   // an emphasized appearance.
-  const isSelectionStart = 'highlightedRange' in state && state.highlightedRange
+  const isSelectionStart = 'highlightedRange' in state
     ? isSameDay(date, state.highlightedRange.start)
     : isSelected;
-  const isSelectionEnd = 'highlightedRange' in state && state.highlightedRange
+  const isSelectionEnd = 'highlightedRange' in state
     ? isSameDay(date, state.highlightedRange.end)
     : isSelected;
 
@@ -314,13 +311,13 @@ export function CalendarCell({ state, date }: CalendarCellProps) {
     >
       <div
         {...mergeProps(buttonProps, focusProps)}
-        ref={ref}
-        hidden={isOutsideVisibleRange}
         className={`w-10 h-10 outline-none group ${
           isRoundedLeft ? "rounded-l-full" : ""
         } ${isRoundedRight ? "rounded-r-full" : ""} ${
           isSelected ? (isInvalid ? "bg-red-300" : "bg-primary bg-opacity-30") : ""
         } ${isDisabled ? "disabled" : ""}`}
+        hidden={isOutsideVisibleRange}
+        ref={ref}
       >
         <div
           className={`w-full h-full rounded-full flex items-center justify-center ${
@@ -357,8 +354,8 @@ export function CalendarCell({ state, date }: CalendarCellProps) {
 }
 
 type DialogProps = AriaDialogProps & React.PropsWithChildren;
-export function Dialog({ children, ...props }: DialogProps) {
-  const ref = React.useRef<HTMLDivElement>(null);
+export function Dialog({ children, ...props }: DialogProps): JSX.Element {
+  const ref = useRef<HTMLDivElement>(null);
   const { dialogProps } = useDialog(props, ref);
 
   return (
@@ -371,8 +368,8 @@ export function Dialog({ children, ...props }: DialogProps) {
 type PopoverProps = React.PropsWithChildren<Omit<AriaPopoverProps, 'popoverRef'> & {
   state: OverlayTriggerState
 }>
-export const Popover = (props: PopoverProps) => {
-  const ref = React.useRef<HTMLDivElement>(null);
+export const Popover = (props: PopoverProps): JSX.Element => {
+  const ref = useRef<HTMLDivElement>(null);
   const {children, state} = props;
 
   const { popoverProps, underlayProps } = usePopover(
@@ -388,8 +385,8 @@ export const Popover = (props: PopoverProps) => {
       <div {...underlayProps} className="fixed inset-0" />
       <div
         {...popoverProps}
-        ref={ref}
         className="absolute top-full bg-white border border-gray-300 rounded-md shadow-lg mt-2 p-8 z-10"
+        ref={ref}
       >
         <DismissButton onDismiss={state.close.bind(state)} />
         {children}
@@ -399,19 +396,20 @@ export const Popover = (props: PopoverProps) => {
   );
 }
 
-export function CalendarButton(props: AriaButtonProps) {
+export function CalendarButton(props: AriaButtonProps): JSX.Element {
   const ref = useRef<HTMLButtonElement>(null);
   const { buttonProps } = useButton(props, ref);
   const { focusProps, isFocusVisible } = useFocusRing();
   return (
     <button
       {...mergeProps(buttonProps, focusProps)}
-      ref={ref}
       className={`p-2 rounded-full ${props.isDisabled ? "text-gray-400" : ""} ${
         !props.isDisabled ? "hover:opacity-10 active:opacity-20" : ""
       } outline-none ${
         isFocusVisible ? "ring-2 ring-offset-2 ring-primary" : ""
       }`}
+      ref={ref}
+	  type="button"
     >
       {props.children}
     </button>
@@ -421,18 +419,19 @@ export function CalendarButton(props: AriaButtonProps) {
 type FieldProps = AriaButtonProps & {
   isPressed: boolean
 }
-export function FieldButton(props: FieldProps) {
+export function FieldButton(props: FieldProps): JSX.Element {
   const ref = useRef<HTMLButtonElement>(null);
   const { buttonProps, isPressed } = useButton(props, ref);
   return (
     <button
       {...buttonProps}
-      ref={ref}
       className={`px-2 -ml-px border transition-colors rounded-r-md group-focus-within:border-primary group-focus-within:group-hover:border-primary outline-none ${
         isPressed || props.isPressed
           ? "bg-gray-200 border-gray-400"
           : "bg-gray-50 border-gray-300 group-hover:border-gray-400"
       }`}
+      ref={ref}
+	  type="button"
     >
       {props.children}
     </button>
