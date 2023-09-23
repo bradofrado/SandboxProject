@@ -19,7 +19,7 @@ export const useGetPatient = (id: string): {isLoading: boolean, isError: boolean
 
 const patients: Patient[] = [
     {
-		id: 'patients/0',
+		id: '0',
 		firstName: 'Maria',
 		lastName: 'Abarca',
 		lawFirm: 'Siegfried and Jensen',
@@ -33,7 +33,7 @@ const patients: Patient[] = [
 		notes: '',
 	},
 	{
-		id: 'patients/1',
+		id: '1',
 		firstName: 'Layne',
 		lastName: 'Abbott',
 		lawFirm: 'Good Guys Law',
@@ -47,7 +47,7 @@ const patients: Patient[] = [
 		notes: '',
 	},
 	{
-		id: 'patients/2',
+		id: '2',
 		firstName: 'Ola',
 		lastName: 'Abdullatif',
 		lawFirm: 'Flickenger & Sutterfield',
@@ -61,7 +61,7 @@ const patients: Patient[] = [
 		notes: '',
 	},
 	{
-		id: 'patients/3',
+		id: '3',
 		firstName: 'Abe',
 		lastName: 'Emmanuel',
 		lawFirm: 'Siegfried and Jensen',
@@ -75,7 +75,7 @@ const patients: Patient[] = [
 		notes: '',
 	},
 	{
-		id: 'patients/4',
+		id: '4',
 		firstName: 'Claudia',
 		lastName: 'Acero',
 		lawFirm: 'Siegfried and Jensen',
