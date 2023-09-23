@@ -1,15 +1,15 @@
 // Source: https://github.com/emotion-js/emotion/blob/master/packages/styled-base/types/helper.d.ts
 // A more precise version of just React.ComponentPropsWithoutRef on its own
 export type PropsOf<
-  C extends keyof JSX.IntrinsicElements | React.JSXElementConstructor<unknown>
-> = JSX.LibraryManagedAttributes<C, React.ComponentPropsWithoutRef<C>>
+  C extends keyof JSX.IntrinsicElements | React.JSXElementConstructor<unknown>,
+> = JSX.LibraryManagedAttributes<C, React.ComponentPropsWithoutRef<C>>;
 
 interface AsProp<C extends React.ElementType> {
   /**
    * An override of the default HTML tag.
    * Can also be another React component.
    */
-  as?: C
+  as?: C;
 }
 
 /**
@@ -17,10 +17,8 @@ interface AsProp<C extends React.ElementType> {
  * (`OverrideProps`), ensuring that any duplicates are overridden by the overriding
  * set of props.
  */
-export type ExtendableProps<
-  ExtendedProps,
-  OverrideProps
-> = OverrideProps & Omit<ExtendedProps, keyof OverrideProps>
+export type ExtendableProps<ExtendedProps, OverrideProps> = OverrideProps &
+  Omit<ExtendedProps, keyof OverrideProps>;
 
 /**
  * Allows for inheriting the props from the specified element type so that
@@ -29,8 +27,8 @@ export type ExtendableProps<
  */
 export type InheritableElementProps<
   C extends React.ElementType,
-  Props
-> = ExtendableProps<PropsOf<C>, Props>
+  Props,
+> = ExtendableProps<PropsOf<C>, Props>;
 
 /**
  * A more sophisticated version of `InheritableElementProps` where
@@ -38,11 +36,11 @@ export type InheritableElementProps<
  */
 export type PolymorphicComponentProps<
   C extends React.ElementType,
-  Props
-> = PolymorphicCustomProps<C, Props, AsProp<C>>//InheritableElementProps<C, Props & AsProp<C>>
+  Props,
+> = PolymorphicCustomProps<C, Props, AsProp<C>>; //InheritableElementProps<C, Props & AsProp<C>>
 
 export type PolymorphicCustomProps<
   C extends React.ElementType,
   Props,
-  PolymorphicProps
-> = InheritableElementProps<C, Props & PolymorphicProps>
+  PolymorphicProps,
+> = InheritableElementProps<C, Props & PolymorphicProps>;

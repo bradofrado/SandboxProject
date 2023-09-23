@@ -16,7 +16,7 @@
   "prettier": "prettier-config",
   "dependencies": {
     "zod": "^3.22.2",
-	"dayjs": "^1.11.9"
+    "dayjs": "^1.11.9"
   },
   "devDependencies": {
     "@types/node": "^20.6.2",
