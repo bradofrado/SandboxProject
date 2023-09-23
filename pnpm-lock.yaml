@@ -111,6 +111,9 @@ importers:
       db:
         specifier: workspace:^
         version: link:../db
+      model:
+        specifier: workspace:*
+        version: link:../model
       superjson:
         specifier: ^1.13.1
         version: 1.13.1

@@ -1,8 +1,7 @@
-import {type GetStaticProps, type NextPage} from 'next';
+import { type NextPage} from 'next';
+import { requireAuth, defaultGetServerProps } from '../util/protected-routes-hoc';
 
-export const getStaticProps: GetStaticProps = () => {
-    return {props: {}}
-}
+export const getServerSideProps = requireAuth(defaultGetServerProps);
 
 export interface Partner {
     name: string,
