@@ -81,6 +81,9 @@ importers:
       eslint-config-custom:
         specifier: workspace:*
         version: link:../../tooling/eslint-config-custom
+      model:
+        specifier: workspace:*
+        version: link:../../packages/model
       prettier:
         specifier: ^3.0.3
         version: 3.0.3
@@ -108,6 +111,9 @@ importers:
       db:
         specifier: workspace:^
         version: link:../db
+      model:
+        specifier: workspace:*
+        version: link:../model
       superjson:
         specifier: ^1.13.1
         version: 1.13.1
