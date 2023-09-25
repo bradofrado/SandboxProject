@@ -30,7 +30,7 @@ export const isNotRole =
     const result = UserRoleSchema.safeParse(obj);
     const role: UserRole | Error = result.success
       ? result.data
-      : !Boolean(transform)
+      : transform === undefined
       ? Error("must provide transform method")
       : transform(obj as T);
     if (role instanceof Error) {
