@@ -5,7 +5,7 @@ interface InputProps {
 	onChange?: (value: string) => void,
 	value?: string | number | readonly string[] | undefined,
 	className?: string,
-	type?: "input" | "textarea" | "password",
+	type?: "input" | "textarea" | "password" | "email",
 	label?: string,
 	placeholder?: string,
 	required?: boolean

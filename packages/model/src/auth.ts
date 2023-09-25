@@ -11,6 +11,13 @@ export interface Login {
 	password: string
 }
 
+export const SignupSchema = z.object({
+	name: z.string(),
+	password: z.string(),
+	email: z.string().email()
+})
+export type Signup = z.infer<typeof SignupSchema>;
+
 export type Email = `${string}@${string}`
 export const EmailSchema = z.custom<Email>((val) => {
 	if (!(typeof val === 'string')) return false;
