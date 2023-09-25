@@ -33,5 +33,5 @@ export const compare = (f1: string | number, f2: string | number): number => {
 };
 
 export const getClass = (...strings: (string | undefined)[]) => {
-	return strings.filter(x => !!x).join(' ');
-}
+  return strings.filter((x) => !!x).join(" ");
+};

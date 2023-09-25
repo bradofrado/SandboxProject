@@ -1,18 +1,19 @@
 import type { Login, Signup } from "model/src/auth";
 
 export interface SignInResult {
-	ok: boolean
+  ok: boolean;
 }
-export type SignInDispatch = (_: Login) => Promise<SignInResult>
+export type SignInDispatch = (_: Login) => Promise<SignInResult>;
 export const useSignIn = (): SignInDispatch => {
-	const signIn: SignInDispatch = () => Promise.resolve<SignInResult>({ok: true})
+  const signIn: SignInDispatch = () =>
+    Promise.resolve<SignInResult>({ ok: true });
 
-	return signIn
-}
+  return signIn;
+};
 
 export const useSignup = () => {
-	return {
-		mutate: (user: Signup) => undefined,
-		isError: false
-	}
-}
+  return {
+    mutate: (user: Signup) => undefined,
+    isError: false,
+  };
+};
