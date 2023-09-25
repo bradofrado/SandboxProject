@@ -43,11 +43,6 @@ const SideNav: React.FunctionComponent<SideNavProps> = ({children, className}: S
             icon: UsersGroupIcon,
             href: {pathname: '/partners'}
         },
-        {
-            label: 'Reporting',
-            icon: DashboardIcon,
-            href: {pathname: '/reports'}
-        },
     ]
     return <SideNavComponent className={className} items={items} path={router.asPath}>
             {children}
