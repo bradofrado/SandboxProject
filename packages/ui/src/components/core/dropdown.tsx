@@ -1,6 +1,9 @@
 import { Menu, Transition } from "@headlessui/react"
 import { Fragment, useState, type PropsWithChildren, useEffect } from "react"
 import { CheckIcon, ChevronDownIcon, type IconComponent } from "./icons"
+import { CheckboxInput } from "./input"
+import { Button } from "./button"
+import { Popover } from "./popover"
 
 export interface DropdownItem<T> {
 	name: React.ReactNode,
@@ -16,8 +19,10 @@ interface DropdownProps<T> extends PropsWithChildren {
 }
 
 export const Dropdown = <T,>({children, initialValue, onChange, items,
-		chevron = true, className = "inline-flex items-center w-full justify-center rounded-md bg-white shadow-sm px-3 py-1.5 border text-sm text-gray-900 focus:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"}: DropdownProps<T>): JSX.Element => {
+		chevron = true, className}: DropdownProps<T>): JSX.Element => {
 	const [value, setValue] = useState<DropdownItem<T> | undefined>(items.find(x => x.id === initialValue));
+
+	const button = <Button className={className}>{children}</Button>
 	useEffect(() => {
 		setValue(items.find(x => x.id === initialValue));
 	}, [initialValue, items])
@@ -28,44 +33,17 @@ export const Dropdown = <T,>({children, initialValue, onChange, items,
 	}
 	
 	return (
-		<Menu as="div" className="relative inline-block text-left">
-			<div>
-				<Menu.Button className={className}>
-					{initialValue && value ? value.name : children} {chevron ? <ChevronDownIcon
-              aria-hidden="true"
-              className="ml-2 -mr-1 h-4 w-4"
-            /> : null}
-				</Menu.Button>
+		<Popover button={button}>
+			<div className="w-44">
+				<ul aria-labelledby="dropdownDefaultButton" className="py-2 text-sm text-gray-700 dark:text-gray-200">
+					{items.map((item, i) => <li key={i}>
+						<button className={`${
+						initialValue !== undefined && item === value ? 'bg-primary-light' : 'text-gray-900'
+					} group flex w-full items-center rounded-md px-2 py-2 text-sm cursor-pointer hover:bg-gray-100`} onClick={() => {onClick(item, i)}}type="button">{item.name}</button>
+					</li>)}
+				</ul>
 			</div>
-			<Transition
-				as={Fragment}
-				enter="transition ease-out duration-100"
-				enterFrom="transform opacity-0 scale-95"
-				enterTo="transform opacity-100 scale-100"
-				leave="transition ease-in duration-75"
-				leaveFrom="transform opacity-100 scale-100"
-				leaveTo="transform opacity-0 scale-95"
-			>
-				<Menu.Items className="absolute left-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-					<div className="py-2">
-						{items.map((item, i) => 
-						<Menu.Item key={i}>
-							{({ active }) => (
-								<button
-									className={`${
-										active ? 'bg-primary-light' : 'text-gray-900'
-									} group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-									onClick={() => {onClick(item, i)}} type="button"
-								>
-									{item.name}
-								</button>
-							)}
-						</Menu.Item>
-						)}
-					</div>
-				</Menu.Items>
-			</Transition>
-		</Menu>
+		</Popover>
 	)
 }
 
@@ -74,7 +52,7 @@ export interface ListItem {
 	value: boolean
 }
 
-interface ListItemProps<T> extends Omit<DropdownIconProps<T>, 'items'>{
+type ListItemProps<T> = (Omit<DropdownIconProps<T>, 'items'> | Omit<DropdownProps<T>, 'items'>) & {
 	items: ListItem[],
 	setItems: (items: ListItem[]) => void
 }
@@ -85,9 +63,21 @@ export const DropdownList = <T,>({items, setItems, ...rest}: ListItemProps<T>): 
 		item.value = !item.value;
 		setItems(copy);
 	}
-	const dropdownItems = copy.map(item => ({ name: <span>{item.value ? <CheckIcon className="w-3 h-3 inline"/> : null} {item.label}</span>, id: undefined }))
+	const dropdownItems = copy.map((item, i) => ({ name: <DropdownListItem item={item}/>, id: undefined }))
+	return 'icon' in rest ? 
+		<DropdownIcon items={dropdownItems} {...rest} onChange={(item, index) => {onSelect(items[index])}}/> :
+		<Dropdown items={dropdownItems} {...rest} onChange={(item, index) => {onSelect(items[index])}} />
+}
+
+interface DropdownListItemProps {
+	item: ListItem
+}
+const DropdownListItem: React.FunctionComponent<DropdownListItemProps> = ({item}) => {
 	return (
-		<DropdownIcon items={dropdownItems} {...rest} onChange={(item, index) => {onSelect(items[index])}}/>
+		<span className="flex items-center">
+			<CheckboxInput className="mr-1" value={item.value}/>
+			{item.label}
+		</span>
 	)
 }
 

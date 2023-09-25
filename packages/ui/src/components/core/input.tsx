@@ -1,5 +1,6 @@
 import React from 'react';
 import {Label} from './label';
+import { getClass } from 'model/src/utils';
 
 interface InputProps {
 	onChange?: (value: string) => void,
@@ -21,5 +22,24 @@ export const Input: React.FunctionComponent<InputProps> = ({onChange, value, cla
     if (label) {
         return <Label label={label}>{input}</Label>
     }
+	return input;
+}
+
+export interface CheckboxInputProps {
+	className?: string,
+	value: boolean,
+	onChange?: (value: boolean) => void,
+	label?: string
+}
+export const CheckboxInput: React.FunctionComponent<CheckboxInputProps> = ({value, onChange, label, className}) => {
+	const onInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+		onChange && onChange(e.target.checked);
+	}
+	
+	const input = <input checked={value} onChange={onInputChange} type="checkbox" className={getClass(className, 'text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-light dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer')}/>
+	if (label) {
+		return <Label label={label}>{input}</Label>
+	}
+
 	return input;
 }

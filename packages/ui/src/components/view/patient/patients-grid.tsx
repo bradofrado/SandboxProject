@@ -2,10 +2,40 @@ import type { Patient } from "model/src/patient";
 import {displayDate, formatDollarAmount} from 'model/src/utils';
 import { Pill } from "../../core/pill";
 import { type TableGridColumn, TableGrid } from "../../core/table-grid";
+import React, { useState } from "react";
+import { ListItem, DropdownList } from "../../core/dropdown";
+import { Input } from "../../core/input";
+
+const columns: TableGridColumn<PatientGridItem>[] = [
+	{
+		id: 'lastName',
+		label: 'Last Name',
+	},
+	{
+		id: 'firstName',
+		label: 'First Name',
+	},
+	{
+		id: 'lawFirm',
+		label: 'Law Firm',
+	},
+	{
+		id: 'primaryContact',
+		label: 'Primary Contact',
+	},
+	{
+		id: 'lastUpdate',
+		label: 'Last Update',
+	},
+	{
+		id: 'outstandingBalance',
+		label: 'Outstanding Balance',
+	},
+]
 
 export interface PatientsGridProps {
-	searchKey?: string,
-	patients: Patient[]
+	patients: Patient[],
+	searchKey?: string
 }
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- For some reason a type is needed here
 type PatientGridItem = {
@@ -17,44 +47,17 @@ type PatientGridItem = {
 	lastUpdate: {compareKey: string | number, label: React.ReactNode},
 	outstandingBalance: {compareKey: string | number, label: React.ReactNode}
 }
-export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({searchKey, patients}) => {
-	
-	const columns: TableGridColumn<PatientGridItem>[] = [
-		{
-			id: 'lastName',
-			label: 'Last Name',
-		},
-		{
-			id: 'firstName',
-			label: 'First Name',
-		},
-		{
-			id: 'lawFirm',
-			label: 'Law Firm',
-		},
-		{
-			id: 'primaryContact',
-			label: 'Primary Contact',
-		},
-		{
-			id: 'lastUpdate',
-			label: 'Last Update',
-		},
-		{
-			id: 'outstandingBalance',
-			label: 'Outstanding Balance',
-		},
-	]
+export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({patients, searchKey}) => {
 	const items: PatientGridItem[] = patients.map(({id, lastName, firstName, lawFirm, primaryContact, lastUpdateDate, outstandingBalance, statuses}) => ({
 		id: `patients/${id}`, lastName, firstName, lawFirm, primaryContact,
 		lastUpdate: {compareKey: lastUpdateDate ? `${displayDate(lastUpdateDate)}${statuses.join('')}` : '---', label: <LastUpdateComponent date={lastUpdateDate} statuses={statuses}/>},
 		outstandingBalance: {compareKey: outstandingBalance, label: <span className="text-primary">{formatDollarAmount(outstandingBalance)}</span>}
-	}))
-
+	}));
+	
 	const filtered = filterItems(items, searchKey, (value) => (value as PatientGridItem['lastUpdate']).compareKey);
     return (
-		<TableGrid columns={columns} items={filtered} itemsPerPage={12} linkKey="id"/>
-	)
+			<TableGrid columns={columns} items={filtered} itemsPerPage={12} linkKey="id"/>
+		)
 }
 
 const LastUpdateComponent: React.FunctionComponent<{date: Date | null, statuses: string[]}> = ({date, statuses}) => {
