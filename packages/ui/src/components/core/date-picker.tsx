@@ -1,10 +1,10 @@
 /* eslint-disable no-nested-ternary -- We will let this go for now... */
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRangeCalendarState } from "@react-stately/calendar";
 import { useRangeCalendar } from "@react-aria/calendar";
 import { useLocale } from "@react-aria/i18n";
 import { CalendarDate, createCalendar, getDayOfWeek, getLocalTimeZone, getWeeksInMonth, isSameDay } from "@internationalized/date";
-import { type CalendarState, type DateFieldState, type DatePickerStateOptions, DateSegment, type OverlayTriggerState, type RangeCalendarState, useCalendarState, useDateFieldState, useDatePickerState, useDateRangePickerState } from "react-stately";
+import { type CalendarState, type DateFieldState, type DatePickerStateOptions, type DateSegment, type OverlayTriggerState, type RangeCalendarState, useCalendarState, useDateFieldState, useDatePickerState, useDateRangePickerState } from "react-stately";
 import { type AriaButtonProps, type AriaCalendarGridProps, type AriaDialogProps, type AriaPopoverProps, type CalendarProps, type DateValue, DismissButton, Overlay, type RangeCalendarProps, mergeProps, useButton, useCalendar, useCalendarCell, useCalendarGrid, useDateField, useDatePicker, useDateRangePicker, useDateSegment, useDialog, useFocusRing, usePopover, type DateRange } from "react-aria";
 import {type DatePickerProps} from '@react-types/datepicker';
 import { ExclamationIcon, CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "./icons";
@@ -13,12 +13,12 @@ const dateToCalendarDate = (date: Date): CalendarDate => new CalendarDate(date.g
 
 interface MyDatePickerProps {
 	date: Date | null,
-	onChange: (date: Date) => void
+	onChange: (date: Date | null) => void
 }
 export const DatePicker = (props: MyDatePickerProps): JSX.Element => {
 	const options: DatePickerStateOptions<CalendarDate> = {
 		value: props.date ? dateToCalendarDate(props.date) : null,
-		onChange: (value: CalendarDate) => {props.onChange(value.toDate(getLocalTimeZone()))}
+		onChange: (value: CalendarDate | null) => {props.onChange(value?.toDate(getLocalTimeZone()) ?? null)}
 	}
   const state = useDatePickerState(options);
   const ref = useRef<HTMLDivElement>(null);
@@ -43,7 +43,7 @@ export const DatePicker = (props: MyDatePickerProps): JSX.Element => {
           )}
         </div>
         <FieldButton {...buttonProps} isPressed={state.isOpen}>
-          <CalendarIcon className="w-5 h-5 text-gray-700 group-focus-within:text-primary" />
+          <CalendarIcon className="w-4 h-4 text-gray-700 group-focus-within:text-primary" />
         </FieldButton>
       </div>
       {state.isOpen ? <Popover placement="bottom start" state={state} triggerRef={ref}>
@@ -113,21 +113,21 @@ export const DateRangePicker = (props: DateRangePickerProps): JSX.Element => {
 
 export const DateField = <T extends DateValue>(props: DatePickerProps<T>): JSX.Element => {
   const { locale } = useLocale();
-  const state = useDateFieldState({
+	const state = useDateFieldState({
     ...props,
     locale,
     createCalendar
   });
-
+	
   const ref = useRef<HTMLDivElement>(null);
   const { fieldProps } = useDateField(props, state, ref);
 
   return (
-    <div {...fieldProps} className="flex" ref={ref}>
+    <div {...fieldProps} className="flex text-xs" ref={ref}>
       {state.segments.map((segment, i) => (
         <DateSegment key={i} segment={segment} state={state} />
       ))}
-    </div>
+		</div>
   );
 }
 

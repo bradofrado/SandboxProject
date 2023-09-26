@@ -39,14 +39,14 @@ const Patients: NextPage = () => {
 interface DateToDatePickerProps {
 	start: Date | null,
 	end: Date | null,
-	onChange: () => void
+	onChange: (range: {start: Date | null, end: Date | null}) => void
 }
 const DateToDatePicker: React.FunctionComponent<DateToDatePickerProps> = ({start, end, onChange}) => {
 	return (
-		<span className="flex gap-2 items-center">
-			<DatePicker date={start} onChange={() => undefined}/>
+		<span className="flex gap-1 items-center">
+			<DatePicker date={start} onChange={(value) => {onChange({start: value, end})}}/>
 			to 
-			<DatePicker date={end} onChange={() => undefined}/>
+			<DatePicker date={end} onChange={(value) => {onChange({start, end: value})}}/>
 		</span>
 	)
 }

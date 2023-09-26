@@ -16,7 +16,7 @@ export const ListBox = <T,>({items, className, children}: ListBoxProps<T>): JSX.
 		</div>
 	</Button>
 	return (
-		<Popover button={button} className={''}>
+		<Popover button={button} className=''>
 			<div className="min-w-[11rem]">
 				<ul aria-labelledby="dropdownDefaultButton" className="text-sm text-gray-700 dark:text-gray-200">
 					{items.map((item, i) => <li key={i}>
@@ -91,7 +91,7 @@ export interface DropdownListItemProps {
 }
 export const DropdownListItem: React.FunctionComponent<DropdownListItemProps> = ({item}) => {
 	return (
-		<span className="flex items-center">
+		<span className="flex items-center text-sm font-medium">
 			<CheckboxInput className="mr-1" value={item.value}/>
 			{item.label}
 		</span>
