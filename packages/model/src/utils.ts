@@ -35,3 +35,67 @@ export const compare = (f1: string | number, f2: string | number): number => {
 export const getClass = (...strings: (string | undefined)[]) => {
   return strings.filter((x) => !!x).join(" ");
 };
+
+export const groupBy = function <T extends Pick<T, K>, K extends keyof T>(
+  arr: T[],
+  key: K,
+) {
+  return arr.reduce<Record<T[K], T[]>>((prev, curr) => {
+    let a: T[] = [];
+    const val = prev[curr[key]];
+    if (val) {
+      a = val;
+    }
+    a?.push(curr);
+    prev[curr[key]] = a;
+
+    return prev;
+  }, {});
+};
+
+export const groupByDistinct = function <
+  T extends Pick<T, K>,
+  K extends keyof T,
+>(arr: T[], key: K) {
+  return arr.reduce<Record<T[K], T>>((prev, curr) => {
+    if (prev[curr[key]]) {
+      throw new DOMException("Each key value in the list must be unique");
+    }
+
+    prev[curr[key]] = curr;
+
+    return prev;
+  }, {});
+};
+
+export const groupTogether = function <T extends Pick<T, K>, K extends keyof T>(
+  arr: T[],
+  key: K,
+) {
+  const groups = groupBy(arr, key);
+
+  return Object.keys(groups);
+};
+
+export const groupTogetherDistinct = function <
+  T extends Pick<T, K>,
+  K extends keyof T,
+>(arr: T[], key: K): string[] {
+  const groups = groupByDistinct(arr, key);
+
+  return Object.keys(groups);
+};
+
+export function isDateInBetween(
+  test: Date | null,
+  start: Date | null,
+  end: Date | null,
+): boolean {
+  if (test === null) {
+    return true;
+  }
+  return (
+    (start !== null ? start <= test : true) &&
+    (end !== null ? test <= end : true)
+  );
+}

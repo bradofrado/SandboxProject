@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { NavbarComponent } from "ui/src/components/feature/navigation/navbar";
 import { SideNavComponent } from "ui/src/components/feature/navigation/sidenav";
-import { UserCircleIcon, UserIcon, UsersGroupIcon, DashboardIcon } from "ui/src/components/core/icons";
+import { UserCircleIcon, UserIcon, UsersGroupIcon } from "ui/src/components/core/icons";
 import type { SidePanelItems } from "ui/src/components/core/side-panel";
 import type { NavItem } from "ui/src/components/feature/navigation/navbar";
 

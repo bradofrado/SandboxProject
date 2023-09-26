@@ -4,42 +4,49 @@ import { useRangeCalendarState } from "@react-stately/calendar";
 import { useRangeCalendar } from "@react-aria/calendar";
 import { useLocale } from "@react-aria/i18n";
 import { CalendarDate, createCalendar, getDayOfWeek, getLocalTimeZone, getWeeksInMonth, isSameDay } from "@internationalized/date";
-import { type CalendarState, type DateFieldState, type DatePickerStateOptions, DateSegment, type OverlayTriggerState, type RangeCalendarState, useCalendarState, useDateFieldState, useDatePickerState, useDateRangePickerState } from "react-stately";
+import { type CalendarState, type DateFieldState, type DatePickerStateOptions, type DateSegment, type OverlayTriggerState, type RangeCalendarState, useCalendarState, useDateFieldState, useDatePickerState, useDateRangePickerState } from "react-stately";
 import { type AriaButtonProps, type AriaCalendarGridProps, type AriaDialogProps, type AriaPopoverProps, type CalendarProps, type DateValue, DismissButton, Overlay, type RangeCalendarProps, mergeProps, useButton, useCalendar, useCalendarCell, useCalendarGrid, useDateField, useDatePicker, useDateRangePicker, useDateSegment, useDialog, useFocusRing, usePopover, type DateRange } from "react-aria";
 import {type DatePickerProps} from '@react-types/datepicker';
 import { ExclamationIcon, CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "./icons";
 
 const dateToCalendarDate = (date: Date): CalendarDate => new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate())
 
-export const DatePicker = <T extends DateValue>(props: DatePickerStateOptions<T>): JSX.Element => {
-  const state = useDatePickerState(props);
+interface MyDatePickerProps {
+	date: Date | null,
+	onChange: (date: Date | null) => void
+}
+export const DatePicker = (props: MyDatePickerProps): JSX.Element => {
+	const options: DatePickerStateOptions<CalendarDate> = {
+		value: props.date ? dateToCalendarDate(props.date) : null,
+		onChange: (value: CalendarDate | null) => {props.onChange(value?.toDate(getLocalTimeZone()) ?? null)}
+	}
+  const state = useDatePickerState(options);
   const ref = useRef<HTMLDivElement>(null);
   const {
     groupProps,
-    labelProps,
     fieldProps,
     buttonProps,
     dialogProps,
     calendarProps
-  } = useDatePicker(props, state, ref);
+  } = useDatePicker(options, state, ref);
 
   return (
     <div className="relative text-left">
-      <span {...labelProps} className="text-sm text-gray-800">
+      {/* <span {...labelProps} className="text-sm text-gray-800">
         {props.label}
-      </span>
+      </span> */}
       <div {...groupProps} className="flex group" ref={ref}>
-        <div className="bg-white border border-gray-300 group-hover:border-gray-400 transition-colors rounded-l-md pr-10 group-focus-within:border-primary group-focus-within:group-hover:border-primary p-1 relative flex items-center">
+        <div className="bg-white border border-gray-300 group-hover:border-gray-400 transition-colors rounded-l-md group-focus-within:border-primary group-focus-within:group-hover:border-primary p-1 relative flex items-center">
           <DateField {...fieldProps} />
           {state.validationState === "invalid" && (
             <ExclamationIcon className="w-6 h-6 text-red-500 absolute right-1" />
           )}
         </div>
         <FieldButton {...buttonProps} isPressed={state.isOpen}>
-          <CalendarIcon className="w-5 h-5 text-gray-700 group-focus-within:text-primary" />
+          <CalendarIcon className="w-4 h-4 text-gray-700 group-focus-within:text-primary" />
         </FieldButton>
       </div>
-      {state.isOpen ? <Popover placement="bottom start" state={state} triggerRef={ref}>
+      {state.isOpen ? <Popover className="p-8" placement="bottom start" state={state} triggerRef={ref}>
           <Dialog {...dialogProps}>
             <Calendar {...calendarProps} />
           </Dialog>
@@ -95,7 +102,7 @@ export const DateRangePicker = (props: DateRangePickerProps): JSX.Element => {
           <CalendarIcon className="w-5 h-5 text-gray-700 group-focus-within:text-primary" />
         </FieldButton>
       </div>
-      {state.isOpen ? <Popover placement="bottom start" state={state} triggerRef={ref}>
+      {state.isOpen ? <Popover className="p-8" placement="bottom start" state={state} triggerRef={ref}>
           <Dialog {...dialogProps}>
             <RangeCalendar {...calendarProps} />
           </Dialog>
@@ -106,21 +113,21 @@ export const DateRangePicker = (props: DateRangePickerProps): JSX.Element => {
 
 export const DateField = <T extends DateValue>(props: DatePickerProps<T>): JSX.Element => {
   const { locale } = useLocale();
-  const state = useDateFieldState({
+	const state = useDateFieldState({
     ...props,
     locale,
     createCalendar
   });
-
+	
   const ref = useRef<HTMLDivElement>(null);
   const { fieldProps } = useDateField(props, state, ref);
 
   return (
-    <div {...fieldProps} className="flex" ref={ref}>
+    <div {...fieldProps} className="flex text-xs" ref={ref}>
       {state.segments.map((segment, i) => (
         <DateSegment key={i} segment={segment} state={state} />
       ))}
-    </div>
+		</div>
   );
 }
 
@@ -366,7 +373,8 @@ export function Dialog({ children, ...props }: DialogProps): JSX.Element {
 }
 
 type PopoverProps = React.PropsWithChildren<Omit<AriaPopoverProps, 'popoverRef'> & {
-  state: OverlayTriggerState
+  state: OverlayTriggerState,
+	className?: string
 }>
 export const Popover = (props: PopoverProps): JSX.Element => {
   const ref = useRef<HTMLDivElement>(null);
@@ -385,7 +393,7 @@ export const Popover = (props: PopoverProps): JSX.Element => {
       <div {...underlayProps} className="fixed inset-0" />
       <div
         {...popoverProps}
-        className="absolute top-full bg-white border border-gray-300 rounded-md shadow-lg mt-2 p-8 z-10"
+        className={`absolute top-full bg-white border border-gray-300 rounded-md shadow-lg mt-2 z-10 ${props.className || ''}`}
         ref={ref}
       >
         <DismissButton onDismiss={state.close.bind(state)} />

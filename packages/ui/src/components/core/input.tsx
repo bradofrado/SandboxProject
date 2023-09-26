@@ -1,5 +1,6 @@
 import React from 'react';
 import {Label} from './label';
+import { CheckmarkIcon } from './icons';
 
 interface InputProps {
 	onChange?: (value: string) => void,
@@ -21,5 +22,27 @@ export const Input: React.FunctionComponent<InputProps> = ({onChange, value, cla
     if (label) {
         return <Label label={label}>{input}</Label>
     }
+	return input;
+}
+
+export interface CheckboxInputProps {
+	className?: string,
+	value: boolean,
+	onChange?: (value: boolean) => void,
+	label?: string
+}
+export const CheckboxInput: React.FunctionComponent<CheckboxInputProps> = ({value, onChange, label, className}) => {
+	const onInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+		onChange && onChange(e.target.checked);
+	}
+	
+	const input = <div className={`${value ? 'bg-primary' : 'bg-gray-100'} ${className} text-blue-600 border-gray-300 rounded focus:ring-primary-light dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer relative`}>
+		<input checked={value} className='absolute top-0 left-0 opacity-0' onChange={onInputChange} type="checkbox"/>
+		<CheckmarkIcon className={`w-4 h-4 fill-white ${value ? 'visible' : 'invisible'}`}/>
+	</div>
+	if (label) {
+		return <Label label={label}>{input}</Label>
+	}
+
 	return input;
 }

@@ -1,12 +1,12 @@
-import type { HexColor } from "model/src/core/colors"
+import type { HexColor } from "model/src/core/colors";
 
 export interface GraphValue {
-	value: number,
-	fill: HexColor
+  value: number;
+  fill: HexColor;
 }
 
 export interface GraphComponentProps {
-	values: GraphValue[],
-	total: number
+  values: GraphValue[];
+  total: number;
 }
-export type GraphComponent = (props: GraphComponentProps) => JSX.Element
+export type GraphComponent = (props: GraphComponentProps) => JSX.Element;

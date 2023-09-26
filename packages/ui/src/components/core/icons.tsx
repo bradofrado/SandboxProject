@@ -129,6 +129,22 @@ export const PlusSmallIcon: IconComponent = (props) => {
 	)
 }
 
+export const PlusIcon: IconComponent = (props) => {
+	return (
+			<svg {...props} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+					<path d="M12 4.5v15m7.5-7.5h-15" strokeLinecap="round" strokeLinejoin="round" />
+			</svg>
+	);
+}
+
+export const MinusIcon: IconComponent = (props) => {
+	return (
+			<svg {...props} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+					<path d="M19.5 12h-15" strokeLinecap="round" strokeLinejoin="round" />
+			</svg>
+	);
+}
+
 export const DashboardIcon: IconComponent = (props) => {
   return <svg {...props} fill="currentColor" viewBox="0 0 22 21" xmlns="http://www.w3.org/2000/svg">
         <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z"/>
@@ -245,6 +261,22 @@ export const ExclamationIcon: IconComponent = (props) => {
 	return (
 		<svg {...props} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 			<path d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" strokeLinecap="round" strokeLinejoin="round" />
+		</svg>
+	)
+}
+
+export const CheckmarkIcon: IconComponent = (props) => {
+	return (
+		<svg {...props} viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg">
+			<path d="M10.346 3.301a.929.929 0 0 1 1.37 0 1.076 1.076 0 0 1 0 1.456l-4.64 4.94a.929.929 0 0 1-1.37 0L3.284 7.123a1.076 1.076 0 0 1 0-1.456.929.929 0 0 1 1.37 0L6.39 7.513l3.955-4.212z" />
+		</svg>
+	)
+}
+
+export const FilterIcon: IconComponent = (props) => {
+	return (
+		<svg {...props} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+			<path d="M13.994.004c.555 0 1.006.448 1.006 1a.997.997 0 0 1-.212.614l-5.782 7.39L9 13.726a1 1 0 0 1-.293.708L7.171 15.97A.1.1 0 0 1 7 15.9V9.008l-5.788-7.39A.996.996 0 0 1 1.389.214a1.01 1.01 0 0 1 .617-.21z" fillRule="evenodd" />
 		</svg>
 	)
 }
