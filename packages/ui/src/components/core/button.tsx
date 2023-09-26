@@ -1,7 +1,7 @@
 import React from 'react';
 import type { PolymorphicComponentProps } from '../../types/polymorphics';
 
-type ButtonType = 'primary' | 'secondary' | 'other'
+export type ButtonType = 'primary' | 'secondary' | 'other'
 type ButtonProps = {
     mode?: 'primary' | 'secondary',
     className?: string,

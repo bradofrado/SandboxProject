@@ -1,17 +1,18 @@
 import React, { useState, type PropsWithChildren, useEffect } from "react"
+import type { AllOrNothing } from "model/src/core/utils"
 import { ChevronDownIcon, type IconComponent } from "./icons"
 import { CheckboxInput } from "./input"
 import { Button } from "./button"
 import { Popover } from "./popover"
-import { AllOrNothing } from "model/src/core/utils"
 
 export type ListBoxProps<T> = {
 	items: DropdownItem<T>[],
 	className?: string,
 	children: React.ReactNode,
+	mode?: 'primary' | 'secondary'
 } & AllOrNothing<{isOpen: boolean, setIsOpen: (value: boolean) => void}>
-export const ListBox = <T,>({items, className, children, ...isOpenStuff}: ListBoxProps<T>): JSX.Element => {
-	const button = <Button className={className}>
+export const ListBox = <T,>({items, className, children, mode, ...isOpenStuff}: ListBoxProps<T>): JSX.Element => {
+	const button = <Button className={className} mode={mode}>
 		<div className="flex items-center">
 			{children}
 		</div>
@@ -61,8 +62,8 @@ export const Dropdown = <T,>({children, initialValue, onChange, items, chevron =
 	} group flex w-full items-center rounded-md p-2 text-sm cursor-pointer hover:bg-gray-100 [&>*]:flex-1`} onClick={() => {onClick(item, i)}}type="button">{item.name}</button>}))
 	
 	return (
-		<ListBox className={className} items={dropdownItems} isOpen={isOpen} setIsOpen={setIsOpen}>
-			{children}	{chevron ? <ChevronDownIcon className="w-4 h-4"/> : null}
+		<ListBox className={className} isOpen={isOpen} items={dropdownItems} setIsOpen={setIsOpen} mode={value === undefined ? 'secondary' : 'primary'}>
+			{value === undefined ? children : value.name}	{chevron ? <ChevronDownIcon className="w-4 h-4 ml-1"/> : null}
 		</ListBox>
 	)
 }
