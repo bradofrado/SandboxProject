@@ -129,6 +129,22 @@ export const PlusSmallIcon: IconComponent = (props) => {
 	)
 }
 
+export const PlusIcon: IconComponent = (props) => {
+	return (
+			<svg {...props} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+					<path d="M12 4.5v15m7.5-7.5h-15" strokeLinecap="round" strokeLinejoin="round" />
+			</svg>
+	);
+}
+
+export const MinusIcon: IconComponent = (props) => {
+	return (
+			<svg {...props} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+					<path d="M19.5 12h-15" strokeLinecap="round" strokeLinejoin="round" />
+			</svg>
+	);
+}
+
 export const DashboardIcon: IconComponent = (props) => {
   return <svg {...props} fill="currentColor" viewBox="0 0 22 21" xmlns="http://www.w3.org/2000/svg">
         <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z"/>

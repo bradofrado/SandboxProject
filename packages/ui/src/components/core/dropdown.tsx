@@ -1,9 +1,32 @@
-import { Menu, Transition } from "@headlessui/react"
-import { Fragment, useState, type PropsWithChildren, useEffect } from "react"
-import { CheckIcon, ChevronDownIcon, type IconComponent } from "./icons"
+import React, { useState, type PropsWithChildren, useEffect } from "react"
+import { ChevronDownIcon, type IconComponent } from "./icons"
 import { CheckboxInput } from "./input"
 import { Button } from "./button"
 import { Popover } from "./popover"
+
+export interface ListBoxProps<T> {
+	items: DropdownItem<T>[],
+	className?: string,
+	children: React.ReactNode
+}
+export const ListBox = <T,>({items, className, children}: ListBoxProps<T>): JSX.Element => {
+	const button = <Button className={className}>
+		<div className="flex items-center">
+			{children}
+		</div>
+	</Button>
+	return (
+		<Popover button={button} className={''}>
+			<div className="min-w-[11rem]">
+				<ul aria-labelledby="dropdownDefaultButton" className="text-sm text-gray-700 dark:text-gray-200">
+					{items.map((item, i) => <li key={i}>
+						{item.name}
+					</li>)}
+				</ul>
+			</div>
+		</Popover>
+	)
+}
 
 export interface DropdownItem<T> {
 	name: React.ReactNode,
@@ -18,11 +41,9 @@ interface DropdownProps<T> extends PropsWithChildren {
 	onChange?: ItemAction<T>,
 }
 
-export const Dropdown = <T,>({children, initialValue, onChange, items,
-		chevron = true, className}: DropdownProps<T>): JSX.Element => {
+export const Dropdown = <T,>({children, initialValue, onChange, items, chevron = true, className}: DropdownProps<T>): JSX.Element => {
 	const [value, setValue] = useState<DropdownItem<T> | undefined>(items.find(x => x.id === initialValue));
 
-	const button = <Button className={className}>{children}</Button>
 	useEffect(() => {
 		setValue(items.find(x => x.id === initialValue));
 	}, [initialValue, items])
@@ -31,19 +52,15 @@ export const Dropdown = <T,>({children, initialValue, onChange, items,
 		setValue(item);
 		onChange && onChange(item, index)
 	}
+
+	const dropdownItems: DropdownItem<T>[] = items.map((item, i) => ({...item, name: <button className={`${
+		initialValue !== undefined && item === value ? 'bg-primary-light' : 'text-gray-900'
+	} group flex w-full items-center rounded-md p-2 text-sm cursor-pointer hover:bg-gray-100 [&>*]:flex-1`} onClick={() => {onClick(item, i)}}type="button">{item.name}</button>}))
 	
 	return (
-		<Popover button={button}>
-			<div className="w-44">
-				<ul aria-labelledby="dropdownDefaultButton" className="py-2 text-sm text-gray-700 dark:text-gray-200">
-					{items.map((item, i) => <li key={i}>
-						<button className={`${
-						initialValue !== undefined && item === value ? 'bg-primary-light' : 'text-gray-900'
-					} group flex w-full items-center rounded-md px-2 py-2 text-sm cursor-pointer hover:bg-gray-100`} onClick={() => {onClick(item, i)}}type="button">{item.name}</button>
-					</li>)}
-				</ul>
-			</div>
-		</Popover>
+		<ListBox className={className} items={dropdownItems}>
+			{children}	{chevron ? <ChevronDownIcon className="w-4 h-4"/> : null}
+		</ListBox>
 	)
 }
 
@@ -63,22 +80,22 @@ export const DropdownList = <T,>({items, setItems, ...rest}: ListItemProps<T>): 
 		item.value = !item.value;
 		setItems(copy);
 	}
-	const dropdownItems = copy.map((item, i) => ({ name: <DropdownListItem item={item}/>, id: undefined }))
+	const dropdownItems = copy.map((item) => ({ name: <DropdownListItem item={item}/>, id: undefined }))
 	return 'icon' in rest ? 
 		<DropdownIcon items={dropdownItems} {...rest} onChange={(item, index) => {onSelect(items[index])}}/> :
 		<Dropdown items={dropdownItems} {...rest} onChange={(item, index) => {onSelect(items[index])}} />
 }
 
-interface DropdownListItemProps {
+export interface DropdownListItemProps {
 	item: ListItem
 }
-const DropdownListItem: React.FunctionComponent<DropdownListItemProps> = ({item}) => {
+export const DropdownListItem: React.FunctionComponent<DropdownListItemProps> = ({item}) => {
 	return (
 		<span className="flex items-center">
 			<CheckboxInput className="mr-1" value={item.value}/>
 			{item.label}
 		</span>
-	)
+	);
 }
 
 type DropdownIconProps<T> = Omit<DropdownProps<T>, "chevron"> & {

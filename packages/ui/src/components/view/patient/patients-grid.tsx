@@ -2,9 +2,6 @@ import type { Patient } from "model/src/patient";
 import {displayDate, formatDollarAmount} from 'model/src/utils';
 import { Pill } from "../../core/pill";
 import { type TableGridColumn, TableGrid } from "../../core/table-grid";
-import React, { useState } from "react";
-import { ListItem, DropdownList } from "../../core/dropdown";
-import { Input } from "../../core/input";
 
 const columns: TableGridColumn<PatientGridItem>[] = [
 	{

@@ -2,10 +2,11 @@ import {Fragment} from 'react';
 import {Popover as ReactPopover, Transition} from '@headlessui/react';
 
 type PopoverProps = React.PropsWithChildren<{
-    button: React.ReactNode
+    button: React.ReactNode,
+		className?: string
 }>
-export const Popover = ({children, button}: PopoverProps) => {
-    return <>
+export const Popover: React.FunctionComponent<PopoverProps> = ({children, button, className='p-2'}) => {
+    return (
       <ReactPopover className="relative">
         {() => (
           <>
@@ -21,12 +22,12 @@ export const Popover = ({children, button}: PopoverProps) => {
                 leaveFrom="opacity-100 translate-y-0"
                 leaveTo="opacity-0 translate-y-1"
               >
-                <ReactPopover.Panel className="absolute top-full bg-white border border-gray-300 rounded-md shadow-lg mt-2 p-2 z-10">
+                <ReactPopover.Panel className={`absolute top-full bg-white border border-gray-300 rounded-md shadow-lg mt-2 z-10 ${className}`}>
                   {children}
                 </ReactPopover.Panel>
               </Transition>
           </>
         )}
       </ReactPopover>
-    </>
+		);
 }

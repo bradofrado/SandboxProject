@@ -11,25 +11,32 @@ import { ExclamationIcon, CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from
 
 const dateToCalendarDate = (date: Date): CalendarDate => new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate())
 
-export const DatePicker = <T extends DateValue>(props: DatePickerStateOptions<T>): JSX.Element => {
-  const state = useDatePickerState(props);
+interface MyDatePickerProps {
+	date: Date | null,
+	onChange: (date: Date) => void
+}
+export const DatePicker = (props: MyDatePickerProps): JSX.Element => {
+	const options: DatePickerStateOptions<CalendarDate> = {
+		value: props.date ? dateToCalendarDate(props.date) : null,
+		onChange: (value: CalendarDate) => {props.onChange(value.toDate(getLocalTimeZone()))}
+	}
+  const state = useDatePickerState(options);
   const ref = useRef<HTMLDivElement>(null);
   const {
     groupProps,
-    labelProps,
     fieldProps,
     buttonProps,
     dialogProps,
     calendarProps
-  } = useDatePicker(props, state, ref);
+  } = useDatePicker(options, state, ref);
 
   return (
     <div className="relative text-left">
-      <span {...labelProps} className="text-sm text-gray-800">
+      {/* <span {...labelProps} className="text-sm text-gray-800">
         {props.label}
-      </span>
+      </span> */}
       <div {...groupProps} className="flex group" ref={ref}>
-        <div className="bg-white border border-gray-300 group-hover:border-gray-400 transition-colors rounded-l-md pr-10 group-focus-within:border-primary group-focus-within:group-hover:border-primary p-1 relative flex items-center">
+        <div className="bg-white border border-gray-300 group-hover:border-gray-400 transition-colors rounded-l-md group-focus-within:border-primary group-focus-within:group-hover:border-primary p-1 relative flex items-center">
           <DateField {...fieldProps} />
           {state.validationState === "invalid" && (
             <ExclamationIcon className="w-6 h-6 text-red-500 absolute right-1" />
