@@ -1,5 +1,5 @@
 import type { Patient } from "model/src/patient";
-import {displayDate, formatDollarAmount, groupTogether} from 'model/src/utils';
+import {displayDate, formatDollarAmount, groupTogether, isDateInBetween} from 'model/src/utils';
 import { useState } from "react";
 import { Pill } from "../../core/pill";
 import { type TableGridColumn, TableGrid } from "../../core/table-grid";
@@ -212,13 +212,6 @@ const FilterButtonItem: React.FunctionComponent<FilterButtonItemProps> = ({item,
 			</div>
 		</>
 	)
-}
-
-function isDateInBetween(test: Date | null, start: Date | null, end: Date | null): boolean {
-	if (test === null) {
-		return true;
-	}
-	return (start !== null ? start <= test : true) && (end !== null ? test <= end : true);
 }
 
 function filterCriteria<T extends Record<string, unknown>>(items: T[], filterObject:  {[P in keyof T]?: (key: T[P]) => boolean}): T[] {
