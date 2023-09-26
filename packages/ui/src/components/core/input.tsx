@@ -1,6 +1,5 @@
 import React from 'react';
 import {Label} from './label';
-import { getClass } from 'model/src/utils';
 import { CheckmarkIcon } from './icons';
 
 interface InputProps {

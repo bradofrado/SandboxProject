@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary -- We will let this go for now... */
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import { useRangeCalendarState } from "@react-stately/calendar";
 import { useRangeCalendar } from "@react-aria/calendar";
 import { useLocale } from "@react-aria/i18n";
@@ -46,7 +46,7 @@ export const DatePicker = (props: MyDatePickerProps): JSX.Element => {
           <CalendarIcon className="w-4 h-4 text-gray-700 group-focus-within:text-primary" />
         </FieldButton>
       </div>
-      {state.isOpen ? <Popover placement="bottom start" state={state} triggerRef={ref}>
+      {state.isOpen ? <Popover className="p-8" placement="bottom start" state={state} triggerRef={ref}>
           <Dialog {...dialogProps}>
             <Calendar {...calendarProps} />
           </Dialog>
@@ -102,7 +102,7 @@ export const DateRangePicker = (props: DateRangePickerProps): JSX.Element => {
           <CalendarIcon className="w-5 h-5 text-gray-700 group-focus-within:text-primary" />
         </FieldButton>
       </div>
-      {state.isOpen ? <Popover placement="bottom start" state={state} triggerRef={ref}>
+      {state.isOpen ? <Popover className="p-8" placement="bottom start" state={state} triggerRef={ref}>
           <Dialog {...dialogProps}>
             <RangeCalendar {...calendarProps} />
           </Dialog>
@@ -373,7 +373,8 @@ export function Dialog({ children, ...props }: DialogProps): JSX.Element {
 }
 
 type PopoverProps = React.PropsWithChildren<Omit<AriaPopoverProps, 'popoverRef'> & {
-  state: OverlayTriggerState
+  state: OverlayTriggerState,
+	className?: string
 }>
 export const Popover = (props: PopoverProps): JSX.Element => {
   const ref = useRef<HTMLDivElement>(null);
@@ -392,7 +393,7 @@ export const Popover = (props: PopoverProps): JSX.Element => {
       <div {...underlayProps} className="fixed inset-0" />
       <div
         {...popoverProps}
-        className="absolute top-full bg-white border border-gray-300 rounded-md shadow-lg mt-2 p-8 z-10"
+        className={`absolute top-full bg-white border border-gray-300 rounded-md shadow-lg mt-2 z-10 ${props.className || ''}`}
         ref={ref}
       >
         <DismissButton onDismiss={state.close.bind(state)} />

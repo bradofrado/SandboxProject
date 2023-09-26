@@ -3,20 +3,21 @@ import { ChevronDownIcon, type IconComponent } from "./icons"
 import { CheckboxInput } from "./input"
 import { Button } from "./button"
 import { Popover } from "./popover"
+import { AllOrNothing } from "model/src/core/utils"
 
-export interface ListBoxProps<T> {
+export type ListBoxProps<T> = {
 	items: DropdownItem<T>[],
 	className?: string,
-	children: React.ReactNode
-}
-export const ListBox = <T,>({items, className, children}: ListBoxProps<T>): JSX.Element => {
+	children: React.ReactNode,
+} & AllOrNothing<{isOpen: boolean, setIsOpen: (value: boolean) => void}>
+export const ListBox = <T,>({items, className, children, ...isOpenStuff}: ListBoxProps<T>): JSX.Element => {
 	const button = <Button className={className}>
 		<div className="flex items-center">
 			{children}
 		</div>
 	</Button>
 	return (
-		<Popover button={button} className=''>
+		<Popover button={button} className='' {...isOpenStuff}>
 			<div className="min-w-[11rem]">
 				<ul aria-labelledby="dropdownDefaultButton" className="text-sm text-gray-700 dark:text-gray-200">
 					{items.map((item, i) => <li key={i}>
@@ -43,6 +44,7 @@ interface DropdownProps<T> extends PropsWithChildren {
 
 export const Dropdown = <T,>({children, initialValue, onChange, items, chevron = true, className}: DropdownProps<T>): JSX.Element => {
 	const [value, setValue] = useState<DropdownItem<T> | undefined>(items.find(x => x.id === initialValue));
+	const [isOpen, setIsOpen] = useState(false);
 
 	useEffect(() => {
 		setValue(items.find(x => x.id === initialValue));
@@ -51,6 +53,7 @@ export const Dropdown = <T,>({children, initialValue, onChange, items, chevron =
 	const onClick = (item: DropdownItem<T>, index: number): void => {
 		setValue(item);
 		onChange && onChange(item, index)
+		setIsOpen(false);
 	}
 
 	const dropdownItems: DropdownItem<T>[] = items.map((item, i) => ({...item, name: <button className={`${
@@ -58,7 +61,7 @@ export const Dropdown = <T,>({children, initialValue, onChange, items, chevron =
 	} group flex w-full items-center rounded-md p-2 text-sm cursor-pointer hover:bg-gray-100 [&>*]:flex-1`} onClick={() => {onClick(item, i)}}type="button">{item.name}</button>}))
 	
 	return (
-		<ListBox className={className} items={dropdownItems}>
+		<ListBox className={className} items={dropdownItems} isOpen={isOpen} setIsOpen={setIsOpen}>
 			{children}	{chevron ? <ChevronDownIcon className="w-4 h-4"/> : null}
 		</ListBox>
 	)

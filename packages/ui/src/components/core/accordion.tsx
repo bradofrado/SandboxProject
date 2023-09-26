@@ -1,4 +1,4 @@
-import React, { Fragment, PropsWithChildren, useState } from "react"
+import React, { Fragment, type PropsWithChildren, useState } from "react"
 import { PlusIcon, MinusIcon } from "./icons";
 
 interface AccordionItemBase {

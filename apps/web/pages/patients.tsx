@@ -14,26 +14,26 @@ export const getServerSideProps = requireAuth(defaultGetServerProps);
 const Patients: NextPage = () => {
 	const query = useGetPatients();
 	const [searchKey, setSearchKey] = useState('');
-	const [filterColumns, setFilterColumns] = useState<FilterItem[]>([{label: 'Date of Loss', value: false, content: <DateToDatePicker start={new Date()} end={new Date()}  onChange={() => undefined}/>}, {label: 'Last Update', value: false, content: <DateToDatePicker start={new Date()} end={new Date()}  onChange={() => undefined}/>}, {label: 'By Attorney', value: false, content: <Dropdown items={[{name: 'Siegboi', id: 0}]}>Hello</Dropdown>}])
+	const [filterColumns, setFilterColumns] = useState<FilterItem[]>([{label: 'Date of Loss', value: false, content: <DateToDatePicker start={new Date()} end={new Date()}  onChange={() => undefined}/>}, {label: 'Last Update', value: false, content: <DateToDatePicker start={new Date()} end={new Date()}  onChange={() => undefined}/>}, {label: 'By Attorney', value: false, content: <Dropdown items={[{name: 'Siegfried and Jensen', id: 0}, {name: 'Good Guys Law', id: 1}]}>Select</Dropdown>}])
 	
 	if (query.isError || query.isLoading) return <>Loading</>
 
 	const items = query.data;
     
-    return (
-			<Layout>
-				<div className="flex flex-col gap-2 p-2">
-					<Header level={2}>Patients</Header>
-					<div className="flex w-fit gap-2">
-						<Input className="h-8" onChange={setSearchKey} placeholder='Search' value={searchKey}/>
-						<FilterButton items={filterColumns} onChange={setFilterColumns}>
-							Filters
-						</FilterButton>
-					</div>
-					<PatientsGrid patients={items}/>
+	return (
+		<Layout>
+			<div className="flex flex-col gap-2 p-2">
+				<Header level={2}>Patients</Header>
+				<div className="flex w-fit gap-2">
+					<Input className="h-8" onChange={setSearchKey} placeholder='Search' value={searchKey}/>
+					<FilterButton items={filterColumns} onChange={setFilterColumns}>
+						Filters
+					</FilterButton>
 				</div>
-			</Layout>
-		)
+				<PatientsGrid patients={items} searchKey={searchKey}/>
+			</div>
+		</Layout>
+	)
 }
 
 interface DateToDatePickerProps {
@@ -84,7 +84,7 @@ const FilterButtonItem: React.FunctionComponent<FilterButtonItemProps> = ({item,
 			<button className="p-2 w-full border-b" onClick={() => {onChange(!item.value)}} type='button'>
 				<DropdownListItem item={listItem}/>
 			</button>
-			<div className={`${item.value ? 'max-h-52' : 'max-h-0'} overflow-hidden transition-[max-height] bg-gray-50`}>
+			<div className={`${item.value ? 'max-h-96' : 'max-h-0'} overflow-hidden transition-[max-height] bg-gray-50`}>
 				<div className="p-2">
 					{content}
 				</div>
