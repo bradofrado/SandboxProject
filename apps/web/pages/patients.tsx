@@ -1,11 +1,7 @@
 import { type NextPage} from 'next';
-import { useState } from 'react';
 import { Header } from 'ui/src/components/core/header';
-import { Input } from 'ui/src/components/core/input';
 import {PatientsGrid} from 'ui/src/components/view/patient/patients-grid'
 import {useGetPatients} from 'ui/src/services/patient';
-import { DatePicker } from 'ui/src/components/core/date-picker';
-import { Dropdown, type DropdownItem, DropdownListItem, ListBox, type ListItem } from 'ui/src/components/core/dropdown';
 import { requireAuth, defaultGetServerProps } from '../util/protected-routes-hoc';
 import { Layout } from '../util/components/layout';
 
