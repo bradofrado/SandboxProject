@@ -5,6 +5,9 @@ export interface Patient {
   dateOfBirth: Date;
   dateOfLoss: Date;
   statuses: string[];
+	incidentType: string;
+	email: string;
+	phone: string;
   notes: string;
   appointments: Date[];
   lawFirm: string;

@@ -36,6 +36,9 @@ const patients: Patient[] = [
     dateOfLoss: new Date(),
     appointments: [],
     notes: "",
+		email: 'maria.abarca@gmail.com',
+		phone: '(801) 999-9999',
+		incidentType: 'Auto'
   },
   {
     id: "1",
@@ -50,6 +53,9 @@ const patients: Patient[] = [
     dateOfLoss: new Date(),
     appointments: [],
     notes: "",
+		email: 'maria.abarca@gmail.com',
+		phone: '(801) 999-9999',
+		incidentType: 'Auto'
   },
   {
     id: "2",
@@ -64,6 +70,9 @@ const patients: Patient[] = [
     dateOfLoss: new Date(),
     appointments: [],
     notes: "",
+		email: 'maria.abarca@gmail.com',
+		phone: '(801) 999-9999',
+		incidentType: 'Auto'
   },
   {
     id: "3",
@@ -78,6 +87,9 @@ const patients: Patient[] = [
     dateOfLoss: new Date(),
     appointments: [],
     notes: "",
+		email: 'maria.abarca@gmail.com',
+		phone: '(801) 999-9999',
+		incidentType: 'Auto'
   },
   {
     id: "4",
@@ -92,5 +104,8 @@ const patients: Patient[] = [
     dateOfLoss: new Date(),
     appointments: [],
     notes: "",
+		email: 'maria.abarca@gmail.com',
+		phone: '(801) 999-9999',
+		incidentType: 'Auto'
   },
 ];

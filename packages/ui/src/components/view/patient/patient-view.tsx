@@ -10,10 +10,11 @@ import { Label } from "../../core/label";
 import { Pill } from "../../core/pill";
 import { type TabItem, TabControl } from "../../core/tab";
 import { ChatBox } from "../../feature/chat/chat-box";
-import { ProfileImage } from "../../feature/profile/profile-image";
 import { useGetPatient } from "../../../services/patient";
 import { Card } from "../../core/card";
 import { EditableText } from "../../feature/edit/editable-text";
+import { Button } from "../../core/button";
+import { StatusTracker } from "../../feature/status-tracker";
 
 export interface PatientViewProps {
     patient: Patient
@@ -26,36 +27,39 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({patient}
 		setNotes(value);
 	}
 
+	const statuses = ['File Setup', 'Treatment', 'Demand', 'Negotiation', 'Settlement']
+
 	const tabItems: TabItem[] = [
 		{
 			id: 0,
-			label: 'Info',
-			component: <div className="flex flex-col gap-4">
-				<Card>
-					<div className="flex gap-4">
-					<Calendar value={new Date()}/>
-					<Label label="Apointments">
-							<ul>
+			label: 'Status',
+			component: (
+				<div className="flex flex-col gap-4 py-2">
+					<StatusTracker className="h-20" statuses={statuses} value="Treatment"/>
+					<Card className="mt-5">
+						<div className="flex gap-4">
+							<Calendar value={new Date()}/>
+							<Label label="Apointments">
+								<ul>
 									{patient.appointments.map((appointment, i) => {
-											const day = dayjs(appointment);
-											return <li key={i}>
-													<div className="rounded-lg hover:bg-primary-light py-1 px-2">
-															<Label label={day.format('ddd, MMM DD')} sameLine>
-																	{day.format('hh:mm a')}
-															</Label>
-													</div>
-											</li>
+										const day = dayjs(appointment);
+										return <li key={i}>
+											<div className="rounded-lg hover:bg-primary-light py-1 px-2">
+												<Label label={day.format('ddd, MMM DD')} sameLine>
+													{day.format('hh:mm a')}
+												</Label>
+											</div>
+										</li>
 									})}
-							</ul>
-					</Label>
-					</div>
-			</Card>
-			
-			<Card label="Documents">
-					<Attachment label="Birth Certificate" link=""/>
-			</Card>
-                
+								</ul>
+							</Label>
+						</div>
+				</Card>
+				<Card label="Documents">
+						<Attachment label="Birth Certificate" link=""/>
+				</Card>
 			</div>
+			)
 		},
 		{
 			id: 1,
@@ -73,13 +77,13 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({patient}
 				<div className="flex gap-4">
 					<Card className="max-w-lg">
 						<div className="flex flex-col gap-4">
-							<ProfileImage className='w-28 h-28' image="/braydon.jpeg"/>
 							<div className="flex gap-16 items-center">
 								<Header>{patient.firstName} {patient.lastName}</Header>
 								<div className="flex flex-col gap-1">
 									{patient.statuses.map(status => <Pill className="w-fit" key={status}>{status}</Pill>)}
 								</div>
-								</div>
+							</div>
+							<div className="flex gap-4">
 								<div className="flex flex-col gap-2">
 									<Label label="Date of Birth" sameLine>
 										{displayDate(patient.dateOfBirth)}
@@ -87,7 +91,20 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({patient}
 									<Label label="Date of Loss" sameLine>
 										{displayDate(patient.dateOfLoss)}
 									</Label>
+									<Label label="Law Firm" sameLine>
+										{patient.lawFirm}
+									</Label>
 								</div>
+								<div className="flex flex-col gap-2">
+									<Label label="Email" sameLine>
+										{patient.email}
+									</Label>
+									<Label label="Phone" sameLine>
+										{patient.phone}
+									</Label>
+									<Button className="ml-auto">Message</Button>
+								</div>
+							</div>
 						</div>
 					</Card>
 					<Card className="min-w-[300px]" items={[{name: 'Edit', id: 'edit'}]} label="Notes" onChange={() => emit()}>
