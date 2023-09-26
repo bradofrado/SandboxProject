@@ -11,7 +11,7 @@ export const Popover: React.FunctionComponent<PopoverProps> = ({children, button
 	const [isOpenState, setIsOpenState] = useState<boolean | undefined>(isOpen === undefined ? false : undefined);
 	const isOpenActual: boolean = isOpen !== undefined ? isOpen : Boolean(isOpenState);
 	const setIsOpenActual = isOpen !== undefined ? setIsOpen : setIsOpenState as (value: boolean) => void;
-	const ref = useRef<HTMLButtonElement>(null);
+	const ref = useRef<HTMLDivElement>(null);
 	const state = {
 		isOpen: isOpenActual, 
 		setOpen: setIsOpenActual, 
@@ -21,9 +21,9 @@ export const Popover: React.FunctionComponent<PopoverProps> = ({children, button
 	}
 	return (
 		<>
-			<button onClick={() => {setIsOpenActual(!isOpenActual)}} ref={ref} type="button">
+			<div onClick={() => {setIsOpenActual(!isOpenActual)}} onKeyDown={() => {setIsOpenActual(!isOpenActual)}} ref={ref} role="button" tabIndex={0}>
 				{button}
-			</button>
+			</div>
 			{isOpenActual ? <ReactPopover className={getClass(className, 'overflow-hidden')} state={state} triggerRef={ref}>
 				{children}
 			</ReactPopover> : null}
