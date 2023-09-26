@@ -9,9 +9,10 @@ export type ListBoxProps<T> = {
 	items: DropdownItem<T>[],
 	className?: string,
 	children: React.ReactNode,
-	mode?: 'primary' | 'secondary'
+	mode?: 'primary' | 'secondary',
+	header?: React.ReactNode
 } & AllOrNothing<{isOpen: boolean, setIsOpen: (value: boolean) => void}>
-export const ListBox = <T,>({items, className, children, mode, ...isOpenStuff}: ListBoxProps<T>): JSX.Element => {
+export const ListBox = <T,>({items, className, children, mode, header, ...isOpenStuff}: ListBoxProps<T>): JSX.Element => {
 	const button = <Button className={className} mode={mode}>
 		<div className="flex items-center">
 			{children}
@@ -19,6 +20,9 @@ export const ListBox = <T,>({items, className, children, mode, ...isOpenStuff}: 
 	</Button>
 	return (
 		<Popover button={button} className='' {...isOpenStuff}>
+			{header ? <div className="p-2 bg-gray-50">
+				{header}
+			</div> : null}
 			<div className="min-w-[11rem]">
 				<ul aria-labelledby="dropdownDefaultButton" className="text-sm text-gray-700 dark:text-gray-200">
 					{items.map((item, i) => <li key={i}>
@@ -62,7 +66,7 @@ export const Dropdown = <T,>({children, initialValue, onChange, items, chevron =
 	} group flex w-full items-center rounded-md p-2 text-sm cursor-pointer hover:bg-gray-100 [&>*]:flex-1`} onClick={() => {onClick(item, i)}}type="button">{item.name}</button>}))
 	
 	return (
-		<ListBox className={className} isOpen={isOpen} items={dropdownItems} setIsOpen={setIsOpen} mode={value === undefined ? 'secondary' : 'primary'}>
+		<ListBox className={className} isOpen={isOpen} items={dropdownItems} mode={value === undefined ? 'secondary' : 'primary'} setIsOpen={setIsOpen}>
 			{value === undefined ? children : value.name}	{chevron ? <ChevronDownIcon className="w-4 h-4 ml-1"/> : null}
 		</ListBox>
 	)

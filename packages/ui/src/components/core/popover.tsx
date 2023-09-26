@@ -1,6 +1,7 @@
 import {Fragment, useRef, useState} from 'react';
 import type { AllOrNothing } from 'model/src/core/utils';
 import {Popover as ReactPopover} from './date-picker'
+import { getClass } from 'model/src/utils';
 
 type PopoverProps = React.PropsWithChildren<{
     button: React.ReactNode,
@@ -23,7 +24,7 @@ export const Popover: React.FunctionComponent<PopoverProps> = ({children, button
 			<button onClick={() => {setIsOpenActual(!isOpenActual)}} ref={ref} type="button">
 				{button}
 			</button>
-			{isOpenActual ? <ReactPopover className={className} state={state} triggerRef={ref}>
+			{isOpenActual ? <ReactPopover className={getClass(className, 'overflow-hidden')} state={state} triggerRef={ref}>
 				{children}
 			</ReactPopover> : null}
 		</>

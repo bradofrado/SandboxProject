@@ -8,6 +8,9 @@ import type { ListItem, DropdownItem} from "../../core/dropdown";
 import { Dropdown, ListBox, DropdownListItem } from "../../core/dropdown";
 import { Input } from "../../core/input";
 import { useChangeProperty } from "../../../hooks/change-property";
+import { FilterIcon } from "../../core/icons";
+import { Button } from "../../core/button";
+import { Header } from "../../core/header";
 
 const columns: TableGridColumn<PatientGridItem>[] = [
 	{
@@ -64,40 +67,14 @@ type PatientType = {[P in keyof Patient]: Patient[P]};
 export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({patients}) => {
 	const [searchKey, setSearchKey] = useState('');
 	const [filter, setFilter] = useState<PatientGridFilter>({dateOfLost: undefined, lastUpdate: undefined, attorney: undefined});
-	const changeFilter = useChangeProperty<PatientGridFilter>(setFilter);
+	
 
 	const allLawFirms = groupTogether(patients, 'lawFirm');
-	const filterColumns = [
-		{
-			label: 'Date of Loss', 
-			value: filter.dateOfLost !== undefined, 
-			content: <DateToDatePicker end={filter.dateOfLost?.end ?? null} onChange={(value) => changeFilter(filter, 'dateOfLost', value)}  start={filter.dateOfLost?.start ?? null}/>
-		}, 
-		{
-			label: 'Last Update', 
-			value: filter.lastUpdate !== undefined, 
-			content: <DateToDatePicker end={filter.lastUpdate?.end ?? null} onChange={(value) => changeFilter(filter, 'lastUpdate', value)}  start={filter.lastUpdate?.start ?? null}/>
-		}, 
-		{
-			label: 'By Attorney', 
-			value: filter.attorney !== undefined, 
-			content: <Dropdown initialValue={filter.attorney} items={allLawFirms.map((firm, i) => ({name: firm, id: i}))} onChange={(item) => changeFilter(filter, 'attorney', item.id)}>Select</Dropdown>
-		}
-	];
+	
 	const filterFunctions: {[P in keyof Patient]?: (key: Patient[P]) => boolean} = {
 		dateOfLoss: (key: Patient['dateOfLoss']) =>  isDateInBetween(key, filter.dateOfLost?.start ?? null, filter.dateOfLost?.end ?? null),
 		lastUpdateDate: (key: Patient['lastUpdateDate']) => isDateInBetween(key, filter.lastUpdate?.start ?? null, filter.lastUpdate?.end ?? null),
 		lawFirm: (key: Patient['lawFirm']) => filter.attorney !== undefined && filter.attorney > -1 ? key === allLawFirms[filter.attorney] : true
-	}
-
-	const onFilterChange = (_filterItems: FilterItem[]): void => {
-		const dateOfLoss = _filterItems.find(item => item.label === 'Date of Loss');
-		const lastUpdate = _filterItems.find(item => item.label === 'Last Update');
-		const attorneyItem = _filterItems.find(item => item.label === 'By Attorney');
-
-		let next = changeFilter(filter, 'dateOfLost', dateOfLoss?.value ? filter.dateOfLost ?? {start: null, end: null} : undefined);
-		next = changeFilter(next, 'lastUpdate', lastUpdate?.value ? filter.lastUpdate ?? {start: null, end: null} : undefined);
-		changeFilter(next, 'attorney', attorneyItem?.value ? filter.attorney ?? -1 : undefined);
 	}
 
 	const filteredPatients = filterCriteria<PatientType>(patients, filterFunctions);
@@ -111,9 +88,7 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({patien
 	return (<>
 		<div className="flex w-fit gap-2">
 			<Input className="h-8" onChange={setSearchKey} placeholder='Search' value={searchKey}/>
-			<FilterButton items={filterColumns} onChange={onFilterChange}>
-				Filters
-			</FilterButton>
+			<FilterButton filter={filter} lawFirms={allLawFirms} onChange={setFilter}/>
 		</div>
 		<TableGrid columns={columns} items={filtered} itemsPerPage={12} linkKey="id"/>
 		</>
@@ -145,23 +120,76 @@ const DateToDatePicker: React.FunctionComponent<DateToDatePickerProps> = ({start
 }
 
 interface FilterItem extends ListItem {
-	content: React.ReactNode
+	label: string,
+	content: React.ReactNode,
+	defaultValue: PatientGridFilter[keyof PatientGridFilter]
 }
 interface FilterButtonProps {
-	items: FilterItem[],
-	onChange: (items: FilterItem[]) => void,
-	children: React.ReactNode
+	filter: PatientGridFilter,
+	lawFirms: string[],
+	onChange: (filter: PatientGridFilter) => void
 }
-const FilterButton: React.FunctionComponent<FilterButtonProps> = ({items, children, onChange}) => {
-	const copy = items.slice();
+const FilterButton = ({lawFirms, filter: initialFilter, onChange}: FilterButtonProps): JSX.Element => {
+	const [filter, setFilter] = useState(initialFilter);
+	const changeFilter = useChangeProperty<PatientGridFilter>(setFilter);
+	const [isOpen, setIsOpen] = useState(false);
+
+	const filterColumns: FilterItem[] = [
+		{
+			label: 'Date of Loss', 
+			value: filter.dateOfLost !== undefined, 
+			defaultValue: {start: null, end: null},
+			content: <DateToDatePicker end={filter.dateOfLost?.end ?? null} onChange={(value) => changeFilter(filter, 'dateOfLost', value)}  start={filter.dateOfLost?.start ?? null}/>
+		}, 
+		{
+			label: 'Last Update', 
+			value: filter.lastUpdate !== undefined, 
+			defaultValue: {start: null, end: null},
+			content: <DateToDatePicker end={filter.lastUpdate?.end ?? null} onChange={(value) => changeFilter(filter, 'lastUpdate', value)}  start={filter.lastUpdate?.start ?? null}/>
+		}, 
+		{
+			label: 'By Attorney', 
+			value: filter.attorney !== undefined, 
+			defaultValue: -1,
+			content: <Dropdown initialValue={filter.attorney} items={lawFirms.map((firm, i) => ({name: firm, id: i}))} onChange={(item) => changeFilter(filter, 'attorney', item.id)}>Select</Dropdown>
+		}
+	];
+
 	const onSelect = (item: FilterItem, value: boolean): void => {
-		item.value = value;
-		onChange(copy);
+		const labelToKeyMapping: Record<string, keyof PatientGridFilter> = {
+			'Date of Loss': 'dateOfLost',
+			'Last Update': 'lastUpdate',
+			'By Attorney': 'attorney'
+		}
+		const key = labelToKeyMapping[item.label];
+		changeFilter(filter, key, value ? item.defaultValue : undefined);
 	}
-	const dropdownItems: DropdownItem<number>[] = copy.map((item, i) => ({id: i, name: <FilterButtonItem item={item} onChange={(value) => {onSelect(item, value)}}/>}))
+
+	const onClear = (): void => {
+		setFilter({dateOfLost: undefined, lastUpdate: undefined, attorney: undefined});
+	}
+
+	const onDone = (): void => {
+		onChange(filter);
+	}
+
+	const onOpen = (value: boolean): void => {
+		//This is to 'cancel' their selection if they close the popup
+		if (!value) {
+			setFilter(initialFilter);
+		}
+		setIsOpen(value);
+	}
+
+	const dropdownItems: DropdownItem<number>[] = filterColumns.map((item, i) => ({id: i, name: <FilterButtonItem item={item} onChange={(value) => {onSelect(item, value)}}/>}));
+	const header = <div className="flex justify-between items-center">
+		<Button className="h-fit" mode='secondary' onClick={onClear}>Clear</Button>
+		<Header level={4}>Filters</Header>
+		<Button className="h-fit" mode='primary' onClick={onDone}>Done</Button>
+	</div>
 	return (
-		<ListBox items={dropdownItems}>
-			{children}
+		<ListBox header={header} isOpen={isOpen} items={dropdownItems} setIsOpen={onOpen}>
+			<FilterIcon className="w-3 h-3 fill-white mr-1"/> Filters
 		</ListBox>
 	)
 }

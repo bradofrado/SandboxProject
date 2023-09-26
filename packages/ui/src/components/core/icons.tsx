@@ -272,3 +272,11 @@ export const CheckmarkIcon: IconComponent = (props) => {
 		</svg>
 	)
 }
+
+export const FilterIcon: IconComponent = (props) => {
+	return (
+		<svg {...props} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+			<path d="M13.994.004c.555 0 1.006.448 1.006 1a.997.997 0 0 1-.212.614l-5.782 7.39L9 13.726a1 1 0 0 1-.293.708L7.171 15.97A.1.1 0 0 1 7 15.9V9.008l-5.788-7.39A.996.996 0 0 1 1.389.214a1.01 1.01 0 0 1 .617-.21z" fillRule="evenodd" />
+		</svg>
+	)
+}
