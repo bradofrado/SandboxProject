@@ -68,6 +68,10 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({patien
 	const [searchKey, setSearchKey] = useState('');
 	const [filter, setFilter] = useState<PatientGridFilter>({dateOfLost: undefined, lastUpdate: undefined, attorney: undefined});
 	
+	const onItemClick = (item: PatientGridItem): void => {
+		const linkKeyValue = item.id;
+		window.location.href = `/${linkKeyValue}`;
+	}
 
 	const allLawFirms = groupTogether(patients, 'lawFirm');
 	
@@ -90,7 +94,7 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({patien
 			<Input className="h-8" onChange={setSearchKey} placeholder='Search' value={searchKey}/>
 			<FilterButton filter={filter} lawFirms={allLawFirms} onChange={setFilter}/>
 		</div>
-		<TableGrid columns={columns} items={filtered} itemsPerPage={12} linkKey="id"/>
+		<TableGrid columns={columns} items={filtered} itemsPerPage={12} onItemClick={onItemClick}/>
 		</>
 	)
 }

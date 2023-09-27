@@ -1,4 +1,4 @@
-export type PillMode = 'primary' | 'secondary' | 'error'
+export type PillMode = 'primary' | 'secondary' | 'error' | 'success'
 export interface PillProps {
 	children: string,
 	className?: string,
@@ -8,7 +8,8 @@ export const Pill: React.FunctionComponent<PillProps> = ({children, className, m
 	const backgrounds: Record<PillMode, string> = {
 		'primary': 'bg-primary-light text-primary',
 		'secondary': 'bg-white text-gray-800 border',
-		'error': 'bg-red-300 text-red-600'
+		'error': 'bg-red-300 text-red-600',
+		'success': 'bg-[#2dd4bf33] text-[#14b8a6]'
 	}
 	const background = backgrounds[mode];
 	return (

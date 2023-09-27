@@ -11,11 +11,11 @@ export interface TableGridColumn<T extends Record<string, TableGridItemValue>> {
 export interface TableGridProps<T extends Record<string, TableGridItemValue>> {
 	items: TableGridItem<T>[],
 	columns: TableGridColumn<T>[],
-	linkKey?: keyof T,
 	itemsPerPage?: number,
-	footer?: Record<keyof T, React.ReactNode>
+	footer?: Record<keyof T, React.ReactNode>,
+	onItemClick?: (item: TableGridItem<T>) => void
 }
-export const TableGrid = <T extends Record<string, TableGridItemValue>>({items, columns, linkKey, itemsPerPage, footer}: TableGridProps<T>): JSX.Element => {
+export const TableGrid = <T extends Record<string, TableGridItemValue>>({items, columns, onItemClick, itemsPerPage, footer}: TableGridProps<T>): JSX.Element => {
 	const [sortId, setSortId] = useState<keyof T | undefined>();
 	const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
 	const [pageNum, setPageNum] = useState(1);
@@ -75,27 +75,23 @@ export const TableGrid = <T extends Record<string, TableGridItemValue>>({items, 
 	}
 
 	const onRowClick = (item: T): void => {
-		if (linkKey) {
-			const linkKeyValue = item[linkKey];
-			if (typeof linkKeyValue !== 'string') throw new Error('Link key value on item must be a string');
-			window.location.href = `/${linkKeyValue}`;
-		}
+		onItemClick && onItemClick(item);
 	}
 
 	const sorted = paginateItems(sortItems());
 	return (
-		<div className="flex flex-col gap-2">
+		<div className="flex flex-col gap-2 rounded-xl shadow-md overflow-hidden">
 			<div className="relative overflow-x-auto">
-				<table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-					<thead className="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+				<table className="w-full text-sm text-left">
+					<thead className="text-xs bg-gray-50 dark:bg-gray-700">
 						<tr>
-							{columns.map(({label, id}) => <th className="px-6 py-3 border-y" key={label} scope="col">
+							{columns.map(({label, id}) => <th className="px-6 py-3 border-b" key={label} scope="col">
 								<ChevronSwitch label={label} onChange={() => {onSortClick(id)}} value={id === sortId && sortOrder === "ASC"}/>
 							</th>)}
 						</tr>
 					</thead>
 					<tbody>
-						{sorted.map((item, i) => <tr className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700 ${linkKey ? 'hover:bg-gray-100 cursor-pointer' : ''}`} key={i} onClick={() => {onRowClick(item)}}>
+						{sorted.map((item, i) => <tr className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700 ${onItemClick ? 'hover:bg-gray-100 cursor-pointer' : ''}`} key={i} onClick={() => {onRowClick(item)}}>
 							{columns.map(({id}) => <td className="px-6 py-4" key={id.toString()}>{getLabel(item[id])}</td>)}
 						</tr>)}
 						{footer ? <tr className="bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700">

@@ -71,7 +71,7 @@ const DocumentLine: React.FunctionComponent<DocumentLineProps> = ({document}) =>
 			<div className="flex gap-2">
 				<Icon className="w-6 h-6"/>
 				<div className="text-left">
-					<div className="font-medium">{document.name}</div>
+					<div className="font-medium text-sm">{document.name}</div>
 					<div className="text-sm">{displayElapsedTime(document.lastUpdate)}</div>
 				</div>
 			</div>

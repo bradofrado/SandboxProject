@@ -1,10 +1,7 @@
 import { useState } from "react";
-import dayjs from 'dayjs';
 import { type Patient} from 'model/src/patient'
 import { displayDate } from "model/src/utils";
 import { useSubscriber } from "../../../hooks/subscriber";
-import { Attachment } from "../../core/attachment";
-import { Calendar } from "../../core/date-picker";
 import { Header } from "../../core/header";
 import { Label } from "../../core/label";
 import { Pill } from "../../core/pill";
@@ -14,7 +11,6 @@ import { useGetPatient } from "../../../services/patient";
 import { Card } from "../../core/card";
 import { EditableText } from "../../feature/edit/editable-text";
 import { Button } from "../../core/button";
-import { StatusTracker } from "../../feature/status-tracker";
 import { StatusTab } from "./tabs/status-tab";
 import { DocumentsTab } from "./tabs/documents-tab";
 import { FinanceTab } from "./tabs/finance-tab";
@@ -60,7 +56,7 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({patient}
     return (
       <div className="flex flex-col gap-8 flex-wrap">
 				<div className="flex gap-4">
-					<Card className="max-w-lg">
+					<Card>
 						<div className="flex flex-col gap-4">
 							<div className="flex gap-16 items-center">
 								<Header>{patient.firstName} {patient.lastName}</Header>
@@ -68,16 +64,21 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({patient}
 									{patient.statuses.map(status => <Pill className="w-fit" key={status}>{status}</Pill>)}
 								</div>
 							</div>
-							<div className="flex gap-4">
+							<div className="flex gap-8">
 								<div className="flex flex-col gap-2">
-									<Label label="Date of Birth" sameLine>
-										{displayDate(patient.dateOfBirth)}
-									</Label>
-									<Label label="Date of Loss" sameLine>
-										{displayDate(patient.dateOfLoss)}
-									</Label>
+									<div className="flex gap-2">
+										<Label label="DOB" sameLine>
+											{displayDate(patient.dateOfBirth)}
+										</Label>
+										<Label label="DOL" sameLine>
+											{displayDate(patient.dateOfLoss)}
+										</Label>
+									</div>
 									<Label label="Law Firm" sameLine>
 										{patient.lawFirm}
+									</Label>
+									<Label label="Incident Type" sameLine>
+										{patient.incidentType}
 									</Label>
 								</div>
 								<div className="flex flex-col gap-2">

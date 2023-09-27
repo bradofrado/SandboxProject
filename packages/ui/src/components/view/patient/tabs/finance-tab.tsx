@@ -3,7 +3,6 @@ import type { ReplaceWithName } from "model/src/core/utils"
 import type { TableGridColumn, TableGridItem } from "../../../core/table-grid";
 import { TableGrid } from "../../../core/table-grid"
 import { Pill } from "../../../core/pill";
-import { Label } from "../../../core/label";
 
 type FinanceProviderTableItem = ReplaceWithName<FinanceProvider, 'amount' | 'status', {
 	amount: {compareKey: number, label: string},
@@ -53,16 +52,25 @@ export const FinanceTab: React.FunctionComponent = () => {
 		}
 	];
 	const totalDue = providers.reduce((prev, curr) => prev + (curr.status === 'Unpaid' ? curr.amount : 0), 0);
+	const footer = {
+		name: <span className="font-medium text-black">Total Due</span>, 
+		status: '', 
+		amount: <span className="font-medium text-black">{formatDollarAmount(totalDue)}</span>
+	}
+
+	const onItemClick = (_: TableGridItem<FinanceProviderTableItem>): void => {
+		alert('clicked') //TODO: Make this functional
+	}
 	return (
 		<div>
-			<TableGrid columns={columns} footer={{name: <span className="font-medium text-black">Total Due</span>, status: '', amount: <span className="font-medium text-black">{formatDollarAmount(totalDue)}</span>}} items={items}/>
+			<TableGrid columns={columns} footer={footer} items={items} onItemClick={onItemClick}/>
 		</div>
 	)
 }
 
 const StatusPill: React.FunctionComponent<{status: string}> = ({status}) => {
 	return (
-		<Pill className="w-fit" mode={status === "Paid" ? 'primary' : 'error'}>{status}</Pill>
+		<Pill className="w-fit" mode={status === "Paid" ? 'success' : 'error'}>{status}</Pill>
 	)
 }
 
