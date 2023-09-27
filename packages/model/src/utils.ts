@@ -20,6 +20,56 @@ export const formatDollarAmount = (amount: number): string => {
     .slice(1)}`;
 };
 
+export const displayElapsedTime = (time: Date): string => {
+  const currTime = new Date();
+  const elapsedTime = currTime.getTime() - time.getTime();
+
+  const second = 1000;
+  const minute = 60000;
+  const hour = 3600000;
+  const day = 86400000;
+  const week = 604800000;
+
+  if (elapsedTime < minute) {
+    return `${round(elapsedTime / second)}s ago`;
+  }
+
+  if (elapsedTime < hour) {
+    return `${round(elapsedTime / minute)}m ago`;
+  }
+
+  if (elapsedTime < day) {
+    return `${round(elapsedTime / hour)}h ago`;
+  }
+
+  if (elapsedTime < week) {
+    return `${round(elapsedTime / day)}d ago`;
+  }
+
+  return displayDate(time);
+};
+
+export const round = (value: number, digits = 0): number => {
+  const places = Math.pow(10, digits);
+  return Math.round(value * places) / places;
+};
+
+export const displayStorageSpace = (value: number): string => {
+  if (value < 1000) {
+    return `${value} B`;
+  }
+
+  if (value < 1000000) {
+    return `${Math.round(value / 100) / 10} KB`;
+  }
+
+  if (value < 1000000000) {
+    return `${Math.round(value / 100000) / 10} MB`;
+  }
+
+  return `${Math.round(value / 100000000) / 10} GB`;
+};
+
 export const compare = (f1: string | number, f2: string | number): number => {
   if (typeof f1 === "string" && typeof f2 === "string") {
     return f1.localeCompare(f2);

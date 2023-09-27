@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "eslint .",
     "generate:component": "turbo gen react-component",
-    "format": "prettier --write \"**/*.{prisma,ts,md,json}\" && eslint --fix"
+    "format": "prettier --write \"**/*.{prisma,ts,tsx,md,json}\" && eslint --fix"
   },
   "prettier": "prettier-config",
   "dependencies": {
