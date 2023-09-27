@@ -13,7 +13,7 @@ export const StatusTracker: React.FunctionComponent<StatusTrackerProps> = ({stat
 			{statuses.map((status, i) => (
 				<div className="flex flex-col items-center" key={status}>
 					<div className={`flex rounded-full h-full aspect-square ${i <= valueIndex ? 'bg-primary' : 'bg-gray-100'}`} >
-						{i < valueIndex ? <CheckmarkIcon className="h-full fill-white"/> : <div className={`m-auto text-2xl ${i <= valueIndex ? 'text-white' : 'text-gray-700'} font-bold`}>{i + 1}</div>}
+						{i < valueIndex ? <CheckmarkIcon className="fill-white"/> : <div className={`m-auto text-2xl ${i <= valueIndex ? 'text-white' : 'text-gray-700'} font-bold`}>{i + 1}</div>}
 					</div>
 					<div className="text-sm font-medium">{status}</div>
 				</div>

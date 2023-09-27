@@ -3,34 +3,22 @@ import type { ReplaceWithName } from "model/src/core/utils"
 import type { TableGridColumn, TableGridItem } from "../../../core/table-grid";
 import { TableGrid } from "../../../core/table-grid"
 import { Pill } from "../../../core/pill";
+import { useGetPatientFinanceProviders } from "../../../../services/patient";
+import { Patient, PatientFinanceProvider } from "model/src/patient";
 
-type FinanceProviderTableItem = ReplaceWithName<FinanceProvider, 'amount' | 'status', {
+type FinanceProviderTableItem = ReplaceWithName<PatientFinanceProvider, 'amount' | 'status' | 'patientId', {
 	amount: {compareKey: number, label: string},
 	status: {compareKey: string, label: React.ReactNode}
-} >
-export const FinanceTab: React.FunctionComponent = () => {
-	const providers: FinanceProvider[] = [
-		{
-			name: 'Joel Templeton',
-			status: 'Paid',
-			amount: 185.34
-		},
-		{
-			name: 'Joel Templeton',
-			status: 'Unpaid',
-			amount: 200
-		},
-		{
-			name: 'Joel Templeton',
-			status: 'Unpaid',
-			amount: 120.50
-		},
-		{
-			name: 'Joel Templeton',
-			status: 'Unpaid',
-			amount: 75
-		},
-	]
+}>
+export interface FinanceTabProps {
+	patient: Patient
+}
+export const FinanceTab: React.FunctionComponent<FinanceTabProps> = ({patient}) => {
+	const query = useGetPatientFinanceProviders(patient.id);
+	if (query.isError || query.isLoading) return <>Loading</>
+
+	const providers = query.data;
+	
 	const items: TableGridItem<FinanceProviderTableItem>[] = providers.map(provider => ({
 		...provider, 
 		status: {compareKey: provider.status, label: <StatusPill status={provider.status}/>}, 
@@ -72,10 +60,4 @@ const StatusPill: React.FunctionComponent<{status: string}> = ({status}) => {
 	return (
 		<Pill className="w-fit" mode={status === "Paid" ? 'success' : 'error'}>{status}</Pill>
 	)
-}
-
-interface FinanceProvider {
-	name: string,
-	status: string,
-	amount: number
 }

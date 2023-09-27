@@ -1,52 +1,31 @@
-import type { Patient } from "model/src/patient";
+import type { Patient, PatientDocument } from "model/src/patient";
 import React, { useState } from "react";
 import { displayElapsedTime, displayStorageSpace } from "model/src/utils";
-import type { IconComponent} from "../../../core/icons";
 import { CheckmarkIcon, DocumentTextIcon, FolderIcon, TridotIcon, UploadIcon } from "../../../core/icons";
 import type { DropdownItem} from "../../../core/dropdown";
 import { DropdownLineItem, ListBoxPopover } from "../../../core/dropdown";
 import { Pill } from "../../../core/pill";
+import { useGetPatientDocuments } from "../../../../services/patient";
 
 export interface DocumentsTabProps {
 	patient: Patient
 }
 export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({patient}) => {
-	const createDate = (milisecondsAgo: number): Date => {
-		const date = new Date();
-		date.setTime(date.getTime() - milisecondsAgo);
+	const query = useGetPatientDocuments(patient.id);
+	if (query.isLoading || query.isError) return <>Loading</>
 
-		return date;
-	}
-	const documents: Document[] = [
-		{
-			name: 'Abarca, Maria Release Form',
-			logo: DocumentTextIcon,
-			onSelect: () => { alert('You selected a file'); },
-			lastUpdate: createDate(4000),
-			storageSpace: 1000000
-		},
-		{
-			name: 'Medical Records',
-			logo: FolderIcon,
-			onSelect: () => { alert('You selected a folder'); },
-			lastUpdate: createDate(60000 * 10),
-			storageSpace: 685760000
-		},
-		{
-			name: 'Legal Docs',
-			logo: FolderIcon,
-			onSelect: () => { alert('You selected a folder'); },
-			lastUpdate: createDate(3600000 * 3),
-			storageSpace: 3400000000
-		}
-	]
-	
+	const documents = query.data;
+
 	const onUpload = (files: FileList): void => {
 		alert(`Uploaded ${files.length} files!`)
 	}
+
+	const onDocumentOpen = (document: PatientDocument) => {
+		
+	}
 	return (
 		<div className="flex flex-col rounded-3xl shadow-md overflow-hidden">
-			{documents.map(document => <DocumentLine document={document} key={document.name}/>)}
+			{documents.map(document => <DocumentLine document={document} key={document.name} onOpen={() => {onDocumentOpen(document)}}/>)}
 			<div className="px-5 py-10">
 				<FileUploadArea onUpload={onUpload}/>
 			</div>
@@ -61,13 +40,14 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({patien
 }
 
 interface DocumentLineProps {
-	document: Document
+	document: PatientDocument,
+	onOpen: () => void
 }
-const DocumentLine: React.FunctionComponent<DocumentLineProps> = ({document}) => {
-	const Icon = document.logo;
+const DocumentLine: React.FunctionComponent<DocumentLineProps> = ({document, onOpen}) => {
+	const Icon = document.type === 'file' ? DocumentTextIcon : FolderIcon;
 	
 	return (
-		<button className="flex justify-between items-center border-b p-4 cursor-pointer hover:bg-gray-100" onDoubleClick={document.onSelect} type="button">
+		<button className="flex justify-between items-center border-b p-4 cursor-pointer hover:bg-gray-100" onDoubleClick={onOpen} type="button">
 			<div className="flex gap-2">
 				<Icon className="w-6 h-6"/>
 				<div className="text-left">
@@ -76,7 +56,7 @@ const DocumentLine: React.FunctionComponent<DocumentLineProps> = ({document}) =>
 				</div>
 			</div>
 			<div className="flex gap-2">
-				<Pill mode='secondary'>{displayStorageSpace(document.storageSpace)}</Pill>
+				<Pill mode='secondary'>{displayStorageSpace(document.size)}</Pill>
 				<TridotButtonOptions/>
 			</div>
 		</button>
@@ -150,12 +130,4 @@ const FileUploadArea: React.FunctionComponent<FileUploadAreaProps> = ({onUpload}
 			{ dragActive ? <div className="absolute top-0 left-0 w-full h-full" onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}/> : null }
 		</div> 
 	)
-}
-
-interface Document {
-	name: string,
-	logo: IconComponent,
-	lastUpdate: Date,
-	storageSpace: number,
-	onSelect: () => void
 }
