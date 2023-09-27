@@ -52,6 +52,9 @@ interface PatientGridFilter {
 
 export interface PatientsGridProps {
 	patients: Patient[],
+	collapse?: boolean,
+	children?: React.ReactNode,
+	onPatientClick: (id: string) => void
 }
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- For some reason a type is needed here
 type PatientGridItem = {
@@ -64,15 +67,10 @@ type PatientGridItem = {
 	outstandingBalance: {compareKey: string | number, label: React.ReactNode}
 }
 type PatientType = {[P in keyof Patient]: Patient[P]};
-export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({patients}) => {
+export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({patients, children, onPatientClick, collapse=false}) => {
 	const [searchKey, setSearchKey] = useState('');
 	const [filter, setFilter] = useState<PatientGridFilter>({dateOfLost: undefined, lastUpdate: undefined, attorney: undefined});
 	
-	const onItemClick = (item: PatientGridItem): void => {
-		const linkKeyValue = item.id;
-		window.location.href = `/${linkKeyValue}`;
-	}
-
 	const allLawFirms = groupTogether(patients, 'lawFirm');
 	
 	const filterFunctions: {[P in keyof Patient]?: (key: Patient[P]) => boolean} = {
@@ -81,20 +79,38 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({patien
 		lawFirm: (key: Patient['lawFirm']) => filter.attorney !== undefined && filter.attorney > -1 ? key === allLawFirms[filter.attorney] : true
 	}
 
-	const filteredPatients = filterCriteria<PatientType>(patients, filterFunctions);
-	const items: PatientGridItem[] = filteredPatients.map(({id, lastName, firstName, lawFirm, primaryContact, lastUpdateDate, outstandingBalance, statuses}) => ({
-		id: `patients/${id}`, lastName, firstName, lawFirm, primaryContact,
-		lastUpdateDate: {compareKey: lastUpdateDate ? `${displayDate(lastUpdateDate)}${statuses.join('')}` : '---', label: <LastUpdateComponent date={lastUpdateDate} statuses={statuses}/>},
-		outstandingBalance: {compareKey: outstandingBalance, label: <span className="text-primary">{formatDollarAmount(outstandingBalance)}</span>}
-	}));
+	const filteredPatients = filterItems(filterCriteria<PatientType>(patients, filterFunctions), searchKey, ['lastUpdateDate', 'firstName', 'lastName', 'outstandingBalance', 'lawFirm', 'primaryContact']);
 	
-	const filtered = filterItems(items, searchKey, (value) => (value as PatientGridItem['lastUpdateDate']).compareKey);
+	const getTableGrid = (): React.ReactNode => {
+		if (collapse) {
+			const items = filteredPatients.map(patient => {
+				const name = `${patient.firstName} ${patient.lastName}`
+				return {id: patient.id, name: {compareKey: name, label: <CollapsedPatient patient={patient}/>}}
+			});
+			const collapsedColumns: {id: 'name', label: string}[] = [{id: 'name', label: 'Full Name'}];
+
+			return <TableGrid columns={collapsedColumns} items={items} itemsPerPage={12} onItemClick={(item) => {onPatientClick(item.id)}}/>
+		}
+
+		const items: PatientGridItem[] = filteredPatients.map(({id, lastName, firstName, lawFirm, primaryContact, lastUpdateDate, outstandingBalance, statuses}) => ({
+			id, lastName, firstName, lawFirm, primaryContact,
+			lastUpdateDate: {compareKey: lastUpdateDate ? `${displayDate(lastUpdateDate)}${statuses.join('')}` : '---', label: <LastUpdateComponent date={lastUpdateDate} statuses={statuses}/>},
+			outstandingBalance: {compareKey: outstandingBalance, label: <span className="text-primary">{formatDollarAmount(outstandingBalance)}</span>}
+		}));
+
+
+		return <TableGrid className="w-full" columns={columns} items={items} itemsPerPage={12} onItemClick={(item) => {onPatientClick(item.id)}}/>
+	}
+	
 	return (<>
 		<div className="flex w-fit gap-2">
 			<Input className="h-8" onChange={setSearchKey} placeholder='Search' value={searchKey}/>
 			<FilterButton filter={filter} lawFirms={allLawFirms} onChange={setFilter}/>
 		</div>
-		<TableGrid columns={columns} items={filtered} itemsPerPage={12} onItemClick={onItemClick}/>
+		<div className="flex gap-2">
+			{getTableGrid()}
+			{collapse ? <div className="flex-1">{children}</div> : null}
+		</div>
 		</>
 	)
 }
@@ -106,6 +122,22 @@ const LastUpdateComponent: React.FunctionComponent<{date: Date | null, statuses:
 			{statuses.map(status => <Pill className="w-fit" key={status}>{status}</Pill>)}
 		</div>
 	) : <span>---</span>
+}
+
+const CollapsedPatient: React.FunctionComponent<{patient: Patient}> = ({patient}) => {
+	return (
+		<div className="flex flex-col gap-2">
+			<span className="text-sm font-medium">{patient.firstName} {patient.lastName}</span>
+			<div className="flex flex-col gap-1">
+				{/* <div className="flex gap-1">
+					<span className="text-xs">DOB: {displayDate(patient.dateOfBirth)}</span>
+					<span className="text-xs">DOL: {displayDate(patient.dateOfLoss)}</span>
+				</div> */}
+				<span className="text-xs">{patient.lawFirm}</span>
+				{patient.statuses.length > 0 ? <Pill className="w-fit">{patient.statuses[0]}</Pill> : null}
+			</div>
+		</div>
+	)
 }
 
 interface DateToDatePickerProps {
@@ -231,19 +263,11 @@ function filterCriteria<T extends Record<string, unknown>>(items: T[], filterObj
 	return items.filter(item => filterItem(item));
 }
 
-function filterItems<T extends Record<string, unknown>>(items: T[], filterKey: string | undefined, getCompareKey?: (value: unknown) => string | number): T[] {
+function filterItems<T extends Record<string, unknown>>(items: T[], filterKey: string | undefined, keys?: (keyof T)[]): T[] {
 	const _getCompareKey = (value: unknown): string | number => {
-		if (typeof value === 'string') return value.toLowerCase();
-		if (!getCompareKey) throw new Error('Must provide a compare key function for non strings');
-
-		const key = getCompareKey(value);
-		if (typeof key === 'string') {
-			return key.toLowerCase();
-		}
-
-		return key;
+		return String(value).toLowerCase();
 	}
-	const reduceItem = (item: T): string =>  Object.values(item).reduce<string>((prev, curr) => prev + _getCompareKey(curr), '')
+	const reduceItem = (item: T): string =>  Object.entries(item).reduce<string>((prev, [key, value]) => prev + (keys === undefined || keys.includes(key) ? _getCompareKey(value) : ''), '')
 
 	return items.filter(item => reduceItem(item).includes((filterKey || '').toLowerCase()));
 }

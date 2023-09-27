@@ -13,9 +13,10 @@ export interface TableGridProps<T extends Record<string, TableGridItemValue>> {
 	columns: TableGridColumn<T>[],
 	itemsPerPage?: number,
 	footer?: Record<keyof T, React.ReactNode>,
-	onItemClick?: (item: TableGridItem<T>) => void
+	onItemClick?: (item: TableGridItem<T>) => void,
+	className?: string
 }
-export const TableGrid = <T extends Record<string, TableGridItemValue>>({items, columns, onItemClick, itemsPerPage, footer}: TableGridProps<T>): JSX.Element => {
+export const TableGrid = <T extends Record<string, TableGridItemValue>>({items, columns, onItemClick, itemsPerPage, footer, className}: TableGridProps<T>): JSX.Element => {
 	const [sortId, setSortId] = useState<keyof T | undefined>();
 	const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
 	const [pageNum, setPageNum] = useState(1);
@@ -80,9 +81,9 @@ export const TableGrid = <T extends Record<string, TableGridItemValue>>({items, 
 
 	const sorted = paginateItems(sortItems());
 	return (
-		<div className="flex flex-col gap-2 rounded-xl shadow-md overflow-hidden">
+		<div className={`${className} flex flex-col gap-2`}>
 			<div className="relative overflow-x-auto">
-				<table className="w-full text-sm text-left">
+				<table className="w-full text-sm text-left rounded-xl shadow-md overflow-hidden">
 					<thead className="text-xs bg-gray-50 dark:bg-gray-700">
 						<tr>
 							{columns.map(({label, id}) => <th className="px-6 py-3 border-b" key={label} scope="col">

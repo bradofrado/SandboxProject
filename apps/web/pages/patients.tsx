@@ -1,9 +1,8 @@
 import { type NextPage} from 'next';
-import { Header } from 'ui/src/components/core/header';
-import {PatientsGrid} from 'ui/src/components/view/patient/patients-grid'
 import {useGetPatients} from 'ui/src/services/patient';
 import { requireAuth, defaultGetServerProps } from '../util/protected-routes-hoc';
 import { Layout } from '../util/components/layout';
+import { PatientView } from '../util/components/patient-view';
 
 export const getServerSideProps = requireAuth(defaultGetServerProps);
 
@@ -16,13 +15,11 @@ const Patients: NextPage = () => {
     
 	return (
 		<Layout>
-			<div className="flex flex-col gap-2 p-2">
-				<Header level={2}>Patients</Header>
-				<PatientsGrid patients={items} />
-			</div>
+			<PatientView items={items} />
 		</Layout>
 	)
 }
+
 
 
 

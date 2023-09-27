@@ -1,7 +1,7 @@
 import { CheckmarkIcon } from "../core/icons";
 
 export interface StatusTrackerProps {
-	statuses: string[],
+	statuses: readonly string[],
 	value: string,
 	className?: string
 }

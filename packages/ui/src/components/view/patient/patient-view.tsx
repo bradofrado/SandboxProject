@@ -92,7 +92,7 @@ export const PatientViewId: React.FunctionComponent<{id: string}> = ({id}) => {
     }
     const patient = query.data;
     if (!patient) {
-      return <Header>Invalid Patient</Header>
+      return <Header>Invalid Patient {id}</Header>
     }
 
     return (
