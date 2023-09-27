@@ -15,6 +15,8 @@ import { Card } from "../../core/card";
 import { EditableText } from "../../feature/edit/editable-text";
 import { Button } from "../../core/button";
 import { StatusTracker } from "../../feature/status-tracker";
+import { StatusTab } from "./tabs/status-tab";
+import { DocumentsTab } from "./tabs/documents-tab";
 
 export interface PatientViewProps {
     patient: Patient
@@ -27,49 +29,35 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({patient}
 		setNotes(value);
 	}
 
-	const statuses = ['File Setup', 'Treatment', 'Demand', 'Negotiation', 'Settlement']
-
 	const tabItems: TabItem[] = [
 		{
 			id: 0,
 			label: 'Status',
-			component: (
-				<div className="flex flex-col gap-4 py-2">
-					<StatusTracker className="h-20" statuses={statuses} value="Treatment"/>
-					<Card className="mt-5">
-						<div className="flex gap-4">
-							<Calendar value={new Date()}/>
-							<Label label="Apointments">
-								<ul>
-									{patient.appointments.map((appointment, i) => {
-										const day = dayjs(appointment);
-										return <li key={i}>
-											<div className="rounded-lg hover:bg-primary-light py-1 px-2">
-												<Label label={day.format('ddd, MMM DD')} sameLine>
-													{day.format('hh:mm a')}
-												</Label>
-											</div>
-										</li>
-									})}
-								</ul>
-							</Label>
-						</div>
-				</Card>
-				<Card label="Documents">
-						<Attachment label="Birth Certificate" link=""/>
-				</Card>
-			</div>
-			)
+			component: <StatusTab patient={patient}/>
 		},
 		{
 			id: 1,
+			label: 'Documents',
+			component: <DocumentsTab patient={patient}/>
+		},
+		{
+			id: 2,
+			label: 'Finance',
+			component: <div>
+				<Card label="Messages">
+					<ChatBox user={{id: '0', name: 'Bob', image: '/braydon.jpeg'}} />
+				</Card>
+			</div>
+		},
+		{
+			id: 3,
 			label: 'Message',
 			component: <div>
 				<Card label="Messages">
 					<ChatBox user={{id: '0', name: 'Bob', image: '/braydon.jpeg'}} />
 				</Card>
 			</div>
-		}
+		},
 	]
 
     return (

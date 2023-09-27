@@ -5,21 +5,15 @@ import { CheckboxInput } from "./input"
 import { Button } from "./button"
 import { Popover } from "./popover"
 
-export type ListBoxProps<T> = {
+export type ListBoxPopoverProps<T> = {
 	items: DropdownItem<T>[],
 	className?: string,
-	children: React.ReactNode,
-	mode?: 'primary' | 'secondary',
-	header?: React.ReactNode
+	header?: React.ReactNode,
+	children: React.ReactNode
 } & AllOrNothing<{isOpen: boolean, setIsOpen: (value: boolean) => void}>
-export const ListBox = <T,>({items, className, children, mode, header, ...isOpenStuff}: ListBoxProps<T>): JSX.Element => {
-	const button = <Button className={className} mode={mode}>
-		<div className="flex items-center">
-			{children}
-		</div>
-	</Button>
+export const ListBoxPopover = <T,>({items, className='', header, children, ...isOpenStuff}: ListBoxPopoverProps<T>): JSX.Element => {
 	return (
-		<Popover button={button} className='' {...isOpenStuff}>
+		<Popover button={children} className={className} {...isOpenStuff}>
 			{header ? <div className="p-2 bg-gray-50">
 				{header}
 			</div> : null}
@@ -31,6 +25,20 @@ export const ListBox = <T,>({items, className, children, mode, header, ...isOpen
 				</ul>
 			</div>
 		</Popover>
+	)
+}
+
+export type ListBoxProps<T> = ListBoxPopoverProps<T> & {	mode?: 'primary' | 'secondary'}
+export const ListBox = <T,>({items, className, children, mode, header, ...isOpenStuff}: ListBoxProps<T>): JSX.Element => {
+	const button = <Button className={className} mode={mode}>
+		<div className="flex items-center">
+			{children}
+		</div>
+	</Button>
+	return (
+		<ListBoxPopover header={header} items={items} {...isOpenStuff}>
+			{button}
+		</ListBoxPopover>
 	)
 }
 
@@ -61,14 +69,25 @@ export const Dropdown = <T,>({children, initialValue, onChange, items, chevron =
 		setIsOpen(false);
 	}
 
-	const dropdownItems: DropdownItem<T>[] = items.map((item, i) => ({...item, name: <button className={`${
-		initialValue !== undefined && item === value ? 'bg-primary-light' : 'text-gray-900'
-	} group flex w-full items-center rounded-md p-2 text-sm cursor-pointer hover:bg-gray-100 [&>*]:flex-1`} onClick={() => {onClick(item, i)}}type="button">{item.name}</button>}))
+	const dropdownItems: DropdownItem<T>[] = items.map((item, i) => ({...item, name: <DropdownLineItem onClick={() => {onClick(item, i)}} selected={initialValue !== undefined && item === value}>{item.name}</DropdownLineItem> }))
 	
 	return (
 		<ListBox className={className} isOpen={isOpen} items={dropdownItems} mode={value === undefined ? 'secondary' : 'primary'} setIsOpen={setIsOpen}>
 			{value === undefined ? children : value.name}	{chevron ? <ChevronDownIcon className="w-4 h-4 ml-1"/> : null}
 		</ListBox>
+	)
+}
+
+export interface DropdownLineItemProps {
+	selected?: boolean,
+	onClick: () => void,
+	children: React.ReactNode
+}
+export const DropdownLineItem: React.FunctionComponent<DropdownLineItemProps> = ({selected, onClick, children}) => {
+	return (
+		<button className={`${
+			selected ? 'bg-primary-light' : 'text-gray-900'
+		} group flex w-full items-center rounded-md p-2 text-sm cursor-pointer hover:bg-gray-100 [&>*]:flex-1`} onClick={onClick} type="button">{children}</button>
 	)
 }
 

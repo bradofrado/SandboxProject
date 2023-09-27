@@ -13,7 +13,7 @@ type ButtonProps = {
 }
 type TextProps<C extends React.ElementType> = PolymorphicComponentProps<C, ButtonProps>
 export const Button = <T extends React.ElementType>({children, as, mode = 'primary', backgroundColor, className, ...rest}: TextProps<T>): JSX.Element => {
-    const Component = as || 'button';
+  const Component = as || 'button';
 	const buttonClasses: {[key in ButtonType]: string} = {
 		'primary': 'bg-primary text-white hover:bg-primary/80',
 		'secondary': 'bg-white text-gray-900 hover:bg-opacity-30',
