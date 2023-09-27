@@ -17,6 +17,7 @@ import { Button } from "../../core/button";
 import { StatusTracker } from "../../feature/status-tracker";
 import { StatusTab } from "./tabs/status-tab";
 import { DocumentsTab } from "./tabs/documents-tab";
+import { FinanceTab } from "./tabs/finance-tab";
 
 export interface PatientViewProps {
     patient: Patient
@@ -43,11 +44,7 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({patient}
 		{
 			id: 2,
 			label: 'Finance',
-			component: <div>
-				<Card label="Messages">
-					<ChatBox user={{id: '0', name: 'Bob', image: '/braydon.jpeg'}} />
-				</Card>
-			</div>
+			component: <FinanceTab/>
 		},
 		{
 			id: 3,

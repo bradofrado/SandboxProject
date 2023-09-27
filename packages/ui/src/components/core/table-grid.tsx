@@ -12,9 +12,10 @@ export interface TableGridProps<T extends Record<string, TableGridItemValue>> {
 	items: TableGridItem<T>[],
 	columns: TableGridColumn<T>[],
 	linkKey?: keyof T,
-	itemsPerPage?: number
+	itemsPerPage?: number,
+	footer?: Record<keyof T, React.ReactNode>
 }
-export const TableGrid = <T extends Record<string, TableGridItemValue>>({items, columns, linkKey, itemsPerPage}: TableGridProps<T>): JSX.Element => {
+export const TableGrid = <T extends Record<string, TableGridItemValue>>({items, columns, linkKey, itemsPerPage, footer}: TableGridProps<T>): JSX.Element => {
 	const [sortId, setSortId] = useState<keyof T | undefined>();
 	const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
 	const [pageNum, setPageNum] = useState(1);
@@ -88,7 +89,7 @@ export const TableGrid = <T extends Record<string, TableGridItemValue>>({items, 
 				<table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
 					<thead className="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
 						<tr>
-							{columns.map(({label, id}) => <th className="px-6 py-3" key={label} scope="col">
+							{columns.map(({label, id}) => <th className="px-6 py-3 border-y" key={label} scope="col">
 								<ChevronSwitch label={label} onChange={() => {onSortClick(id)}} value={id === sortId && sortOrder === "ASC"}/>
 							</th>)}
 						</tr>
@@ -97,6 +98,9 @@ export const TableGrid = <T extends Record<string, TableGridItemValue>>({items, 
 						{sorted.map((item, i) => <tr className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700 ${linkKey ? 'hover:bg-gray-100 cursor-pointer' : ''}`} key={i} onClick={() => {onRowClick(item)}}>
 							{columns.map(({id}) => <td className="px-6 py-4" key={id.toString()}>{getLabel(item[id])}</td>)}
 						</tr>)}
+						{footer ? <tr className="bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700">
+							{columns.map(({id}) => <td className="px-6 py-4" key={id.toString()}>{footer[id]}</td>)}
+						</tr> : null}
 					</tbody>
 				</table>
 			</div>
@@ -110,4 +114,4 @@ export const TableGrid = <T extends Record<string, TableGridItemValue>>({items, 
 			</div> : null}
 		</div>
 	)
-}
+} 

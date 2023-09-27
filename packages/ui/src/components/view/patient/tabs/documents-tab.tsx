@@ -115,7 +115,7 @@ interface FileUploadAreaProps {
 const FileUploadArea: React.FunctionComponent<FileUploadAreaProps> = ({onUpload}) => {
 	const [dragActive, setDragActive] = useState(false);
 	const onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-		e.target.files && onUpload(e.target.files);
+		e.target.files && e.target.files.length > 0 && onUpload(e.target.files);
 	}
 
 	const handleDrag: React.DragEventHandler<HTMLDivElement> = (e) => {
@@ -133,7 +133,7 @@ const FileUploadArea: React.FunctionComponent<FileUploadAreaProps> = ({onUpload}
 		e.stopPropagation();
 		
 		setDragActive(false);
-		if (e.dataTransfer.files[0]) {
+		if (e.dataTransfer.files.length > 0) {
 			onUpload(e.dataTransfer.files);
 		}
 	}
