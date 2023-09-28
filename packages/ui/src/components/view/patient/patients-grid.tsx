@@ -119,6 +119,7 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
       "outstandingBalance",
       "lawFirm",
       "primaryContact",
+			"statuses",
     ],
   );
 
@@ -249,13 +250,14 @@ const CollapsedPatient: React.FunctionComponent<{ patient: Patient }> = ({
       </span>
       <div className="flex flex-col gap-1">
         {/* <div className="flex gap-1">
-					<span className="text-xs">DOB: {displayDate(patient.dateOfBirth)}</span>
-					<span className="text-xs">DOL: {displayDate(patient.dateOfLoss)}</span>
+					<span className="text-xs">Last Update: {displayDate(patient.dateOfBirth)}</span>
+					<span className="text-xs">{patient.lawFirm}</span>
 				</div> */}
-        <span className="text-xs">{patient.lawFirm}</span>
-        {patient.statuses.length > 0 ? (
-          <Pill className="w-fit">{patient.statuses[0]}</Pill>
-        ) : null}
+			 	<span className="text-xs">{patient.lawFirm}</span>
+				<span className="text-xs">Last Update: {displayDate(patient.dateOfBirth)}</span>
+				{patient.statuses.length > 0 ? (
+						<Pill className="w-fit">{patient.statuses[0]}</Pill>
+					) : null}
       </div>
     </div>
   );
@@ -370,6 +372,7 @@ const FilterButton = ({
 
   const onDone = (): void => {
     onChange(filter);
+		setIsOpen(false);
   };
 
   const onOpen = (value: boolean): void => {
@@ -404,14 +407,16 @@ const FilterButton = ({
       </Button>
     </div>
   );
+	const hasFilter = Object.values(initialFilter).some(value => value !== undefined);
   return (
     <ListBox
       header={header}
       isOpen={isOpen}
       items={dropdownItems}
-      setIsOpen={onOpen}
+      mode={hasFilter ? 'primary' : 'secondary'}
+			setIsOpen={onOpen}
     >
-      <FilterIcon className="w-3 h-3 fill-white mr-1" /> Filters
+      <FilterIcon className="w-3 h-3 mr-1" /> Filters
     </ListBox>
   );
 };

@@ -28,7 +28,7 @@ export const Button = <T extends React.ElementType>({
 }: TextProps<T>): JSX.Element => {
   const Component = as || "button";
   const buttonClasses: { [key in ButtonType]: string } = {
-    primary: "bg-primary text-white hover:bg-primary/80",
+    primary: "bg-primary text-white hover:bg-primary/80 fill-white",
     secondary: "bg-white text-gray-900 hover:bg-opacity-30",
     other: `text-secondary hover:opacity-80`,
   };

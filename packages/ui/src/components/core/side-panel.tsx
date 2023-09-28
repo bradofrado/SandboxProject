@@ -38,7 +38,7 @@ export const SidePanel: React.FunctionComponent<SidePanelProps> = ({
       <div
         className={`${
           className || ""
-        } z-40 max-w-64 transition-transform sm:translate-x-0`}
+        } z-40 w-48 transition-transform sm:translate-x-0`}
       >
         <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-700 border-r border-gray-200 dark:border-gray-600">
           <ul className="space-y-2 font-medium">

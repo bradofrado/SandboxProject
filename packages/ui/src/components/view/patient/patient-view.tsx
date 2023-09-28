@@ -83,10 +83,10 @@ const PatientBio: React.FunctionComponent<{ patient: Patient }> = ({
           </div>
           <div className="flex flex-col gap-2">
             <Label label="Email" sameLine>
-              {patient.email}
+              <a href={`mailto:${patient.email}`}>{patient.email}</a>
             </Label>
             <Label label="Phone" sameLine>
-              {patient.phone}
+						<a href={`tel:${patient.phone}`}>{patient.phone}</a>
             </Label>
             <Button className="ml-auto">Message</Button>
           </div>
