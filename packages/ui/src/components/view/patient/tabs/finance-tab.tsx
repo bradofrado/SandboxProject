@@ -93,7 +93,7 @@ export const FinanceTab: React.FunctionComponent<FinanceTabProps> = ({
     setFilter(newFilter);
 	}
 
-  const onItemClick = (_: PatientFinanceProvider): void => {
+  const onItemClick = (_: PatientFinanceProviderType): void => {
     //TODO: Make this functional
   };
   return (
