@@ -86,7 +86,7 @@ const PatientBio: React.FunctionComponent<{ patient: Patient }> = ({
               <a href={`mailto:${patient.email}`}>{patient.email}</a>
             </Label>
             <Label label="Phone" sameLine>
-						<a href={`tel:${patient.phone}`}>{patient.phone}</a>
+              <a href={`tel:${patient.phone}`}>{patient.phone}</a>
             </Label>
             <Button className="ml-auto">Message</Button>
           </div>

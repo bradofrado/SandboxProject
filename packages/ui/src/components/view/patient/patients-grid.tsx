@@ -6,19 +6,13 @@ import {
   groupTogether,
   isDateInBetween,
 } from "model/src/utils";
-
-import { useChangeProperty } from "../../../hooks/change-property";
-import { Button } from "../../core/button";
 import { DatePicker } from "../../core/date-picker";
-import type { DropdownItem, ListItem } from "../../core/dropdown";
-import { Dropdown, DropdownListItem, ListBox } from "../../core/dropdown";
-import { Header } from "../../core/header";
-import { FilterIcon } from "../../core/icons";
-import { Input } from "../../core/input";
+import { Dropdown } from "../../core/dropdown";
 import { Pill } from "../../core/pill";
-import { TableGrid, type TableGridColumn } from "../../core/table-grid";
+import { FilterTableGrid, type TableGridColumn } from "../../core/table-grid";
+import type { FilterChildren, FilterItem} from "../../core/filter-button";
 
-const columns: TableGridColumn<PatientGridItem>[] = [
+const columns: TableGridColumn<'lastName' | 'firstName' | 'lawFirm' | 'primaryContact' | 'lastUpdateDate' | 'outstandingBalance'>[] = [
   {
     id: "lastName",
     label: "Last Name",
@@ -62,16 +56,16 @@ export interface PatientsGridProps {
   children?: React.ReactNode;
   onPatientClick: (id: string) => void;
 }
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- For some reason a type is needed here
-type PatientGridItem = {
-  id: string;
-  lastName: string;
-  firstName: string;
-  lawFirm: string;
-  primaryContact: string;
-  lastUpdateDate: { compareKey: string | number; label: React.ReactNode };
-  outstandingBalance: { compareKey: string | number; label: React.ReactNode };
-};
+ 
+// type PatientGridItem = {
+//   id: string;
+//   lastName: string;
+//   firstName: string;
+//   lawFirm: string;
+//   primaryContact: string;
+//   lastUpdateDate: { compareKey: string | number; label: React.ReactNode };
+//   outstandingBalance: { compareKey: string | number; label: React.ReactNode };
+// };
 type PatientType = { [P in keyof Patient]: Patient[P] };
 export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
   patients,
@@ -79,7 +73,6 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
   onPatientClick,
   collapse = false,
 }) => {
-  const [searchKey, setSearchKey] = useState("");
   const [filter, setFilter] = useState<PatientGridFilter>({
     dateOfLost: undefined,
     lastUpdate: undefined,
@@ -109,50 +102,139 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
         : true,
   };
 
-  const filteredPatients = filterItems(
-    filterCriteria<PatientType>(patients, filterFunctions),
-    searchKey,
-    [
-      "lastUpdateDate",
-      "firstName",
-      "lastName",
-      "outstandingBalance",
-      "lawFirm",
-      "primaryContact",
-			"statuses",
-    ],
-  );
+	const filterItems: FilterItem<PatientGridFilter>[] = [
+    {
+      id: "dateOfLost",
+      label: "Date of Loss",
+      value: filter.dateOfLost,
+      defaultValue: { start: null, end: null },
+    },
+    {
+      id: "lastUpdate",
+      label: "Last Update",
+      value: filter.lastUpdate,
+      defaultValue: { start: null, end: null },
+    },
+    {
+      id: "attorney",
+      label: "By Attorney",
+      value: filter.attorney,
+      defaultValue: -1,
+    },
+  ];
+
+	const getFilterContent: FilterChildren<PatientGridFilter> = (item, changeItem) => {
+		switch (item.id) {
+			case "dateOfLost": {
+				const value = item.value;
+				return (
+					<DateToDatePicker
+						end={value?.end ?? null}
+						onChange={(_value) => {
+							changeItem(_value);
+						}}
+						start={value?.start ?? null}
+					/>
+				);
+			}
+			case "lastUpdate": {
+				const value = item.value;
+				return (
+					<DateToDatePicker
+						end={value?.end ?? null}
+						onChange={(_value) => {
+							changeItem(_value);
+						}}
+						start={value?.start ?? null}
+					/>
+				);
+			}
+			case "attorney": {
+				const value = item.value;
+				return (
+					<Dropdown
+						initialValue={value}
+						items={allLawFirms.map((firm, i) => ({ name: firm, id: i }))}
+						onChange={(newItem) => {
+							changeItem(newItem.id);
+						}}
+					>
+						Select
+					</Dropdown>
+				);
+			}
+		}
+	}
+
+	const filterKeys: (keyof Patient)[] = [
+		"lastUpdateDate",
+		"firstName",
+		"lastName",
+		"outstandingBalance",
+		"lawFirm",
+		"primaryContact",
+		"statuses",
+	]
+
+	const onFilterChange = (newItems: FilterItem<PatientGridFilter>[]): void => {
+    const newFilter = newItems.reduce<PatientGridFilter>(
+      (prev, curr) => ({ ...prev, [curr.id]: curr.value }),
+      { dateOfLost: undefined, lastUpdate: undefined, attorney: undefined },
+    );
+    setFilter(newFilter);
+  };
 
   const getTableGrid = (): React.ReactNode => {
     if (collapse) {
-      const items = filteredPatients.map((patient) => {
-        const name = `${patient.firstName} ${patient.lastName}`;
-        return {
-          id: patient.id,
-          name: {
-            compareKey: name,
-            label: <CollapsedPatient patient={patient} />,
-          },
-        };
-      });
       const collapsedColumns: { id: "name"; label: string }[] = [
         { id: "name", label: "Full Name" },
       ];
 
       return (
-        <TableGrid
-          columns={collapsedColumns}
-          items={items}
-          itemsPerPage={12}
-          onItemClick={(item) => {
+        <FilterTableGrid
+					columns={collapsedColumns}
+          data={patients.map(patient => ({...patient, name: `${patient.firstName} ${patient.lastName}`}))}
+          filterFunctions={filterFunctions}
+          filterKeys={filterKeys}
+					getFilterContent={getFilterContent}
+					items={filterItems}
+					itemsPerPage={12}
+					onChange={onFilterChange}
+					onItemClick={(item) => {
             onPatientClick(item.id);
           }}
-        />
+					search
+        >
+					{(patient) => {
+						return {
+							id: patient.id,
+							name: {
+								compareKey: patient.name,
+								label: <CollapsedPatient patient={patient} />,
+							},
+						};
+					}}
+				</FilterTableGrid>
       );
     }
 
-    const items: PatientGridItem[] = filteredPatients.map(
-      ({
+    return (
+      <FilterTableGrid<PatientGridFilter, PatientType, typeof columns[number]['id']>
+				className="w-full"
+        columns={columns}
+        data={patients}
+        filterFunctions={filterFunctions}
+        filterKeys={filterKeys}
+				getFilterContent={getFilterContent}
+				items={filterItems}
+				itemsPerPage={12}
+				onChange={onFilterChange}
+				onItemClick={(item) => {
+          onPatientClick(item.id);
+        }}
+				search
+      >
+			{({
         id,
         lastName,
         firstName,
@@ -183,43 +265,17 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
             </span>
           ),
         },
-      }),
-    );
-
-    return (
-      <TableGrid
-        className="w-full"
-        columns={columns}
-        items={items}
-        itemsPerPage={12}
-        onItemClick={(item) => {
-          onPatientClick(item.id);
-        }}
-      />
+      })}
+			</FilterTableGrid>
     );
   };
 
   return (
-    <>
-      <div className="flex w-fit gap-2">
-        <Input
-          className="h-8"
-          onChange={setSearchKey}
-          placeholder="Search"
-          value={searchKey}
-        />
-        <FilterButton
-          filter={filter}
-          lawFirms={allLawFirms}
-          onChange={setFilter}
-        />
-      </div>
-      <div className="flex gap-2">
-        {getTableGrid()}
-        {collapse ? <div className="flex-1">{children}</div> : null}
-      </div>
-    </>
-  );
+		<div className="flex gap-2">
+			<div className={`${collapse ? '' : 'w-full'}`}>{getTableGrid()}</div>
+			{collapse ? <div className="flex-1">{children}</div> : null}
+		</div>
+    );
 };
 
 const LastUpdateComponent: React.FunctionComponent<{
@@ -253,11 +309,13 @@ const CollapsedPatient: React.FunctionComponent<{ patient: Patient }> = ({
 					<span className="text-xs">Last Update: {displayDate(patient.dateOfBirth)}</span>
 					<span className="text-xs">{patient.lawFirm}</span>
 				</div> */}
-			 	<span className="text-xs">{patient.lawFirm}</span>
-				<span className="text-xs">Last Update: {displayDate(patient.dateOfBirth)}</span>
-				{patient.statuses.length > 0 ? (
-						<Pill className="w-fit">{patient.statuses[0]}</Pill>
-					) : null}
+        <span className="text-xs">{patient.lawFirm}</span>
+        <span className="text-xs">
+          Last Update: {displayDate(patient.dateOfBirth)}
+        </span>
+        {patient.statuses.length > 0 ? (
+          <Pill className="w-fit">{patient.statuses[0]}</Pill>
+        ) : null}
       </div>
     </div>
   );
@@ -292,199 +350,89 @@ const DateToDatePicker: React.FunctionComponent<DateToDatePickerProps> = ({
   );
 };
 
-interface FilterItem extends ListItem {
-  label: string;
-  content: React.ReactNode;
-  defaultValue: PatientGridFilter[keyof PatientGridFilter];
-}
-interface FilterButtonProps {
-  filter: PatientGridFilter;
-  lawFirms: string[];
-  onChange: (filter: PatientGridFilter) => void;
-}
-const FilterButton = ({
-  lawFirms,
-  filter: initialFilter,
-  onChange,
-}: FilterButtonProps): JSX.Element => {
-  const [filter, setFilter] = useState(initialFilter);
-  const changeFilter = useChangeProperty<PatientGridFilter>(setFilter);
-  const [isOpen, setIsOpen] = useState(false);
+// interface PatientGridFilterButtonProps {
+//   filter: PatientGridFilter;
+//   lawFirms: string[];
+//   onChange: (filter: PatientGridFilter) => void;
+// }
+// const PatientGridFilterButton: React.FunctionComponent<
+//   PatientGridFilterButtonProps
+// > = ({ lawFirms, filter, onChange }) => {
+//   const items: FilterItem<PatientGridFilter>[] = [
+//     {
+//       id: "dateOfLost",
+//       label: "Date of Loss",
+//       value: filter.dateOfLost,
+//       defaultValue: { start: null, end: null },
+//     },
+//     {
+//       id: "lastUpdate",
+//       label: "Last Update",
+//       value: filter.lastUpdate,
+//       defaultValue: { start: null, end: null },
+//     },
+//     {
+//       id: "attorney",
+//       label: "By Attorney",
+//       value: filter.attorney,
+//       defaultValue: -1,
+//     },
+//   ];
 
-  const filterColumns: FilterItem[] = [
-    {
-      label: "Date of Loss",
-      value: filter.dateOfLost !== undefined,
-      defaultValue: { start: null, end: null },
-      content: (
-        <DateToDatePicker
-          end={filter.dateOfLost?.end ?? null}
-          onChange={(value) => changeFilter(filter, "dateOfLost", value)}
-          start={filter.dateOfLost?.start ?? null}
-        />
-      ),
-    },
-    {
-      label: "Last Update",
-      value: filter.lastUpdate !== undefined,
-      defaultValue: { start: null, end: null },
-      content: (
-        <DateToDatePicker
-          end={filter.lastUpdate?.end ?? null}
-          onChange={(value) => changeFilter(filter, "lastUpdate", value)}
-          start={filter.lastUpdate?.start ?? null}
-        />
-      ),
-    },
-    {
-      label: "By Attorney",
-      value: filter.attorney !== undefined,
-      defaultValue: -1,
-      content: (
-        <Dropdown
-          initialValue={filter.attorney}
-          items={lawFirms.map((firm, i) => ({ name: firm, id: i }))}
-          onChange={(item) => changeFilter(filter, "attorney", item.id)}
-        >
-          Select
-        </Dropdown>
-      ),
-    },
-  ];
+//   const onFilterChange = (newItems: FilterItem<PatientGridFilter>[]): void => {
+//     const newFilter = newItems.reduce<PatientGridFilter>(
+//       (prev, curr) => ({ ...prev, [curr.id]: curr.value }),
+//       { dateOfLost: undefined, lastUpdate: undefined, attorney: undefined },
+//     );
+//     onChange(newFilter);
+//   };
 
-  const onSelect = (item: FilterItem, value: boolean): void => {
-    const labelToKeyMapping: Record<string, keyof PatientGridFilter> = {
-      "Date of Loss": "dateOfLost",
-      "Last Update": "lastUpdate",
-      "By Attorney": "attorney",
-    };
-    const key = labelToKeyMapping[item.label];
-    changeFilter(filter, key, value ? item.defaultValue : undefined);
-  };
+//   return (
+//     <FilterButton items={items} onChange={onFilterChange}>
+//       {(item, changeItem) => {
+//         switch (item.id) {
+//           case "dateOfLost": {
+//             const value = item.value;
+//             return (
+//               <DateToDatePicker
+//                 end={value?.end ?? null}
+//                 onChange={(_value) => {
+//                   changeItem(_value);
+//                 }}
+//                 start={value?.start ?? null}
+//               />
+//             );
+//           }
+//           case "lastUpdate": {
+//             const value = item.value;
+//             return (
+//               <DateToDatePicker
+//                 end={value?.end ?? null}
+//                 onChange={(_value) => {
+//                   changeItem(_value);
+//                 }}
+//                 start={value?.start ?? null}
+//               />
+//             );
+//           }
+//           case "attorney": {
+//             const value = item.value;
+//             return (
+//               <Dropdown
+//                 initialValue={value}
+//                 items={lawFirms.map((firm, i) => ({ name: firm, id: i }))}
+//                 onChange={(newItem) => {
+//                   changeItem(newItem.id);
+//                 }}
+//               >
+//                 Select
+//               </Dropdown>
+//             );
+//           }
+//         }
+//       }}
+//     </FilterButton>
+//   );
+// };
 
-  const onClear = (): void => {
-    setFilter({
-      dateOfLost: undefined,
-      lastUpdate: undefined,
-      attorney: undefined,
-    });
-  };
 
-  const onDone = (): void => {
-    onChange(filter);
-		setIsOpen(false);
-  };
-
-  const onOpen = (value: boolean): void => {
-    //This is to 'cancel' their selection if they close the popup
-    if (!value) {
-      setFilter(initialFilter);
-    }
-    setIsOpen(value);
-  };
-
-  const dropdownItems: DropdownItem<number>[] = filterColumns.map(
-    (item, i) => ({
-      id: i,
-      name: (
-        <FilterButtonItem
-          item={item}
-          onChange={(value) => {
-            onSelect(item, value);
-          }}
-        />
-      ),
-    }),
-  );
-  const header = (
-    <div className="flex justify-between items-center">
-      <Button className="h-fit" mode="secondary" onClick={onClear}>
-        Clear
-      </Button>
-      <Header level={4}>Filters</Header>
-      <Button className="h-fit" mode="primary" onClick={onDone}>
-        Done
-      </Button>
-    </div>
-  );
-	const hasFilter = Object.values(initialFilter).some(value => value !== undefined);
-  return (
-    <ListBox
-      header={header}
-      isOpen={isOpen}
-      items={dropdownItems}
-      mode={hasFilter ? 'primary' : 'secondary'}
-			setIsOpen={onOpen}
-    >
-      <FilterIcon className="w-3 h-3 mr-1" /> Filters
-    </ListBox>
-  );
-};
-
-interface FilterButtonItemProps {
-  item: FilterItem;
-  onChange: (value: boolean) => void;
-}
-const FilterButtonItem: React.FunctionComponent<FilterButtonItemProps> = ({
-  item,
-  onChange,
-}) => {
-  const { content, ...listItem } = item;
-  return (
-    <>
-      <button
-        className="p-2 w-full border-b"
-        onClick={() => {
-          onChange(!item.value);
-        }}
-        type="button"
-      >
-        <DropdownListItem item={listItem} />
-      </button>
-      <div
-        className={`${
-          item.value ? "max-h-96" : "max-h-0"
-        } overflow-hidden transition-[max-height] bg-gray-50`}
-      >
-        <div className="p-2">{content}</div>
-      </div>
-    </>
-  );
-};
-
-function filterCriteria<T extends Record<string, unknown>>(
-  items: T[],
-  filterObject: { [P in keyof T]?: (key: T[P]) => boolean },
-): T[] {
-  const filterItem = (item: T): boolean => {
-    for (const key in filterObject) {
-      const predicate = filterObject[key];
-      if (predicate && !predicate(item[key])) {
-        return false;
-      }
-    }
-    return true;
-  };
-  return items.filter((item) => filterItem(item));
-}
-
-function filterItems<T extends Record<string, unknown>>(
-  items: T[],
-  filterKey: string | undefined,
-  keys?: (keyof T)[],
-): T[] {
-  const _getCompareKey = (value: unknown): string | number => {
-    return String(value).toLowerCase();
-  };
-  const reduceItem = (item: T): string =>
-    Object.entries(item).reduce<string>(
-      (prev, [key, value]) =>
-        prev +
-        (keys === undefined || keys.includes(key) ? _getCompareKey(value) : ""),
-      "",
-    );
-
-  return items.filter((item) =>
-    reduceItem(item).includes((filterKey || "").toLowerCase()),
-  );
-}

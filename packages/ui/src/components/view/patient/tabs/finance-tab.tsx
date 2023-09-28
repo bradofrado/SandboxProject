@@ -1,20 +1,10 @@
-import type { ReplaceWithName } from "model/src/core/utils";
-import { Patient, PatientFinanceProvider } from "model/src/patient";
+import type { Patient, PatientFinanceProvider } from "model/src/patient";
 import { formatDollarAmount } from "model/src/utils";
-
 import { useGetPatientFinanceProviders } from "../../../../services/patient";
 import { Pill } from "../../../core/pill";
-import type { TableGridColumn, TableGridItem } from "../../../core/table-grid";
+import type { TableGridColumn } from "../../../core/table-grid";
 import { TableGrid } from "../../../core/table-grid";
 
-type FinanceProviderTableItem = ReplaceWithName<
-  PatientFinanceProvider,
-  "amount" | "status" | "patientId",
-  {
-    amount: { compareKey: number; label: string };
-    status: { compareKey: string; label: React.ReactNode };
-  }
->;
 export interface FinanceTabProps {
   patient: Patient;
 }
@@ -26,21 +16,7 @@ export const FinanceTab: React.FunctionComponent<FinanceTabProps> = ({
 
   const providers = query.data;
 
-  const items: TableGridItem<FinanceProviderTableItem>[] = providers.map(
-    (provider) => ({
-      ...provider,
-      status: {
-        compareKey: provider.status,
-        label: <StatusPill status={provider.status} />,
-      },
-      amount: {
-        compareKey: provider.amount,
-        label: formatDollarAmount(provider.amount),
-      },
-    }),
-  );
-
-  const columns: TableGridColumn<FinanceProviderTableItem>[] = [
+  const columns: TableGridColumn<'name' | 'status' | 'amount'>[] = [
     {
       id: "name",
       label: "Provider",
@@ -68,17 +44,29 @@ export const FinanceTab: React.FunctionComponent<FinanceTabProps> = ({
     ),
   };
 
-  const onItemClick = (_: TableGridItem<FinanceProviderTableItem>): void => {
+  const onItemClick = (_: PatientFinanceProvider): void => {
     alert("clicked"); //TODO: Make this functional
   };
   return (
     <div>
       <TableGrid
-        columns={columns}
+				columns={columns}
+        data={providers}
         footer={footer}
-        items={items}
         onItemClick={onItemClick}
-      />
+      >
+				{(provider) => ({
+					...provider,
+					status: {
+						compareKey: provider.status,
+						label: <StatusPill status={provider.status} />,
+					},
+					amount: {
+						compareKey: provider.amount,
+						label: formatDollarAmount(provider.amount),
+					},
+				})}
+			</TableGrid>
     </div>
   );
 };
