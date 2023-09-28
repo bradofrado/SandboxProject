@@ -3,6 +3,7 @@ import { patientStatuses, type Patient } from "model/src/patient";
 import { useGetPatientStatus } from "../../../../services/patient";
 import { Label } from "../../../core/label";
 import { StatusTracker } from "../../../feature/status-tracker";
+import { displayDate } from "model/src/utils";
 
 export interface StatusTabProps {
   patient: Patient;
@@ -26,13 +27,14 @@ export const StatusTab: React.FunctionComponent<StatusTabProps> = ({
       <div className="flex gap-4">
         <ul>
           {status.appointments.map((appointment, i) => {
-            const day = dayjs(appointment.date);
+            //const day = dayjs(appointment.date);
             return (
               <li key={i}>
                 <div className="flex gap-2 rounded-lg py-1 px-2">
-                  <Label label={day.format("ddd, MMM DD")} sameLine>
+                  {/* <Label label={day.format("ddd, MMM DD")} sameLine>
                     {day.format("hh:mm a")}
-                  </Label>
+                  </Label> */}
+									<span className="font-medium">{displayDate(appointment.date)}</span>
                   <div>{appointment.note}</div>
                 </div>
               </li>

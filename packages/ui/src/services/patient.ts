@@ -153,8 +153,24 @@ const patientStatuses: PatientStatus[] = [
     patientId: "0",
     appointments: [
       {
-        date: new Date(2023, 1, 10),
+        date: new Date(2023, 7, 27),
         note: "Maria has finished her inital file setup @ Joel",
+      },
+			{
+        date: new Date(2023, 8, 3),
+        note: "Maria's status has moved to 'Treatment'- Maria was notified",
+      },
+			{
+        date: new Date(2023, 8, 3),
+        note: "Maria was seen by Dr. Templeton for an initial consultation and massage",
+      },
+			{
+        date: new Date(2023, 8, 15),
+        note: "Maria missed her appointment @Todd @Luke",
+      },
+			{
+        date: new Date(2023, 8, 23),
+        note: "Maria was seen for a chiropractic appointment",
       },
     ],
     status: "Treatment",
