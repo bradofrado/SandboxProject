@@ -13,11 +13,12 @@ export interface TableGridColumn<S> {
   id: S;
   label: string;
 }
+export type TableGridFooter<S extends string | number | symbol> = Record<S, React.ReactNode>
 export interface TableGridProps<T, S extends keyof T> {
   data: T[];
 	columns: TableGridColumn<S>[];
   itemsPerPage?: number;
-  footer?: Record<S, React.ReactNode>;
+  footer?: TableGridFooter<S> | ((data: T[]) => TableGridFooter<S>);
   onItemClick?: (item: T) => void;
   className?: string;
 	search?: boolean;
@@ -28,7 +29,7 @@ export const TableGrid = <T, S extends keyof T>({
   columns,
   onItemClick,
   itemsPerPage,
-  footer,
+  footer: footerFunc,
   className,
 	children,
 }: TableGridProps<T, S>): JSX.Element => {
@@ -107,6 +108,7 @@ export const TableGrid = <T, S extends keyof T>({
   };
 
   const sorted = paginateItems(sortItems());
+	const footer = typeof footerFunc === 'function' ? footerFunc(data) : footerFunc;
   return (
     <div className={`${className} flex flex-col gap-2`}>
       <div className="relative overflow-x-auto">

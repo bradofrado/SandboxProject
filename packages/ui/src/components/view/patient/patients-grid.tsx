@@ -6,6 +6,7 @@ import {
   groupTogether,
   isDateInBetween,
 } from "model/src/utils";
+import type {RecordType} from 'model/src/core/utils';
 import { DatePicker } from "../../core/date-picker";
 import { Dropdown } from "../../core/dropdown";
 import { Pill } from "../../core/pill";
@@ -57,16 +58,7 @@ export interface PatientsGridProps {
   onPatientClick: (id: string) => void;
 }
  
-// type PatientGridItem = {
-//   id: string;
-//   lastName: string;
-//   firstName: string;
-//   lawFirm: string;
-//   primaryContact: string;
-//   lastUpdateDate: { compareKey: string | number; label: React.ReactNode };
-//   outstandingBalance: { compareKey: string | number; label: React.ReactNode };
-// };
-type PatientType = { [P in keyof Patient]: Patient[P] };
+type PatientType = RecordType<Patient>
 export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
   patients,
   children,
@@ -349,90 +341,3 @@ const DateToDatePicker: React.FunctionComponent<DateToDatePickerProps> = ({
     </span>
   );
 };
-
-// interface PatientGridFilterButtonProps {
-//   filter: PatientGridFilter;
-//   lawFirms: string[];
-//   onChange: (filter: PatientGridFilter) => void;
-// }
-// const PatientGridFilterButton: React.FunctionComponent<
-//   PatientGridFilterButtonProps
-// > = ({ lawFirms, filter, onChange }) => {
-//   const items: FilterItem<PatientGridFilter>[] = [
-//     {
-//       id: "dateOfLost",
-//       label: "Date of Loss",
-//       value: filter.dateOfLost,
-//       defaultValue: { start: null, end: null },
-//     },
-//     {
-//       id: "lastUpdate",
-//       label: "Last Update",
-//       value: filter.lastUpdate,
-//       defaultValue: { start: null, end: null },
-//     },
-//     {
-//       id: "attorney",
-//       label: "By Attorney",
-//       value: filter.attorney,
-//       defaultValue: -1,
-//     },
-//   ];
-
-//   const onFilterChange = (newItems: FilterItem<PatientGridFilter>[]): void => {
-//     const newFilter = newItems.reduce<PatientGridFilter>(
-//       (prev, curr) => ({ ...prev, [curr.id]: curr.value }),
-//       { dateOfLost: undefined, lastUpdate: undefined, attorney: undefined },
-//     );
-//     onChange(newFilter);
-//   };
-
-//   return (
-//     <FilterButton items={items} onChange={onFilterChange}>
-//       {(item, changeItem) => {
-//         switch (item.id) {
-//           case "dateOfLost": {
-//             const value = item.value;
-//             return (
-//               <DateToDatePicker
-//                 end={value?.end ?? null}
-//                 onChange={(_value) => {
-//                   changeItem(_value);
-//                 }}
-//                 start={value?.start ?? null}
-//               />
-//             );
-//           }
-//           case "lastUpdate": {
-//             const value = item.value;
-//             return (
-//               <DateToDatePicker
-//                 end={value?.end ?? null}
-//                 onChange={(_value) => {
-//                   changeItem(_value);
-//                 }}
-//                 start={value?.start ?? null}
-//               />
-//             );
-//           }
-//           case "attorney": {
-//             const value = item.value;
-//             return (
-//               <Dropdown
-//                 initialValue={value}
-//                 items={lawFirms.map((firm, i) => ({ name: firm, id: i }))}
-//                 onChange={(newItem) => {
-//                   changeItem(newItem.id);
-//                 }}
-//               >
-//                 Select
-//               </Dropdown>
-//             );
-//           }
-//         }
-//       }}
-//     </FilterButton>
-//   );
-// };
-
-

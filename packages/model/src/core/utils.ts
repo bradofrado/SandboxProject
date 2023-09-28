@@ -10,3 +10,5 @@ export type Replace<T, K extends keyof T, Q> = ReplaceWithName<
   K,
   Record<K, Q>
 >;
+
+export type RecordType<T> = { [P in keyof T]: T[P] };
