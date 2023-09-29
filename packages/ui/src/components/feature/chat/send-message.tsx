@@ -20,7 +20,7 @@ export const SendMessage: React.FunctionComponent<SendMessageProps> = ({ user })
       <label hidden htmlFor="messageInput">
         Enter Message
       </label>
-      <div className="flex-1 dark:bg-[#323437] border-2 border-[#00000029] rounded-xl dark:text-white">
+      <div className="flex-1 dark:bg-[#323437] border-2 border-[#00000029] rounded-xl dark:text-white focus-within:ring-primary focus-within:ring-2 transition-[box-shadow]">
         <div className="py-2 px-4">
           <input
             className="bg-transparent outline-none text-sm w-full "
@@ -28,7 +28,8 @@ export const SendMessage: React.FunctionComponent<SendMessageProps> = ({ user })
               setMessage(e.target.value);
             }}
             placeholder="Type your message"
-            value={message}
+            tabIndex={0}
+						value={message}
           />
         </div>
       </div>

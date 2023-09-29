@@ -37,7 +37,7 @@ export const MessageProvider: React.FunctionComponent<MessageProviderProps> = ({
   );
 };
 
-export const useMessages = () => {
+export const useMessages = (): MessageContextType => {
   return useContext(MessageContext);
 };
 
@@ -53,7 +53,7 @@ const messages: Message[] = [
   {
     id: "1",
     userId: "1",
-    name: "John",
+    name: "Jeremy Richards",
     text: "Saw that. I will reach out to Maria.",
     avatar: "/jeremy.jpeg",
 		date: calculateDateDifference(2 * day + 7 * hour - 33 * minute)
@@ -69,7 +69,7 @@ const messages: Message[] = [
 	{
     id: "3",
     userId: "1",
-    name: "John",
+    name: "Jeremy Richards",
     text: "Awesome! Let me know if there is anything else we can do to help!",
     avatar: "/jeremy.jpeg",
 		date: calculateDateDifference(day + 3 * hour)
