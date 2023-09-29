@@ -4,6 +4,10 @@ export const displayDate = (date: Date) => {
   return dayjs(date).format("MM/DD/YY");
 };
 
+export const displayTime = (date: Date): string => {
+	return dayjs(date).format("h:mm A");
+}
+
 export const formatDollarAmount = (amount: number): string => {
   const digits = Math.floor(amount).toString().split("").reverse();
   let str = "";
@@ -20,15 +24,21 @@ export const formatDollarAmount = (amount: number): string => {
     .slice(1)}`;
 };
 
+export const second = 1000;
+export const minute = 60000;
+export const hour = 3600000;
+export const day = 86400000;
+export const week = 604800000;
+export const calculateDateDifference = (milisecondsSinceToday: number): Date => {
+	const today = new Date();
+	today.setTime(today.getTime() - milisecondsSinceToday);
+
+	return today;
+}
+
 export const displayElapsedTime = (time: Date): string => {
   const currTime = new Date();
   const elapsedTime = currTime.getTime() - time.getTime();
-
-  const second = 1000;
-  const minute = 60000;
-  const hour = 3600000;
-  const day = 86400000;
-  const week = 604800000;
 
   if (elapsedTime < minute) {
     return `${round(elapsedTime / second)}s ago`;
@@ -48,6 +58,19 @@ export const displayElapsedTime = (time: Date): string => {
 
   return displayDate(time);
 };
+
+export const displayRelativeDate = (date: Date): string => {
+	const elapsedTime = new Date().getTime() - date.getTime();
+	if (elapsedTime < day) {
+		return 'Today';
+	}
+
+	if (elapsedTime < day * 2) {
+		return 'Yesterday';
+	}
+
+	return displayDate(date);
+}
 
 export const round = (value: number, digits = 0): number => {
   const places = Math.pow(10, digits);

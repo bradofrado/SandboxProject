@@ -4,4 +4,11 @@ export interface Message {
   avatar: string;
   name: string;
   text: string;
+	date: Date;
+}
+
+export interface Chat {
+	id: string;
+	name: string;
+	messages: Message[]
 }

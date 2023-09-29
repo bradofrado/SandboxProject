@@ -13,10 +13,7 @@ export const Layout: React.FunctionComponent<React.PropsWithChildren> = ({
   children,
 }) => {
   return (
-    <>
-      <Navbar />
-      <SideNav className="top-20">{children}</SideNav>
-    </>
+    <SideNav className="top-20">{children}</SideNav>
   );
 };
 
@@ -52,7 +49,7 @@ const SideNav: React.FunctionComponent<SideNavProps> = ({
     },
   ];
   return (
-    <SideNavComponent className={className} items={items} path={router.asPath}>
+    <SideNavComponent className={className} items={items} path={router.asPath} title="Nexa">
       {children}
     </SideNavComponent>
   );
