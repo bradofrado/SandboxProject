@@ -4,4 +4,5 @@ export interface Message {
   avatar: string;
   name: string;
   text: string;
+	date: Date;
 }

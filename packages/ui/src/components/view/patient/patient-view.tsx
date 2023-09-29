@@ -11,6 +11,7 @@ import { TabControl, type TabItem } from "../../core/tab";
 import { DocumentsTab } from "./tabs/documents-tab";
 import { FinanceTab } from "./tabs/finance-tab";
 import { StatusTab } from "./tabs/status-tab";
+import { ChatBox } from "../../feature/chat/chat-box";
 
 export interface PatientViewProps {
   patient: Patient;
@@ -18,7 +19,21 @@ export interface PatientViewProps {
 export const PatientView: React.FunctionComponent<PatientViewProps> = ({
   patient,
 }) => {
-  const tabItems: TabItem[] = [
+  return (
+		<div className="flex">
+			<div className="border-x w-[550px] overflow-auto">
+				<PatientInfo patient={patient}/>
+			</div>
+			<div className="flex-1 flex flex-col px-2">
+				<Header level={2}>Threads</Header>
+				<ChatBox className="h-[80vh]" user={{id: '0', name: patient.primaryContact, image: '/braydon.jpeg'}}/>
+			</div>
+		</div>
+	)
+};
+
+const PatientInfo: React.FunctionComponent<{patient: Patient}> = ({patient}) => {
+	const tabItems: TabItem[] = [
     {
       id: 0,
       label: "Status",
@@ -38,19 +53,19 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
 
   return (
     <div className="flex flex-col gap-8 flex-wrap">
-      <div className="flex gap-4">
+      <div className="flex gap-4 px-2 pt-2">
         <PatientBio patient={patient} />
       </div>
       <TabControl items={tabItems} />
     </div>
   );
-};
+}
 
 const PatientBio: React.FunctionComponent<{ patient: Patient }> = ({
   patient,
 }) => {
   return (
-    <Card>
+    // <Card>
       <div className="flex flex-col gap-4">
         <div className="flex gap-16 items-center">
           <Header>
@@ -92,7 +107,7 @@ const PatientBio: React.FunctionComponent<{ patient: Patient }> = ({
           </div>
         </div>
       </div>
-    </Card>
+    // </Card>
   );
 };
 

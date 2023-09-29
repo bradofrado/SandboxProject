@@ -3,9 +3,9 @@
 /* eslint-disable jsx-a11y/role-supports-aria-props -- we need aria-selected*/
 import { type ParsedUrlQueryInput } from "node:querystring";
 import React from "react";
-
 import type { IconComponent } from "./icons";
 import { NotifyLabel, type NotifyLabelProps } from "./notify-label";
+import { Header } from "./header";
 
 export interface SidePanelItems {
   label: string;
@@ -20,6 +20,7 @@ export type SidePanelProps = {
   items: SidePanelItems[];
   onBodyClick?: () => void;
   path: string;
+	title?: string;
 } & React.PropsWithChildren;
 export const SidePanel: React.FunctionComponent<SidePanelProps> = ({
   className,
@@ -27,6 +28,7 @@ export const SidePanel: React.FunctionComponent<SidePanelProps> = ({
   children,
   onBodyClick,
   path,
+	title
 }) => {
   const queryToString = (query: ParsedUrlQueryInput): string => {
     return Object.entries(query)
@@ -38,10 +40,13 @@ export const SidePanel: React.FunctionComponent<SidePanelProps> = ({
       <div
         className={`${
           className || ""
-        } z-40 w-48 transition-transform sm:translate-x-0`}
+        } z-40 transition-transform sm:translate-x-0`}
       >
         <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-700 border-r border-gray-200 dark:border-gray-600">
-          <ul className="space-y-2 font-medium">
+					{title ? <a href="/">
+						<Header className="mb-6 text-center" level={2}>{title}</Header>
+					</a> : null}
+					<ul className="space-y-2 font-medium">
             {items.map((item, i) => {
               const Icon = item.icon;
               const includesLink =
@@ -54,7 +59,7 @@ export const SidePanel: React.FunctionComponent<SidePanelProps> = ({
                 <li key={i}>
                   <a
                     aria-selected={selected}
-                    className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-primary-light dark:hover:bg-primary-light group aria-selected:bg-primary-light dark:aria-selected:bg-primary-light"
+                    className="flex items-center px-4 py-2 text-gray-900 rounded-lg dark:text-white hover:bg-primary-light dark:hover:bg-primary-light group aria-selected:bg-primary-light dark:aria-selected:bg-primary-light"
                     href={link}
                   >
                     {Icon ? (

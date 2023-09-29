@@ -1,5 +1,3 @@
-import React from "react";
-
 import { useExpand } from "../../../hooks/expand";
 import { HamburgerIcon } from "../../core/icons";
 import { SidePanel, type SidePanelItems } from "../../core/side-panel";
@@ -8,10 +6,11 @@ export type SideNavComponentProps = {
   items: SidePanelItems[];
   className?: string;
   path: string;
+	title?: string;
 } & React.PropsWithChildren;
 export const SideNavComponent: React.FunctionComponent<
   SideNavComponentProps
-> = ({ children, items, className, path }) => {
+> = ({ children, items, className, path, title }) => {
   const { onExpand, expandClass } = useExpand(
     "translate-x-0",
     "-translate-x-full",
@@ -38,6 +37,7 @@ export const SideNavComponent: React.FunctionComponent<
           onExpand(false);
         }}
         path={path}
+				title={title}
       >
         {children}
       </SidePanel>

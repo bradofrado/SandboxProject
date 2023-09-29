@@ -52,7 +52,7 @@ export const TabControl: React.FunctionComponent<TabControlProps> = ({
           ))}
         </ul>
       </div>
-      <div className="mt-2">{selectedComponent}</div>
+      <div className="mt-2 mx-2">{selectedComponent}</div>
     </div>
   );
 };
