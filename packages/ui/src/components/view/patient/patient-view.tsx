@@ -26,7 +26,7 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
 			</div>
 			<div className="flex-1 flex flex-col px-2">
 				<Header level={2}>Threads</Header>
-				<ChatBox chatId={patient.id} className="h-[80vh]" user={{id: '0', name: patient.primaryContact, image: '/braydon.jpeg'}}/>
+				<ChatBox chatId={patient.id} className="h-[80vh]" user={{id: '0', patientId: patient.id, name: patient.primaryContact, image: '/braydon.jpeg'}}/>
 			</div>
 		</div>
 	)

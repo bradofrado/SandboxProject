@@ -21,7 +21,7 @@ export const MessageProvider: React.FunctionComponent<MessageProviderProps> = ({
   const sendMessage = (_chatId: string, message: string, user: User): void => {
 		const copyChats = [...chats];
     const currIndex = copyChats.findIndex(chat => chat.id === _chatId);
-		if (currIndex < 0) throw new Error('Cannot send message to chat');
+		if (currIndex < 0) throw new Error('Cannot send message to chat ' + _chatId);
 		const copy = [...copyChats[currIndex].messages];
     copy.push({
       id: "3",

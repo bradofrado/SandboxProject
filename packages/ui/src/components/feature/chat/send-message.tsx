@@ -12,7 +12,7 @@ export const SendMessage: React.FunctionComponent<SendMessageProps> = ({ user })
 
   const sendMessage: React.FormEventHandler = (e): void => {
 		e.preventDefault();
-    message && send(message, user);
+    message && send(user.patientId, message, user);
     setMessage("");
   };
   return (
