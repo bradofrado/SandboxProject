@@ -16,8 +16,8 @@ export const ChatBox: React.FunctionComponent<ChatBoxProps> = ({ user, className
       {(messages) => {
 				const groupedByTime = groupBy(messages.map(message => ({...message, day: displayDate(message.date)})), 'day');
 				return (
-					<div className={`${className} flex flex-col max-h-screen dark:bg-[#282a2d] overflow-auto`}>
-						<div className="p-8 mb-15 flex flex-col gap-2 flex-1 justify-end">
+					<div className={`${className} flex flex-col max-h-screen dark:bg-[#282a2d]`}>
+						<div className="p-8 mb-15 flex-col gap-2 flex-1 justify-end overflow-auto">
 							{Object.entries(groupedByTime).map(([date, messages]) => (
 								<MessageDateSegment date={date} key={date} messages={messages} user={user}/>
 							))}

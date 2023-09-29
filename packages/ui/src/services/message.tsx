@@ -47,7 +47,7 @@ const messages: Message[] = [
     userId: "0",
     name: "Bob",
     text: "Not sure if you saw the notification under status but Maria missed her appointment yesterday at Spinal Rehab",
-    avatar: "/braydon.jpeg",
+    avatar: "/jeremy.jpeg",
 		date: calculateDateDifference(2 * day + 7 * hour)
   },
   {
@@ -55,7 +55,7 @@ const messages: Message[] = [
     userId: "1",
     name: "John",
     text: "Saw that. I will reach out to Maria.",
-    avatar: "/braydon.jpeg",
+    avatar: "/jeremy.jpeg",
 		date: calculateDateDifference(2 * day + 7 * hour - 33 * minute)
   },
 	{
@@ -63,7 +63,7 @@ const messages: Message[] = [
     userId: "0",
     name: "Bob",
     text: "Thanks for reaching out to her! She was seen yesterday at spinal rehab.",
-    avatar: "/braydon.jpeg",
+    avatar: "/jeremy.jpeg",
 		date: calculateDateDifference(day + 7 * hour)
   },
 	{
@@ -71,7 +71,7 @@ const messages: Message[] = [
     userId: "1",
     name: "John",
     text: "Awesome! Let me know if there is anything else we can do to help!",
-    avatar: "/braydon.jpeg",
+    avatar: "/jeremy.jpeg",
 		date: calculateDateDifference(day + 3 * hour)
   },
 ];
