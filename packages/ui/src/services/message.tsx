@@ -1,11 +1,11 @@
 import { createContext, useContext, useState } from "react";
-import { type Message } from "model/src/message";
+import { Chat, type Message } from "model/src/message";
 import { type User } from "model/src/user";
 import { calculateDateDifference, day, hour, minute } from "model/src/utils";
 
 export type MessageContextType = [
   Message[],
-  (message: string, user: User) => void,
+  (chatId: string, message: string, user: User) => void,
 ];
 export const MessageContext = createContext<MessageContextType>([
   [],
@@ -14,11 +14,15 @@ export const MessageContext = createContext<MessageContextType>([
 
 export interface MessageProviderProps {
   children: (messages: Message[]) => React.ReactNode;
+	chatId: string
 }
-export const MessageProvider: React.FunctionComponent<MessageProviderProps> = ({ children }) => {
-  const [_messages, setMessages] = useState<Message[]>(messages);
-  const sendMessage = (message: string, user: User): void => {
-    const copy = [..._messages];
+export const MessageProvider: React.FunctionComponent<MessageProviderProps> = ({ children, chatId }) => {
+  const [chats, setChats] = useState<Chat[]>(_chats);
+  const sendMessage = (_chatId: string, message: string, user: User): void => {
+		const copyChats = [...chats];
+    const currIndex = copyChats.findIndex(chat => chat.id === _chatId);
+		if (currIndex < 0) throw new Error('Cannot send message to chat');
+		const copy = [...copyChats[currIndex].messages];
     copy.push({
       id: "3",
       userId: user.id,
@@ -27,9 +31,13 @@ export const MessageProvider: React.FunctionComponent<MessageProviderProps> = ({
       avatar: user.image,
 			date: new Date()
     });
-    setMessages(copy);
+		copyChats[currIndex].messages = copy;
+    setChats(copyChats);
   };
-	const sorted = _messages.slice().sort((a, b) => a.date.getTime() - b.date.getTime());
+	const chat = chats.find(chat => chat.id === chatId);
+	if (!chat) throw new Error('Invalid chat id');
+
+	const sorted = chat.messages.slice().sort((a, b) => a.date.getTime() - b.date.getTime());
   return (
     <MessageContext.Provider value={[sorted, sendMessage]}>
       {children(sorted)}
@@ -41,37 +49,187 @@ export const useMessages = (): MessageContextType => {
   return useContext(MessageContext);
 };
 
-const messages: Message[] = [
+const _chats: Chat[] = [
   {
     id: "0",
-    userId: "0",
-    name: "Bob",
-    text: "Not sure if you saw the notification under status but Maria missed her appointment yesterday at Spinal Rehab",
-    avatar: "/jeremy.jpeg",
-		date: calculateDateDifference(2 * day + 7 * hour)
+    name: 'Threads',
+		messages: [
+			{
+				id: "0",
+				userId: "0",
+				name: "Bob",
+				text: "Not sure if you saw the notification under status but Maria missed her appointment yesterday at Spinal Rehab",
+				avatar: "/jeremy.jpeg",
+				date: calculateDateDifference(2 * day + 7 * hour)
+			},
+			{
+				id: "1",
+				userId: "1",
+				name: "Jeremy Richards",
+				text: "Saw that. I will reach out to Maria.",
+				avatar: "/jeremy.jpeg",
+				date: calculateDateDifference(2 * day + 7 * hour - 33 * minute)
+			},
+			{
+				id: "2",
+				userId: "0",
+				name: "Bob",
+				text: "Thanks for reaching out to her! She was seen yesterday at spinal rehab.",
+				avatar: "/jeremy.jpeg",
+				date: calculateDateDifference(day + 7 * hour)
+			},
+			{
+				id: "3",
+				userId: "1",
+				name: "Jeremy Richards",
+				text: "Awesome! Let me know if there is anything else we can do to help!",
+				avatar: "/jeremy.jpeg",
+				date: calculateDateDifference(day + 3 * hour)
+			},
+		]
   },
   {
     id: "1",
-    userId: "1",
-    name: "Jeremy Richards",
-    text: "Saw that. I will reach out to Maria.",
-    avatar: "/jeremy.jpeg",
-		date: calculateDateDifference(2 * day + 7 * hour - 33 * minute)
+    name: 'Threads',
+		messages: [
+			{
+				id: "0",
+				userId: "0",
+				name: "Bob",
+				text: "Layne is all finished with treatment, could you update the demands?",
+				avatar: "/jeremy.jpeg",
+				date: calculateDateDifference(1 * day + 7 * hour)
+			},
+			{
+				id: "1",
+				userId: "1",
+				name: "Clint Peterson",
+				text: "Yes, I have already begun that process and I'll let you know when I'm done.",
+				avatar: "/jeremy.jpeg",
+				date: calculateDateDifference(day + 7 * hour - 33 * minute)
+			},
+			{
+				id: "2",
+				userId: "0",
+				name: "Bob",
+				text: "Ok awesome, thanks so much!",
+				avatar: "/jeremy.jpeg",
+				date: calculateDateDifference(15 * hour)
+			},
+		]
   },
-	{
+  {
     id: "2",
-    userId: "0",
-    name: "Bob",
-    text: "Thanks for reaching out to her! She was seen yesterday at spinal rehab.",
-    avatar: "/jeremy.jpeg",
-		date: calculateDateDifference(day + 7 * hour)
+    name: 'Threads',
+		messages: [
+			{
+				id: "0",
+				userId: "0",
+				name: "Bob",
+				text: "Not sure if you saw the notification under status but Maria missed her appointment yesterday at Spinal Rehab",
+				avatar: "/jeremy.jpeg",
+				date: calculateDateDifference(2 * day + 7 * hour)
+			},
+			{
+				id: "1",
+				userId: "1",
+				name: "Jeremy Richards",
+				text: "Saw that. I will reach out to Maria.",
+				avatar: "/jeremy.jpeg",
+				date: calculateDateDifference(2 * day + 7 * hour - 33 * minute)
+			},
+			{
+				id: "2",
+				userId: "0",
+				name: "Bob",
+				text: "Thanks for reaching out to her! She was seen yesterday at spinal rehab.",
+				avatar: "/jeremy.jpeg",
+				date: calculateDateDifference(day + 7 * hour)
+			},
+			{
+				id: "3",
+				userId: "1",
+				name: "Jeremy Richards",
+				text: "Awesome! Let me know if there is anything else we can do to help!",
+				avatar: "/jeremy.jpeg",
+				date: calculateDateDifference(day + 3 * hour)
+			},
+		]
   },
-	{
+  {
     id: "3",
-    userId: "1",
-    name: "Jeremy Richards",
-    text: "Awesome! Let me know if there is anything else we can do to help!",
-    avatar: "/jeremy.jpeg",
-		date: calculateDateDifference(day + 3 * hour)
+    name: 'Threads',
+		messages: [
+			{
+				id: "0",
+				userId: "0",
+				name: "Bob",
+				text: "Not sure if you saw the notification under status but Maria missed her appointment yesterday at Spinal Rehab",
+				avatar: "/jeremy.jpeg",
+				date: calculateDateDifference(2 * day + 7 * hour)
+			},
+			{
+				id: "1",
+				userId: "1",
+				name: "Jeremy Richards",
+				text: "Saw that. I will reach out to Maria.",
+				avatar: "/jeremy.jpeg",
+				date: calculateDateDifference(2 * day + 7 * hour - 33 * minute)
+			},
+			{
+				id: "2",
+				userId: "0",
+				name: "Bob",
+				text: "Thanks for reaching out to her! She was seen yesterday at spinal rehab.",
+				avatar: "/jeremy.jpeg",
+				date: calculateDateDifference(day + 7 * hour)
+			},
+			{
+				id: "3",
+				userId: "1",
+				name: "Jeremy Richards",
+				text: "Awesome! Let me know if there is anything else we can do to help!",
+				avatar: "/jeremy.jpeg",
+				date: calculateDateDifference(day + 3 * hour)
+			},
+		]
+  },
+  {
+    id: "4",
+    name: 'Threads',
+		messages: [
+			{
+				id: "0",
+				userId: "0",
+				name: "Bob",
+				text: "Not sure if you saw the notification under status but Maria missed her appointment yesterday at Spinal Rehab",
+				avatar: "/jeremy.jpeg",
+				date: calculateDateDifference(2 * day + 7 * hour)
+			},
+			{
+				id: "1",
+				userId: "1",
+				name: "Jeremy Richards",
+				text: "Saw that. I will reach out to Maria.",
+				avatar: "/jeremy.jpeg",
+				date: calculateDateDifference(2 * day + 7 * hour - 33 * minute)
+			},
+			{
+				id: "2",
+				userId: "0",
+				name: "Bob",
+				text: "Thanks for reaching out to her! She was seen yesterday at spinal rehab.",
+				avatar: "/jeremy.jpeg",
+				date: calculateDateDifference(day + 7 * hour)
+			},
+			{
+				id: "3",
+				userId: "1",
+				name: "Jeremy Richards",
+				text: "Awesome! Let me know if there is anything else we can do to help!",
+				avatar: "/jeremy.jpeg",
+				date: calculateDateDifference(day + 3 * hour)
+			},
+		]
   },
 ];

@@ -9,10 +9,11 @@ import { SendMessage } from "./send-message";
 export interface ChatBoxProps {
   user: User;
 	className?: string;
+	chatId: string;
 }
-export const ChatBox: React.FunctionComponent<ChatBoxProps> = ({ user, className }) => {
+export const ChatBox: React.FunctionComponent<ChatBoxProps> = ({ user, className, chatId }) => {
   return (
-    <MessageProvider>
+    <MessageProvider chatId={chatId}>
       {(messages) => {
 				const groupedByTime = groupBy(messages.map(message => ({...message, day: displayDate(message.date)})), 'day');
 				return (

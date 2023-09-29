@@ -6,3 +6,9 @@ export interface Message {
   text: string;
 	date: Date;
 }
+
+export interface Chat {
+	id: string;
+	name: string;
+	messages: Message[]
+}
