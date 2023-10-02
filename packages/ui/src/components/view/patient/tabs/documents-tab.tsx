@@ -12,6 +12,7 @@ import {
   UploadIcon,
 } from "../../../core/icons";
 import { Pill } from "../../../core/pill";
+import { DocumentViewer } from "../../../feature/document-viewer/document-viewer";
 
 export interface DocumentsTabProps {
   patient: Patient;
@@ -20,6 +21,7 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
   patient,
 }) => {
   const query = useGetPatientDocuments(patient.id);
+	const [show, setShow] = useState(false);
   if (query.isLoading || query.isError) return <>Loading</>;
 
   const documents = query.data;
@@ -28,7 +30,9 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
     alert(`Uploaded ${files.length} files!`);
   };
 
-  const onDocumentOpen = (document: PatientDocument) => {};
+  const onDocumentOpen = (document: PatientDocument): void => {
+		setShow(true);
+	};
   return (
     <div className="flex flex-col rounded-3xl shadow-md overflow-hidden">
       {documents.map((document) => (
@@ -51,6 +55,7 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
           Last Synced: 3m ago
         </span>
       </div>
+			<DocumentViewer src="/pdf-file-paged.pdf" type="pdf" show={show} setShow={setShow}/>
     </div>
   );
 };

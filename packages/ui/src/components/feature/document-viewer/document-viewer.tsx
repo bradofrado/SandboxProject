@@ -1,16 +1,22 @@
 import { PDFViewer } from "./viewers/pdf-viewer"
 import {DocumentType, DocumentViewerComponent} from './types';
+import { ModalPortal } from "../../core/modal";
+import { ClosableContent } from "../../core/closable-content";
 
 export interface DocumentViewerProps {
 	src: string,
-	type: DocumentType
+	type: DocumentType,
+	show: boolean,
+	setShow: (show: boolean) => void
 }
-export const DocumentViewer: React.FunctionComponent<DocumentViewerProps> = ({src, type}) => {
+export const DocumentViewer: React.FunctionComponent<DocumentViewerProps> = ({src, type, show, setShow}) => {
 	const Component = documentComponents[type];
 	return (
-		<div className="fixed top-0 left-0 w-full z-50 bg-gray-500/90 min-h-screen">
-			<Component src={src}/>
-		</div>
+		<ModalPortal show={show}>
+			<ClosableContent onClose={() => {setShow(false)}}>
+				<Component src={src}/>
+			</ClosableContent>
+		</ModalPortal>
 	)
 }
 

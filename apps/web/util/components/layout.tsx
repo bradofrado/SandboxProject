@@ -8,12 +8,15 @@ import type { SidePanelItems } from "ui/src/components/core/side-panel";
 import { NavbarComponent } from "ui/src/components/feature/navigation/navbar";
 import type { NavItem } from "ui/src/components/feature/navigation/navbar";
 import { SideNavComponent } from "ui/src/components/feature/navigation/sidenav";
+import {ModalProvider} from 'ui/src/components/core/modal';
 
 export const Layout: React.FunctionComponent<React.PropsWithChildren> = ({
   children,
 }) => {
   return (
-    <SideNav className="top-20">{children}</SideNav>
+		<ModalProvider>
+    	<SideNav className="top-20">{children}</SideNav>
+		</ModalProvider>
   );
 };
 
