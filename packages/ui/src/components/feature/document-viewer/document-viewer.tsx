@@ -8,7 +8,7 @@ export interface DocumentViewerProps {
 export const DocumentViewer: React.FunctionComponent<DocumentViewerProps> = ({src, type}) => {
 	const Component = documentComponents[type];
 	return (
-		<div className="fixed top-0 left-0 w-full z-50 bg-gray-500/90">
+		<div className="fixed top-0 left-0 w-full z-50 bg-gray-500/90 min-h-screen">
 			<Component src={src}/>
 		</div>
 	)

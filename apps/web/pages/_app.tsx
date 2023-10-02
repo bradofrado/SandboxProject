@@ -16,7 +16,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       </Head>
       <main className="flex min-h-screen flex-col">
         <Component {...pageProps} />
-				<DocumentViewer src="/pdf-file.pdf" type='pdf'/>
+				<DocumentViewer src="/pdf-file-paged.pdf" type='pdf'/>
       </main>
     </>
   );
