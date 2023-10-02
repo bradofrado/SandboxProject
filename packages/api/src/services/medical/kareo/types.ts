@@ -17,16 +17,43 @@ const GetAppointmentRequestSchema = KareoRequestSchema.extend({
 	AppointmentId: z.string()
 })
 
+/* There are many more fields that can be added to this response. */
 const GetAppointmentResponseSchema = z.object({
 	PracticeId: z.string(),
 	ServiceLocationId: z.string(),
 	AppointmentStatus: z.string(),
 	StartTime: z.string(),
-	EndTime: z.string()
+	EndTime: z.string(),
+	IsRecurring: z.boolean(),
+	OccurrenceId: z.string()
 })
 export type GetAppointmentRequest = z.infer<typeof GetAppointmentRequestSchema>;
 export type GetAppointmentResponse = z.infer<typeof GetAppointmentResponseSchema>;
 const getAppointmentSchema = createKareoMethodSchema(GetAppointmentRequestSchema, GetAppointmentResponseSchema);
+
+/* GetAppointments */
+/* Additional optional fields exist for this request */
+const GetAppointmentsRequestSchema = KareoRequestSchema.extend({
+	PracticeName: z.string(),
+	Type: z.string(),
+	ConfirmationStatus: z.string(),
+	ServiceLocationName: z.string(),
+	PatientID: z.string(),
+	PatientFulName: z.string(),
+	AppointmentReason: z.string()
+})
+
+/* There are many more fields that can be added to this response. */
+const GetAppointmentsResponseSchema = z.object({
+	Id: z.string(),
+	CreatedDate: z.date(),
+	LastModifiedDate: z.date(),
+	PracticeName: z.string(),
+	Type: z.string(),
+})
+export type GetAppointmentsRequest = z.infer<typeof GetAppointmentsRequestSchema>;
+export type GetAppointmentsResponse = z.infer<typeof GetAppointmentsResponseSchema>;
+const getAppointmentsSchema = createKareoMethodSchema(GetAppointmentsRequestSchema, GetAppointmentsResponseSchema);
 
 /* Get Charges */
 const GetChargesRequestSchema = KareoRequestSchema.extend({
@@ -66,6 +93,7 @@ const getPatientsSchema = createKareoMethodSchema(GetPatientsRequestSchema, GetP
 
 export const KareoClientSchema = z.object({
 	GetAppointment: getAppointmentSchema,
+	GetAppointments: getAppointmentsSchema,
 	GetCharges: getChargesSchema,
 	GetPatient: getPatientSchema,
 	GetPatients: getPatientsSchema
