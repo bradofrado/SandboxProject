@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import type { Patient, PatientDocument } from "model/src/patient";
 import { displayElapsedTime, displayStorageSpace } from "model/src/utils";
-
 import { useGetPatientDocuments } from "../../../../services/patient";
 import type { DropdownItem } from "../../../core/dropdown";
 import { DropdownLineItem, ListBoxPopover } from "../../../core/dropdown";

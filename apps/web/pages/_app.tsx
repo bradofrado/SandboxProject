@@ -1,6 +1,6 @@
 import { type AppType } from "next/app";
 import Head from "next/head";
-
+import {DocumentViewer} from 'ui/src/components/feature/document-viewer/document-viewer';
 import "ui/styles.css";
 
 import React from "react";
@@ -16,6 +16,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       </Head>
       <main className="flex min-h-screen flex-col">
         <Component {...pageProps} />
+				<DocumentViewer src="/pdf-file.pdf" type='pdf'/>
       </main>
     </>
   );

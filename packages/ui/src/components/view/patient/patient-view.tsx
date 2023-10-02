@@ -1,9 +1,7 @@
 import { type Patient } from "model/src/patient";
 import { displayDate } from "model/src/utils";
-
 import { useGetPatient } from "../../../services/patient";
 import { Button } from "../../core/button";
-import { Card } from "../../core/card";
 import { Header } from "../../core/header";
 import { Label } from "../../core/label";
 import { Pill } from "../../core/pill";
@@ -29,6 +27,7 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
 				<ChatBox chatId={patient.id} className="h-[80vh]" user={{id: '0', patientId: patient.id, name: patient.primaryContact, image: '/braydon.jpeg'}}/>
 			</div>
 		</div>
+
 	)
 };
 
