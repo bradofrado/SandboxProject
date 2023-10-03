@@ -5,9 +5,10 @@ import { usePrevious } from "../../hooks/previous";
 interface ModalContextType {
 	addModal: (newModal: React.ReactNode) => void,
 	removeModal: (toRemoveId: number) => void,
-	nextId: number
+	nextId: number,
+	container: HTMLElement
 }
-const ModalContext = createContext<ModalContextType>({addModal: () => undefined, removeModal: () => undefined, nextId: -1});
+const ModalContext = createContext<ModalContextType>({addModal: () => undefined, removeModal: () => undefined, nextId: -1, container: null});
 export const ModalProvider: React.FunctionComponent<{container: HTMLElement} & React.PropsWithChildren> = ({children, container}) => {
 	const [modals, setModals] = useState<React.ReactNode[]>([]);
 
@@ -26,14 +27,14 @@ export const ModalProvider: React.FunctionComponent<{container: HTMLElement} & R
 		copy.splice(index);
 
 		if (copy.length === 0) {
-			container.style.overflow = 'none';
+			container.style.overflow = 'auto';
 		}
 			
 		setModals(copy);
 	}, [modals]);
 
 	return (
-		<ModalContext.Provider value={{addModal, removeModal, nextId: modals.length}}>
+		<ModalContext.Provider value={{addModal, removeModal, nextId: modals.length, container}}>
 			{children}
 			{modals.length > 0 ? <div className="fixed top-0 left-0 w-full z-50 bg-gray-500/90 h-screen overflow-auto">
 				{modals}
@@ -60,11 +61,11 @@ export const ModalPortal: React.FunctionComponent<{children: React.ReactNode, sh
 }
 
 export const useModal = (): ReplaceWithName<ModalContextType, 'nextId' | 'removeModal', {removeModal: () => void}> => {
-	const modal = useContext(ModalContext);
-	const [id] = useState(modal.nextId);
-	const removeModal = (): void => {
-		modal.removeModal(id);
+	const {nextId, removeModal, ...rest} = useContext(ModalContext);
+	const [id] = useState(nextId);
+	const remove = (): void => {
+		removeModal(id);
 	}
 
-	return {addModal: modal.addModal, removeModal};
+	return {...rest, removeModal: remove};
 }
