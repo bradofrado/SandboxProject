@@ -19,10 +19,10 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
 }) => {
   return (
 		<div className="flex">
-			<div className="border-x w-[550px] overflow-auto">
+			<div className="border-x min-w-[550px] overflow-auto flex-1">
 				<PatientInfo patient={patient}/>
 			</div>
-			<div className="flex-1 flex flex-col px-2">
+			<div className="flex max-w-[600px] flex-col px-2">
 				<Header level={2}>Threads</Header>
 				<ChatBox chatId={patient.id} className="h-[80vh]" user={{id: '0', patientId: patient.id, name: patient.primaryContact, image: '/braydon.jpeg'}}/>
 			</div>

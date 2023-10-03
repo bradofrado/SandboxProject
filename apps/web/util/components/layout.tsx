@@ -9,12 +9,13 @@ import { NavbarComponent } from "ui/src/components/feature/navigation/navbar";
 import type { NavItem } from "ui/src/components/feature/navigation/navbar";
 import { SideNavComponent } from "ui/src/components/feature/navigation/sidenav";
 import {ModalProvider} from 'ui/src/components/core/modal';
+import { useEffect, useRef, useState } from "react";
 
 export const Layout: React.FunctionComponent<React.PropsWithChildren> = ({
   children,
 }) => {
   return (
-		<ModalProvider container={document.body}>
+		<ModalProvider>
     	<SideNav className="top-20">{children}</SideNav>
 		</ModalProvider>
   );

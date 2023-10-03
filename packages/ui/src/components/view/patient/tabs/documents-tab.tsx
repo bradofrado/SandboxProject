@@ -15,6 +15,8 @@ import { Pill } from "../../../core/pill";
 import { DocumentViewer } from "../../../feature/document-viewer/document-viewer";
 import { Button } from "../../../core/button";
 import { useClickOutside } from "../../../../hooks/click-outside";
+import type { UniqueIdentifier } from "../../../core/draggable";
+import { Draggable, DraggableContext, Droppable } from "../../../core/draggable";
 
 interface FileButton {
 	label: string,
@@ -41,16 +43,16 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
 
   const documents = query.data;
 
-  const onUpload = (files: FileList): void => {
-    //TODO: Implement this behavior
-		alert(`Uploading ${files.length} files`)
-  };
-
   const openDocument = (document: PatientDocument): void => {
 		if (document.type !== 'folder') {
 			setOpenedFile(document);
 		}
 	};
+
+	const uploadFiles = (files: FileList): void => {
+    //TODO: Implement this behavior
+		alert(`Uploading ${files.length} files`)
+  };
 
 	const deleteDocuments = (documents: PatientDocument[]): void => {
 		//TODO: Implement delete documents
@@ -108,30 +110,47 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
 		}
 		setSelectedFiles(copy);
 	}
+
+	const moveToFolder = (toMove: PatientDocument, folder: PatientDocument): void => {
+		alert(`Moving ${toMove.name} into folder ${folder.name}`);
+	}
+
+	const onDragEnd = (activeId: UniqueIdentifier, overId: UniqueIdentifier | undefined): void => {
+		if (overId && activeId !== overId) {
+			const toMove: PatientDocument | undefined = documents.find(document => document.name === activeId);
+			const folder: PatientDocument | undefined = documents.find(document => document.name === overId && document.type === 'folder');
+
+			if (toMove && folder) {
+				moveToFolder(toMove, folder);
+			}
+		}
+	}
   return (
 		<div ref={ref}>
 			<div className="flex mb-2 gap-2">
-				{fileButtons.map(button => button.shouldShow(selectedFiles) ? <Button key={button.label} mode="secondary" onClick={() => {button.action(selectedFiles)}}>{button.label}</Button> : null)}
+				{fileButtons.map(button => <Button className={`${button.shouldShow(selectedFiles) ? 'visible' : 'invisible'}`} key={button.label} mode="secondary" onClick={() => {button.action(selectedFiles)}}>{button.label}</Button>)}
 			</div>
 			<div className="flex flex-col rounded-3xl shadow-md overflow-hidden">
-				{documents.map((document) => (
-					<DocumentLine
-						document={document}
-						key={document.name}
-						onDelete={() => {deleteDocuments([document])}}
-						onExport={() => {exportDocuments([document])}}
-						onOpen={() => {
-							openDocument(document);
-						}}
-						onSelect={(ctlKey) => {
-							selectFile(document, ctlKey);
-						}}
-						onSendTo={() => {sendToDocument([document])}}
-						selected={selectedFiles.includes(document)}
-					/>
-				))}
+				<DraggableContext onDragEnd={onDragEnd}>
+					{documents.map((document) => (
+						<DocumentLine
+							document={document}
+							key={document.name}
+							onDelete={() => {deleteDocuments([document])}}
+							onExport={() => {exportDocuments([document])}}
+							onOpen={() => {
+								openDocument(document);
+							}}
+							onSelect={(ctlKey) => {
+								selectFile(document, ctlKey);
+							}}
+							onSendTo={() => {sendToDocument([document])}}
+							selected={selectedFiles.includes(document)}
+						/>
+					))}
+				</DraggableContext>
 				<div className="px-5 py-10">
-					<FileUploadArea onUpload={onUpload} />
+					<FileUploadArea onUpload={uploadFiles} />
 				</div>
 				<div className="bg-primary py-3 px-4 flex items-center gap-2">
 					<div className="rounded-full border border-gray-900 p-[.125rem]">
@@ -165,30 +184,40 @@ const DocumentLine: React.FunctionComponent<DocumentLineProps> = ({
 	onSelect,
 	selected,
 }) => {
-  const Icon = document.type !== "folder" ? DocumentTextIcon : FolderIcon;
+  const Icon = document.type !== "folder" ? DocumentTextIcon : FolderIcon; 
 
-  return (
-    <button
-      className={`flex justify-between items-center border-b p-4 cursor-pointer outline-none ${selected ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
-      onClick={(e) => {onSelect(e.ctrlKey)}}
-			onDoubleClick={onOpen}
-      type="button"
-    >
-      <div className="flex gap-2">
-        <Icon className="w-6 h-6" />
-        <div className="text-left">
-          <div className="font-medium text-sm">{document.name}</div>
-          <div className="text-sm">
-            {displayElapsedTime(document.lastUpdate)}
-          </div>
-        </div>
-      </div>
-      <div className="flex gap-2">
-        <Pill mode="secondary">{displayStorageSpace(document.size)}</Pill>
-        <TridotButtonOptions onDelete={onDelete} onExport={onExport} onSendTo={onSendTo}/>
-      </div>
-    </button>
-  );
+	const getChildren = (isDropping: boolean): JSX.Element => (
+		<Draggable id={`${document.name}`}>
+			<button
+				className={`flex justify-between items-center border-b p-4 cursor-pointer outline-none w-full ${isDropping ? 'bg-gray-100' : ''} ${selected ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+				onClick={(e) => {onSelect(e.ctrlKey)}}
+				onDoubleClick={onOpen}
+				type="button"
+			>
+				<div className="flex gap-2">
+					<Icon className="w-6 h-6" />
+					<div className="text-left">
+						<div className="font-medium text-sm">{document.name}</div>
+						<div className="text-sm">
+							{displayElapsedTime(document.lastUpdate)}
+						</div>
+					</div>
+				</div>
+				<div className="flex gap-2">
+					<Pill mode="secondary">{displayStorageSpace(document.size)}</Pill>
+					<TridotButtonOptions onDelete={onDelete} onExport={onExport} onSendTo={onSendTo}/>
+				</div>
+			</button>
+		</Draggable>
+	)
+
+	if (document.type === 'folder') {
+		return <Droppable id={`${document.name}`}>
+			{getChildren}
+		</Droppable>
+	}
+
+	return getChildren(false);
 };
 
 interface TridotButtonOptionsProps {

@@ -6,17 +6,23 @@ interface ModalContextType {
 	addModal: (newModal: React.ReactNode) => void,
 	removeModal: (toRemoveId: number) => void,
 	nextId: number,
-	container: HTMLElement
+	container: HTMLElement | undefined
 }
-const ModalContext = createContext<ModalContextType>({addModal: () => undefined, removeModal: () => undefined, nextId: -1, container: null});
-export const ModalProvider: React.FunctionComponent<{container: HTMLElement} & React.PropsWithChildren> = ({children, container}) => {
+const ModalContext = createContext<ModalContextType>({addModal: () => undefined, removeModal: () => undefined, nextId: -1, container: undefined});
+export const ModalProvider: React.FunctionComponent<React.PropsWithChildren> = ({children}) => {
 	const [modals, setModals] = useState<React.ReactNode[]>([]);
+	const [container, setContainer] = useState<HTMLElement>();
+
+	useEffect(() => {
+		setContainer(document.body);
+	}, [])
 
 	const addModal = useCallback((newModal: React.ReactNode): void => {
 		const copy = modals.slice();
 		copy.push(newModal);
 		setModals(copy);
-		container.style.overflow = 'hidden';
+		if (container)
+			container.style.overflow = 'hidden';
 	}, [modals]);
 
 	const removeModal = useCallback((toRemove: number): void => {
@@ -26,7 +32,7 @@ export const ModalProvider: React.FunctionComponent<{container: HTMLElement} & R
 
 		copy.splice(index);
 
-		if (copy.length === 0) {
+		if (copy.length === 0 && container) {
 			container.style.overflow = 'auto';
 		}
 			
