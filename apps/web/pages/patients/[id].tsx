@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useGetPatients } from "ui/src/services/patient";
+import { useGetPatients } from "../../util/services/patient";
 import { Layout } from "../../util/components/layout";
 import { PatientView } from "../../util/components/patient-view";
 

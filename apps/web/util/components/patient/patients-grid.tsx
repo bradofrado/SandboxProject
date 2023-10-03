@@ -7,11 +7,11 @@ import {
   isDateInBetween,
 } from "model/src/utils";
 import type {RecordType} from 'model/src/core/utils';
-import { DatePicker } from "../../core/date-picker";
-import { Dropdown } from "../../core/dropdown";
-import { Pill } from "../../core/pill";
-import { FilterTableGrid, type TableGridColumn } from "../../core/table-grid";
-import type { FilterChildren, FilterItem} from "../../core/filter-button";
+import { DatePicker } from "ui/src/components/core/date-picker";
+import { Dropdown } from "ui/src/components/core/dropdown";
+import { Pill } from "ui/src/components/core/pill";
+import { FilterTableGrid, type TableGridColumn } from "ui/src/components/core/table-grid";
+import type { FilterChildren, FilterItem} from "ui/src/components/core/filter-button";
 
 const columns: TableGridColumn<'lastName' | 'firstName' | 'lawFirm' | 'primaryContact' | 'lastUpdateDate' | 'outstandingBalance'>[] = [
   {

@@ -1,7 +1,6 @@
 import { type AppType } from "next/app";
 import Head from "next/head";
 import "ui/styles.css";
-
 import React from "react";
 import { api } from "../util/api";
 
@@ -14,7 +13,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         <link href="/favicon.ico" rel="icon" />
       </Head>
       <main className="flex min-h-screen flex-col">
-        <Component {...pageProps} />
+				<Component {...pageProps} />
       </main>
     </>
   );

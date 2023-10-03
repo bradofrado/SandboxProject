@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 import type { User } from "model/src/user";
-import { useMessages } from "../../../services/message";
 import { RightArrowIcon } from "../../core/icons";
 
 export interface SendMessageProps {
   user: User;
+	onSendMessage: (id: string, message: string, user: User) => void
 }
-export const SendMessage: React.FunctionComponent<SendMessageProps> = ({ user }) => {
-  const [_, send] = useMessages();
+export const SendMessage: React.FunctionComponent<SendMessageProps> = ({ user, onSendMessage }) => {
   const [message, setMessage] = useState("");
 
   const sendMessage: React.FormEventHandler = (e): void => {
 		e.preventDefault();
-    message && send(user.patientId, message, user);
+    message && onSendMessage(user.patientId, message, user);
     setMessage("");
   };
   return (

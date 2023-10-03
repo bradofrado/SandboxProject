@@ -2,12 +2,12 @@ import type { Patient, PatientFinanceProvider } from "model/src/patient";
 import { formatDollarAmount, groupTogether } from "model/src/utils";
 import type { RecordType } from "model/src/core/utils";
 import { useState } from "react";
-import { useGetPatientFinanceProviders } from "../../../../services/patient";
-import { Pill } from "../../../core/pill";
-import type { TableGridColumn, TableGridFooter } from "../../../core/table-grid";
-import { FilterTableGrid } from "../../../core/table-grid";
-import type { FilterChildren, FilterItem } from "../../../core/filter-button";
-import { Dropdown } from "../../../core/dropdown";
+import { Pill } from "ui/src/components/core/pill";
+import type { TableGridColumn, TableGridFooter } from "ui/src/components/core/table-grid";
+import { FilterTableGrid } from "ui/src/components/core/table-grid";
+import type { FilterChildren, FilterItem } from "ui/src/components/core/filter-button";
+import { Dropdown } from "ui/src/components/core/dropdown";
+import { useGetPatientFinanceProviders } from "../../../services/patient";
 
 interface PatientFinanceProviderFilter {
 	status: number | undefined,

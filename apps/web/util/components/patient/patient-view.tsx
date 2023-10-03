@@ -1,15 +1,16 @@
 import { type Patient } from "model/src/patient";
 import { displayDate } from "model/src/utils";
-import { useGetPatient } from "../../../services/patient";
-import { Button } from "../../core/button";
-import { Header } from "../../core/header";
-import { Label } from "../../core/label";
-import { Pill } from "../../core/pill";
-import { TabControl, type TabItem } from "../../core/tab";
+import { Button } from "ui/src/components/core/button";
+import { Header } from "ui/src/components/core/header";
+import { Label } from "ui/src/components/core/label";
+import { Pill } from "ui/src/components/core/pill";
+import { TabControl, type TabItem } from "ui/src/components/core/tab";
+import { ChatBox } from "ui/src/components/feature/chat/chat-box";
+import { useGetPatient } from "../../services/patient";
+import { MessageProvider } from "../../services/message";
 import { DocumentsTab } from "./tabs/documents-tab";
 import { FinanceTab } from "./tabs/finance-tab";
 import { StatusTab } from "./tabs/status-tab";
-import { ChatBox } from "../../feature/chat/chat-box";
 
 export interface PatientViewProps {
   patient: Patient;
@@ -24,7 +25,9 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
 			</div>
 			<div className="flex max-w-[600px] flex-col px-2">
 				<Header level={2}>Threads</Header>
-				<ChatBox chatId={patient.id} className="h-[80vh]" user={{id: '0', patientId: patient.id, name: patient.primaryContact, image: '/braydon.jpeg'}}/>
+				<MessageProvider chatId={patient.id}>
+					{(messages, send) => <ChatBox className="h-[80vh]" messages={messages} user={{id: '0', patientId: patient.id, name: patient.primaryContact, image: '/braydon.jpeg'}} onSendMessage={send}/>}
+				</MessageProvider>
 			</div>
 		</div>
 
