@@ -1,5 +1,6 @@
 import type { ReplaceWithName } from "model/src/core/utils";
 import { createContext, useCallback, useContext, useEffect, useState } from "react"
+import { usePrevious } from "../../hooks/previous";
 
 interface ModalContextType {
 	addModal: (newModal: React.ReactNode) => void,
@@ -7,29 +8,34 @@ interface ModalContextType {
 	nextId: number
 }
 const ModalContext = createContext<ModalContextType>({addModal: () => undefined, removeModal: () => undefined, nextId: -1});
-export const ModalProvider: React.FunctionComponent<React.PropsWithChildren> = ({children}) => {
+export const ModalProvider: React.FunctionComponent<{container: HTMLElement} & React.PropsWithChildren> = ({children, container}) => {
 	const [modals, setModals] = useState<React.ReactNode[]>([]);
 
 	const addModal = useCallback((newModal: React.ReactNode): void => {
 		const copy = modals.slice();
 		copy.push(newModal);
 		setModals(copy);
+		container.style.overflow = 'hidden';
 	}, [modals]);
 
 	const removeModal = useCallback((toRemove: number): void => {
 		const copy = modals.slice();
 		const index = toRemove;
-		//if (index < 0) throw new Error('Cannot remove modal');
+		if (index < 0) throw new Error('Cannot remove modal');
 
-		if (index >= 0)
-			copy.splice(index);
+		copy.splice(index);
+
+		if (copy.length === 0) {
+			container.style.overflow = 'none';
+		}
+			
 		setModals(copy);
 	}, [modals]);
 
 	return (
 		<ModalContext.Provider value={{addModal, removeModal, nextId: modals.length}}>
 			{children}
-			{modals.length > 0 ? <div className="fixed top-0 left-0 w-full z-50 bg-gray-500/90 min-h-screen">
+			{modals.length > 0 ? <div className="fixed top-0 left-0 w-full z-50 bg-gray-500/90 h-screen overflow-auto">
 				{modals}
 			</div> : null}
 		</ModalContext.Provider>
@@ -38,14 +44,17 @@ export const ModalProvider: React.FunctionComponent<React.PropsWithChildren> = (
 
 export const ModalPortal: React.FunctionComponent<{children: React.ReactNode, show: boolean}> = ({children, show}) => {
 	const {addModal, removeModal} = useModal();
-
+	const prevShow = usePrevious(show);
+	
 	useEffect(() => {
-		if (show) {
-			addModal(children);
-		} else {
-			removeModal();
+		if (prevShow !== show) {
+			if (show) {
+				addModal(children);
+			} else {
+				removeModal();
+			}
 		}
-	}, [show]);
+	}, [show, prevShow]);
 
 	return <></>
 }

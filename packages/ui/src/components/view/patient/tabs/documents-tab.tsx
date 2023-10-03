@@ -21,7 +21,7 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
   patient,
 }) => {
   const query = useGetPatientDocuments(patient.id);
-	const [show, setShow] = useState(false);
+	const [openedFile, setOpenedFile] = useState<PatientDocument | undefined>();
   if (query.isLoading || query.isError) return <>Loading</>;
 
   const documents = query.data;
@@ -31,7 +31,9 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
   };
 
   const onDocumentOpen = (document: PatientDocument): void => {
-		setShow(true);
+		if (document.type !== 'folder') {
+			setOpenedFile(document);
+		}
 	};
   return (
     <div className="flex flex-col rounded-3xl shadow-md overflow-hidden">
@@ -55,7 +57,7 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
           Last Synced: 3m ago
         </span>
       </div>
-			<DocumentViewer src="/pdf-file-paged.pdf" type="pdf" show={show} setShow={setShow}/>
+			<DocumentViewer onClose={() => {setOpenedFile(undefined)}} show={Boolean(openedFile)} src={openedFile?.path} type={openedFile?.type as Exclude<PatientDocument['type'], 'folder'>}/>
     </div>
   );
 };
@@ -68,7 +70,7 @@ const DocumentLine: React.FunctionComponent<DocumentLineProps> = ({
   document,
   onOpen,
 }) => {
-  const Icon = document.type === "file" ? DocumentTextIcon : FolderIcon;
+  const Icon = document.type !== "folder" ? DocumentTextIcon : FolderIcon;
 
   return (
     <button

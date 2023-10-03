@@ -1,25 +1,28 @@
-import { PDFViewer } from "./viewers/pdf-viewer"
-import {DocumentType, DocumentViewerComponent} from './types';
 import { ModalPortal } from "../../core/modal";
 import { ClosableContent } from "../../core/closable-content";
+import { PDFViewer } from "./viewers/pdf-viewer"
+import type {DocumentType, DocumentViewerComponent} from './types';
+import { ImageViewer } from "./viewers/img-viewer";
 
 export interface DocumentViewerProps {
-	src: string,
-	type: DocumentType,
+	src?: string,
+	type?: DocumentType,
 	show: boolean,
-	setShow: (show: boolean) => void
+	onClose: () => void
 }
-export const DocumentViewer: React.FunctionComponent<DocumentViewerProps> = ({src, type, show, setShow}) => {
-	const Component = documentComponents[type];
+export const DocumentViewer: React.FunctionComponent<DocumentViewerProps> = ({src, type, show, onClose}) => {
+	if (show && (!src || !type)) throw new Error('Invalid src and type');
+	const Component = type && src ? documentComponents[type] : undefined;
 	return (
 		<ModalPortal show={show}>
-			<ClosableContent onClose={() => {setShow(false)}}>
-				<Component src={src}/>
+			<ClosableContent onClose={onClose}>
+				{type && src && Component ? <Component src={src}/> : null}
 			</ClosableContent>
 		</ModalPortal>
 	)
 }
 
 const documentComponents: Record<DocumentType, DocumentViewerComponent> = {
-	'pdf': PDFViewer
+	'pdf': PDFViewer,
+	'img': ImageViewer
 }

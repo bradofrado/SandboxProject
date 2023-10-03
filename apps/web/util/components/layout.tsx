@@ -14,7 +14,7 @@ export const Layout: React.FunctionComponent<React.PropsWithChildren> = ({
   children,
 }) => {
   return (
-		<ModalProvider>
+		<ModalProvider container={document.body}>
     	<SideNav className="top-20">{children}</SideNav>
 		</ModalProvider>
   );

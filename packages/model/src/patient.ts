@@ -41,7 +41,7 @@ export interface PatientDocument {
   path: string;
   lastUpdate: Date;
   size: number;
-  type: "file" | "folder";
+  type: "pdf" | "img" | "folder";
 }
 
 export interface PatientFinanceProvider {

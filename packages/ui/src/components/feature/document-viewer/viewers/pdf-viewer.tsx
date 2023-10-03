@@ -12,7 +12,7 @@ export const PDFViewer: DocumentViewerComponent = ({src}) => {
 			{(page, setNumPages) => (
 				<div className="w-fit p-2">
 					<Document file={src} onLoadSuccess={({numPages}) => {setNumPages(numPages)}}>
-						<Page height={650} pageNumber={page} />
+						<Page pageNumber={page} />
 					</Document>
 				</div>
 			)
