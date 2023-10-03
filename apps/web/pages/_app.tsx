@@ -1,6 +1,5 @@
 import { type AppType } from "next/app";
 import Head from "next/head";
-
 import "ui/styles.css";
 
 import React from "react";
