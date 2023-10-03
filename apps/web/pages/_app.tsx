@@ -70,4 +70,16 @@ export const SideNav: React.FunctionComponent<SideNavProps> = ({children, classN
         </SideNavComponent>
 }
 
+// Call patientList procedure on frontend
+const patientList = () => {
+  const { query } = useRouter();
+  const patientQuery = api.patients.patientList.useQuery();
+
+  return (
+    <div>
+      <h1>{patientQuery.data}</h1>
+    </div>
+  );
+};
+
 export default api.withTRPC(MyApp);

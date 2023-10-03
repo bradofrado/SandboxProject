@@ -1,4 +1,4 @@
-import { exampleRouter } from "./routers/example";
+import { patientRouter } from "./routers/patients";
 import { createTRPCRouter } from "./trpc";
 
 /**
@@ -7,7 +7,7 @@ import { createTRPCRouter } from "./trpc";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  example: exampleRouter,
+  patients: patientRouter,
 });
 
 // export type definition of API
