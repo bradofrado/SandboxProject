@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import type { Patient, PatientDocument } from "model/src/patient";
 import { displayElapsedTime, displayStorageSpace } from "model/src/utils";
 import { useGetPatientDocuments } from "../../../../services/patient";
@@ -13,7 +13,14 @@ import {
 } from "../../../core/icons";
 import { Pill } from "../../../core/pill";
 import { DocumentViewer } from "../../../feature/document-viewer/document-viewer";
+import { Button } from "../../../core/button";
+import { useClickOutside } from "../../../../hooks/click-outside";
 
+interface FileButton {
+	label: string,
+	action: (files: PatientDocument[]) => void,
+	shouldShow: (files: PatientDocument[]) => boolean
+}
 export interface DocumentsTabProps {
   patient: Patient;
 }
@@ -22,60 +29,126 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
 }) => {
   const query = useGetPatientDocuments(patient.id);
 	const [openedFile, setOpenedFile] = useState<PatientDocument | undefined>();
+	const [selectedFiles, setSelectedFiles] = useState<PatientDocument[]>([]);
+	const ref = useRef<HTMLDivElement>(null);
+	
+	useClickOutside(ref, () => {
+		setSelectedFiles([]);
+	})
+	
+
   if (query.isLoading || query.isError) return <>Loading</>;
 
+	
+
   const documents = query.data;
+
+	const fileButtons: FileButton[] = [
+		{
+			label: 'Open',
+			action: (files) => {
+				openDocument(files[0]);
+			},
+			shouldShow: (files) => files.length === 1
+		},
+		{
+			label: 'Delete',
+			action: () => {},
+			shouldShow: (files) => files.length > 0
+		},
+		{
+			label: 'Export',
+			action: () => {},
+			shouldShow: (files) => files.length > 0
+		},
+		{
+			label: 'Send To',
+			action: () => {},
+			shouldShow: (files) => files.length > 0
+		}
+	]
 
   const onUpload = (files: FileList): void => {
     alert(`Uploaded ${files.length} files!`);
   };
 
-  const onDocumentOpen = (document: PatientDocument): void => {
+  const openDocument = (document: PatientDocument): void => {
 		if (document.type !== 'folder') {
 			setOpenedFile(document);
 		}
 	};
+
+	const selectFile = (document: PatientDocument, selectAll: boolean): void => {
+		let copy = selectedFiles.slice();
+		const index = copy.indexOf(document);
+		if (index < 0) {
+			if (selectAll) {
+				copy.push(document);
+			} else {
+				copy = [document];
+			}
+		} else if (selectAll) {
+			copy.splice(index, 1);
+		} else {
+			copy = copy.length > 1 ? [document] : [];
+		}
+		setSelectedFiles(copy);
+	}
   return (
-    <div className="flex flex-col rounded-3xl shadow-md overflow-hidden">
-      {documents.map((document) => (
-        <DocumentLine
-          document={document}
-          key={document.name}
-          onOpen={() => {
-            onDocumentOpen(document);
-          }}
-        />
-      ))}
-      <div className="px-5 py-10">
-        <FileUploadArea onUpload={onUpload} />
-      </div>
-      <div className="bg-primary py-3 px-4 flex items-center gap-2">
-        <div className="rounded-full border border-gray-900 p-[.125rem]">
-          <CheckmarkIcon className="w-3 h-3 fill-gray-900" />
-        </div>
-        <span className="text-sm font-medium text-gray-900">
-          Last Synced: 3m ago
-        </span>
-      </div>
-			<DocumentViewer onClose={() => {setOpenedFile(undefined)}} show={Boolean(openedFile)} src={openedFile?.path} type={openedFile?.type as Exclude<PatientDocument['type'], 'folder'>}/>
-    </div>
+		<div ref={ref}>
+			<div className="flex mb-2 gap-2">
+				{fileButtons.map(button => button.shouldShow(selectedFiles) ? <Button key={button.label} onClick={() => {button.action(selectedFiles)}} mode="secondary">{button.label}</Button> : null)}
+			</div>
+			<div className="flex flex-col rounded-3xl shadow-md overflow-hidden">
+				{documents.map((document) => (
+					<DocumentLine
+						document={document}
+						key={document.name}
+						onOpen={() => {
+							openDocument(document);
+						}}
+						onSelect={(ctlKey) => {
+							selectFile(document, ctlKey);
+						}}
+						selected={selectedFiles.includes(document)}
+					/>
+				))}
+				<div className="px-5 py-10">
+					<FileUploadArea onUpload={onUpload} />
+				</div>
+				<div className="bg-primary py-3 px-4 flex items-center gap-2">
+					<div className="rounded-full border border-gray-900 p-[.125rem]">
+						<CheckmarkIcon className="w-3 h-3 fill-gray-900" />
+					</div>
+					<span className="text-sm font-medium text-gray-900">
+						Last Synced: 3m ago
+					</span>
+				</div>
+				<DocumentViewer onClose={() => {setOpenedFile(undefined)}} show={Boolean(openedFile)} src={openedFile?.path} type={openedFile?.type as Exclude<PatientDocument['type'], 'folder'>}/>
+			</div>
+		</div>
   );
 };
 
 interface DocumentLineProps {
   document: PatientDocument;
   onOpen: () => void;
+	onSelect: (ctlKey: boolean) => void;
+	selected: boolean;
 }
 const DocumentLine: React.FunctionComponent<DocumentLineProps> = ({
   document,
   onOpen,
+	onSelect,
+	selected,
 }) => {
   const Icon = document.type !== "folder" ? DocumentTextIcon : FolderIcon;
 
   return (
     <button
-      className="flex justify-between items-center border-b p-4 cursor-pointer hover:bg-gray-100"
-      onDoubleClick={onOpen}
+      className={`flex justify-between items-center border-b p-4 cursor-pointer outline-none ${selected ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+      onClick={(e) => {onSelect(e.ctrlKey)}}
+			onDoubleClick={onOpen}
       type="button"
     >
       <div className="flex gap-2">
