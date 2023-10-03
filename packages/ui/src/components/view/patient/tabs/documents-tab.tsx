@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import type { Patient, PatientDocument } from "model/src/patient";
 import { displayElapsedTime, displayStorageSpace } from "model/src/utils";
 import { useGetPatientDocuments } from "../../../../services/patient";
@@ -39,9 +39,33 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
 
   if (query.isLoading || query.isError) return <>Loading</>;
 
-	
-
   const documents = query.data;
+
+  const onUpload = (files: FileList): void => {
+    //TODO: Implement this behavior
+		alert(`Uploading ${files.length} files`)
+  };
+
+  const openDocument = (document: PatientDocument): void => {
+		if (document.type !== 'folder') {
+			setOpenedFile(document);
+		}
+	};
+
+	const deleteDocuments = (documents: PatientDocument[]): void => {
+		//TODO: Implement delete documents
+		alert(`Deleting ${documents.map(d => d.name)}`)
+	}
+
+	const exportDocuments = (documents: PatientDocument[]): void => {
+		//TODO: Implement export documents
+		alert(`Exporting ${documents.map(d => d.name)}`)
+	}
+
+	const sendToDocument = (documents: PatientDocument[]): void => {
+		//TODO: Implement send to documents
+		alert(`Sending ${documents.map(d => d.name)}`)
+	}
 
 	const fileButtons: FileButton[] = [
 		{
@@ -53,30 +77,20 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
 		},
 		{
 			label: 'Delete',
-			action: () => {},
+			action: deleteDocuments,
 			shouldShow: (files) => files.length > 0
 		},
 		{
 			label: 'Export',
-			action: () => {},
+			action: exportDocuments,
 			shouldShow: (files) => files.length > 0
 		},
 		{
 			label: 'Send To',
-			action: () => {},
+			action: sendToDocument,
 			shouldShow: (files) => files.length > 0
 		}
 	]
-
-  const onUpload = (files: FileList): void => {
-    alert(`Uploaded ${files.length} files!`);
-  };
-
-  const openDocument = (document: PatientDocument): void => {
-		if (document.type !== 'folder') {
-			setOpenedFile(document);
-		}
-	};
 
 	const selectFile = (document: PatientDocument, selectAll: boolean): void => {
 		let copy = selectedFiles.slice();
@@ -97,19 +111,22 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
   return (
 		<div ref={ref}>
 			<div className="flex mb-2 gap-2">
-				{fileButtons.map(button => button.shouldShow(selectedFiles) ? <Button key={button.label} onClick={() => {button.action(selectedFiles)}} mode="secondary">{button.label}</Button> : null)}
+				{fileButtons.map(button => button.shouldShow(selectedFiles) ? <Button key={button.label} mode="secondary" onClick={() => {button.action(selectedFiles)}}>{button.label}</Button> : null)}
 			</div>
 			<div className="flex flex-col rounded-3xl shadow-md overflow-hidden">
 				{documents.map((document) => (
 					<DocumentLine
 						document={document}
 						key={document.name}
+						onDelete={() => {deleteDocuments([document])}}
+						onExport={() => {exportDocuments([document])}}
 						onOpen={() => {
 							openDocument(document);
 						}}
 						onSelect={(ctlKey) => {
 							selectFile(document, ctlKey);
 						}}
+						onSendTo={() => {sendToDocument([document])}}
 						selected={selectedFiles.includes(document)}
 					/>
 				))}
@@ -133,12 +150,18 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
 interface DocumentLineProps {
   document: PatientDocument;
   onOpen: () => void;
+	onDelete: () => void;
+	onExport: () => void;
+	onSendTo: () => void;
 	onSelect: (ctlKey: boolean) => void;
 	selected: boolean;
 }
 const DocumentLine: React.FunctionComponent<DocumentLineProps> = ({
   document,
   onOpen,
+	onDelete,
+	onExport,
+	onSendTo,
 	onSelect,
 	selected,
 }) => {
@@ -162,13 +185,18 @@ const DocumentLine: React.FunctionComponent<DocumentLineProps> = ({
       </div>
       <div className="flex gap-2">
         <Pill mode="secondary">{displayStorageSpace(document.size)}</Pill>
-        <TridotButtonOptions />
+        <TridotButtonOptions onDelete={onDelete} onExport={onExport} onSendTo={onSendTo}/>
       </div>
     </button>
   );
 };
 
-const TridotButtonOptions = ({}) => {
+interface TridotButtonOptionsProps {
+	onDelete: () => void,
+	onExport: () => void,
+	onSendTo: () => void,
+}
+const TridotButtonOptions: React.FunctionComponent<TridotButtonOptionsProps> = ({onDelete, onExport, onSendTo}) => {
   const [isOpen, setIsOpen] = useState(false);
   const TridotButton = (
     <button className="hover:bg-gray-200 rounded-full p-1" type="button">
@@ -182,6 +210,7 @@ const TridotButtonOptions = ({}) => {
         <DropdownLineItem
           onClick={() => {
             setIsOpen(false);
+						onDelete();
           }}
         >
           Delete
@@ -194,6 +223,7 @@ const TridotButtonOptions = ({}) => {
         <DropdownLineItem
           onClick={() => {
             setIsOpen(false);
+						onExport();
           }}
         >
           Export
@@ -206,6 +236,7 @@ const TridotButtonOptions = ({}) => {
         <DropdownLineItem
           onClick={() => {
             setIsOpen(false);
+						onSendTo();
           }}
         >
           Send To
