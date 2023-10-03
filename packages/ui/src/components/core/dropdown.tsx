@@ -1,105 +1,227 @@
-import { Menu, Transition } from "@headlessui/react"
-import { Fragment, useState, type PropsWithChildren, useEffect } from "react"
-import { CheckIcon, ChevronDown, type IconComponent } from "./icons"
+import React, { useEffect, useState, type PropsWithChildren } from "react";
+import type { AllOrNothing } from "model/src/core/utils";
+
+import { Button } from "./button";
+import { ChevronDownIcon, type IconComponent } from "./icons";
+import { CheckboxInput } from "./input";
+import { Popover } from "./popover";
+
+export type ListBoxPopoverProps<T> = {
+  items: DropdownItem<T>[];
+  className?: string;
+  header?: React.ReactNode;
+  children: React.ReactNode;
+} & AllOrNothing<{ isOpen: boolean; setIsOpen: (value: boolean) => void }>;
+export const ListBoxPopover = <T,>({
+  items,
+  className = "",
+  header,
+  children,
+  ...isOpenStuff
+}: ListBoxPopoverProps<T>): JSX.Element => {
+  return (
+    <Popover button={children} className={className} {...isOpenStuff}>
+      {header ? <div className="p-2 bg-gray-50">{header}</div> : null}
+      <div className="min-w-[11rem]">
+        <ul
+          aria-labelledby="dropdownDefaultButton"
+          className="text-sm text-gray-700 dark:text-gray-200"
+        >
+          {items.map((item, i) => (
+            <li key={i}>{item.name}</li>
+          ))}
+        </ul>
+      </div>
+    </Popover>
+  );
+};
+
+export type ListBoxProps<T> = ListBoxPopoverProps<T> & {
+  mode?: "primary" | "secondary";
+};
+export const ListBox = <T,>({
+  items,
+  className,
+  children,
+  mode,
+  header,
+  ...isOpenStuff
+}: ListBoxProps<T>): JSX.Element => {
+  const button = (
+    <Button className={className} mode={mode}>
+      <div className="flex items-center">{children}</div>
+    </Button>
+  );
+  return (
+    <ListBoxPopover header={header} items={items} {...isOpenStuff}>
+      {button}
+    </ListBoxPopover>
+  );
+};
 
 export interface DropdownItem<T> {
-	name: React.ReactNode,
-	id: T
+  name: React.ReactNode;
+  id: T;
 }
-export type ItemAction<T> = (item: DropdownItem<T>, index: number) => void
+export type ItemAction<T> = (item: DropdownItem<T>, index: number) => void;
 interface DropdownProps<T> extends PropsWithChildren {
-	items: DropdownItem<T>[],
-	initialValue?: T,
-	className?: string,
-	chevron?: boolean,
-	onChange?: ItemAction<T>,
+  items: DropdownItem<T>[];
+  initialValue?: T;
+  className?: string;
+  chevron?: boolean;
+  onChange?: ItemAction<T>;
 }
 
-export const Dropdown = <T,>({children, initialValue, onChange, items,
-		chevron = true, className = "inline-flex items-center w-full justify-center rounded-md bg-white shadow-sm px-3 py-1.5 border text-sm text-gray-900 focus:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"}: DropdownProps<T>) => {
-	const [value, setValue] = useState<DropdownItem<T> | undefined>(items.find(x => x.id === initialValue));
-	useEffect(() => {
-		setValue(items.find(x => x.id === initialValue));
-	}, [initialValue, items])
-	
-	const onClick = (item: DropdownItem<T>, index: number) => {
-		setValue(item);
-		onChange && onChange(item, index)
-	}
-	
-	return (
-		<Menu as="div" className="relative inline-block text-left">
-			<div>
-				<Menu.Button className={className}>
-					{initialValue && value ? value.name : children} {chevron && <ChevronDown
-              className="ml-2 -mr-1 h-4 w-4"
-              aria-hidden="true"
-            />}
-				</Menu.Button>
-			</div>
-			<Transition
-				as={Fragment}
-				enter="transition ease-out duration-100"
-				enterFrom="transform opacity-0 scale-95"
-				enterTo="transform opacity-100 scale-100"
-				leave="transition ease-in duration-75"
-				leaveFrom="transform opacity-100 scale-100"
-				leaveTo="transform opacity-0 scale-95"
-			>
-				<Menu.Items className="absolute left-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-					<div className="py-2">
-						{items.map((item, i) => 
-						<Menu.Item key={i}>
-							{({ active }) => (
-								<button
-									className={`${
-										active ? 'bg-primary-light' : 'text-gray-900'
-									} group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-									onClick={() => {onClick(item, i)}}
-								>
-									{item.name}
-								</button>
-							)}
-						</Menu.Item>
-						)}
-					</div>
-				</Menu.Items>
-			</Transition>
-		</Menu>
-	)
+export const Dropdown = <T,>({
+  children,
+  initialValue,
+  onChange,
+  items,
+  chevron = true,
+  className,
+}: DropdownProps<T>): JSX.Element => {
+  const [value, setValue] = useState<DropdownItem<T> | undefined>(
+    items.find((x) => x.id === initialValue),
+  );
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    setValue(items.find((x) => x.id === initialValue));
+  }, [initialValue, items]);
+
+  const onClick = (item: DropdownItem<T>, index: number): void => {
+    setValue(item);
+    onChange && onChange(item, index);
+    setIsOpen(false);
+  };
+
+  const dropdownItems: DropdownItem<T>[] = items.map((item, i) => ({
+    ...item,
+    name: (
+      <DropdownLineItem
+        onClick={() => {
+          onClick(item, i);
+        }}
+        selected={initialValue !== undefined && item === value}
+      >
+        {item.name}
+      </DropdownLineItem>
+    ),
+  }));
+
+  return (
+    <ListBox
+      className={className}
+      isOpen={isOpen}
+      items={dropdownItems}
+      mode={value === undefined ? "secondary" : "primary"}
+      setIsOpen={setIsOpen}
+    >
+      {value === undefined ? children : value.name}{" "}
+      {chevron ? <ChevronDownIcon className="w-4 h-4 ml-1" /> : null}
+    </ListBox>
+  );
+};
+
+export interface DropdownLineItemProps {
+  selected?: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
 }
+export const DropdownLineItem: React.FunctionComponent<
+  DropdownLineItemProps
+> = ({ selected, onClick, children }) => {
+  return (
+    <button
+      className={`${
+        selected ? "bg-primary-light" : "text-gray-900"
+      } group flex w-full items-center rounded-md p-2 text-sm cursor-pointer hover:bg-gray-100 [&>*]:flex-1`}
+      onClick={onClick}
+      type="button"
+    >
+      {children}
+    </button>
+  );
+};
 
 export interface ListItem {
-	label: React.ReactNode,
-	value: boolean
+  label: React.ReactNode;
+  value: boolean;
 }
 
-interface ListItemProps<T> extends Omit<DropdownIconProps<T>, 'items'>{
-	items: ListItem[],
-	setItems: (items: ListItem[]) => void
-}
+type ListItemProps<T> = (
+  | Omit<DropdownIconProps<T>, "items">
+  | Omit<DropdownProps<T>, "items">
+) & {
+  items: ListItem[];
+  setItems: (items: ListItem[]) => void;
+};
 
-export const DropdownList = <T,>({items, setItems, ...rest}: ListItemProps<T>) => {
-	const copy = items.slice();
-	const onSelect = (item: ListItem) => {
-		item.value = !item.value;
-		setItems(copy);
-	}
-	const dropdownItems = copy.map(item => ({ name: <span>{item.value && <CheckIcon className="w-3 h-3 inline"/>} {item.label}</span>, id: undefined }))
-	return <>
-		<DropdownIcon items={dropdownItems} {...rest} onChange={(item, index) => {onSelect(items[index])}}/>
-	</>
+export const DropdownList = <T,>({
+  items,
+  setItems,
+  ...rest
+}: ListItemProps<T>): JSX.Element => {
+  const copy = items.slice();
+  const onSelect = (item: ListItem): void => {
+    item.value = !item.value;
+    setItems(copy);
+  };
+  const dropdownItems = copy.map((item) => ({
+    name: <DropdownListItem item={item} />,
+    id: undefined,
+  }));
+  return "icon" in rest ? (
+    <DropdownIcon
+      items={dropdownItems}
+      {...rest}
+      onChange={(item, index) => {
+        onSelect(items[index]);
+      }}
+    />
+  ) : (
+    <Dropdown
+      items={dropdownItems}
+      {...rest}
+      onChange={(item, index) => {
+        onSelect(items[index]);
+      }}
+    />
+  );
+};
+
+export interface DropdownListItemProps {
+  item: ListItem;
 }
+export const DropdownListItem: React.FunctionComponent<
+  DropdownListItemProps
+> = ({ item }) => {
+  return (
+    <span className="flex items-center text-sm font-medium">
+      <CheckboxInput className="mr-1" value={item.value} />
+      {item.label}
+    </span>
+  );
+};
 
 type DropdownIconProps<T> = Omit<DropdownProps<T>, "chevron"> & {
-	icon: IconComponent,
-}
-export const DropdownIcon = <T,>({icon, className, ...rest}: DropdownIconProps<T>) => {
-	const Icon = icon;
-	return <>
-		<Dropdown className={`hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1.5 ${className || ''}`} 
-				{...rest} chevron={false}>
-			<Icon className="h-5 w-5"/>
-		</Dropdown>
-	</>
-}
+  icon: IconComponent;
+};
+export const DropdownIcon = <T,>({
+  icon,
+  className,
+  ...rest
+}: DropdownIconProps<T>): JSX.Element => {
+  const Icon = icon;
+  return (
+    <Dropdown
+      className={`hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1.5 ${
+        className || ""
+      }`}
+      {...rest}
+      chevron={false}
+    >
+      <Icon className="h-5 w-5" />
+    </Dropdown>
+  );
+};

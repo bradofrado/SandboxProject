@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write \"**/*.{ts,md,json}\" && eslint --fix .",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\" && eslint --fix .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -19,11 +19,12 @@
     "@trpc/server": "^10.38.3",
     "api": "workspace:^",
     "db": "workspace:^",
-    "tailwind-config": "workspace:^",
     "next": "^13.4.19",
+    "raw-loader": "^4.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "superjson": "^1.13.1",
+    "tailwind-config": "workspace:^",
     "ui": "workspace:*"
   },
   "devDependencies": {
@@ -32,11 +33,12 @@
     "@types/react": "^18.0.22",
     "@types/react-dom": "^18.0.7",
     "eslint-config-custom": "workspace:*",
-    "tsconfig": "workspace:*",
-    "typescript": "^4.5.3",
+    "model": "workspace:*",
     "prettier": "^3.0.3",
     "prettier-config": "workspace:^",
-    "tailwindcss": "^3.3.3"
+    "tailwindcss": "^3.3.3",
+    "tsconfig": "workspace:*",
+    "typescript": "^4.5.3"
   },
   "prettier": "prettier-config"
 }

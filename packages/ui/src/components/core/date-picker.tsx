@@ -1,69 +1,133 @@
+/* eslint-disable no-nested-ternary -- We will let this go for now... */
 import React, { useRef } from "react";
-import { useRangeCalendarState } from "@react-stately/calendar";
+import {
+  CalendarDate,
+  createCalendar,
+  getDayOfWeek,
+  getLocalTimeZone,
+  getWeeksInMonth,
+  isSameDay,
+} from "@internationalized/date";
 import { useRangeCalendar } from "@react-aria/calendar";
 import { useLocale } from "@react-aria/i18n";
-import { CalendarDate, createCalendar, getDayOfWeek, getLocalTimeZone, getWeeksInMonth, isSameDay } from "@internationalized/date";
-import { type CalendarState, type DateFieldState, type DatePickerStateOptions, DateSegment, type OverlayTriggerState, type RangeCalendarState, useCalendarState, useDateFieldState, useDatePickerState, useDateRangePickerState } from "react-stately";
-import { type AriaButtonProps, type AriaCalendarGridProps, type AriaDialogProps, type AriaPopoverProps, type CalendarProps, type DateValue, DismissButton, Overlay, type RangeCalendarProps, mergeProps, useButton, useCalendar, useCalendarCell, useCalendarGrid, useDateField, useDatePicker, useDateRangePicker, useDateSegment, useDialog, useFocusRing, usePopover, type DateRange } from "react-aria";
-import {type DatePickerProps} from '@react-types/datepicker';
-import { ExclamationIcon, CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "./icons";
+import { useRangeCalendarState } from "@react-stately/calendar";
+import { type DatePickerProps } from "@react-types/datepicker";
+import {
+  DismissButton,
+  mergeProps,
+  Overlay,
+  useButton,
+  useCalendar,
+  useCalendarCell,
+  useCalendarGrid,
+  useDateField,
+  useDatePicker,
+  useDateRangePicker,
+  useDateSegment,
+  useDialog,
+  useFocusRing,
+  usePopover,
+  type AriaButtonProps,
+  type AriaCalendarGridProps,
+  type AriaDialogProps,
+  type AriaPopoverProps,
+  type CalendarProps,
+  type DateRange,
+  type DateValue,
+  type RangeCalendarProps,
+} from "react-aria";
+import {
+  useCalendarState,
+  useDateFieldState,
+  useDatePickerState,
+  useDateRangePickerState,
+  type CalendarState,
+  type DateFieldState,
+  type DatePickerStateOptions,
+  type DateSegment,
+  type OverlayTriggerState,
+  type RangeCalendarState,
+} from "react-stately";
 
-const dateToCalendarDate = (date: Date): CalendarDate => new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate())
+import {
+  CalendarIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ExclamationIcon,
+} from "./icons";
 
-export const DatePicker = <T extends DateValue>(props: DatePickerStateOptions<T>) => {
-  const state = useDatePickerState(props);
+const dateToCalendarDate = (date: Date): CalendarDate =>
+  new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
+
+interface MyDatePickerProps {
+  date: Date | null;
+  onChange: (date: Date | null) => void;
+}
+export const DatePicker = (props: MyDatePickerProps): JSX.Element => {
+  const options: DatePickerStateOptions<CalendarDate> = {
+    value: props.date ? dateToCalendarDate(props.date) : null,
+    onChange: (value: CalendarDate | null) => {
+      props.onChange(value?.toDate(getLocalTimeZone()) ?? null);
+    },
+  };
+  const state = useDatePickerState(options);
   const ref = useRef<HTMLDivElement>(null);
-  const {
-    groupProps,
-    labelProps,
-    fieldProps,
-    buttonProps,
-    dialogProps,
-    calendarProps
-  } = useDatePicker(props, state, ref);
+  const { groupProps, fieldProps, buttonProps, dialogProps, calendarProps } =
+    useDatePicker(options, state, ref);
 
   return (
     <div className="relative text-left">
-      <span {...labelProps} className="text-sm text-gray-800">
+      {/* <span {...labelProps} className="text-sm text-gray-800">
         {props.label}
-      </span>
-      <div {...groupProps} ref={ref} className="flex group">
-        <div className="bg-white border border-gray-300 group-hover:border-gray-400 transition-colors rounded-l-md pr-10 group-focus-within:border-primary group-focus-within:group-hover:border-primary p-1 relative flex items-center">
+      </span> */}
+      <div {...groupProps} className="flex group" ref={ref}>
+        <div className="bg-white border border-gray-300 group-hover:border-gray-400 transition-colors rounded-l-md group-focus-within:border-primary group-focus-within:group-hover:border-primary p-1 relative flex items-center">
           <DateField {...fieldProps} />
           {state.validationState === "invalid" && (
             <ExclamationIcon className="w-6 h-6 text-red-500 absolute right-1" />
           )}
         </div>
         <FieldButton {...buttonProps} isPressed={state.isOpen}>
-          <CalendarIcon className="w-5 h-5 text-gray-700 group-focus-within:text-primary" />
+          <CalendarIcon className="w-4 h-4 text-gray-700 group-focus-within:text-primary" />
         </FieldButton>
       </div>
-      {state.isOpen && (
-        <Popover triggerRef={ref} state={state} placement="bottom start">
+      {state.isOpen ? (
+        <Popover
+          className="p-8"
+          placement="bottom start"
+          state={state}
+          triggerRef={ref}
+        >
           <Dialog {...dialogProps}>
             <Calendar {...calendarProps} />
           </Dialog>
         </Popover>
-      )}
+      ) : null}
     </div>
   );
-}
+};
 
 interface DateRangePickerProps {
-  start: Date | null,
-  end: Date | null,
-  onChange: (start: Date, end?: Date) => void
+  start: Date | null;
+  end: Date | null;
+  onChange: (start: Date, end?: Date) => void;
 }
-export const DateRangePicker = (props: DateRangePickerProps) => {
+export const DateRangePicker = (props: DateRangePickerProps): JSX.Element => {
   const options = {
-    value: props.start && props.end ? {
-      start: dateToCalendarDate(props.start),
-      end: dateToCalendarDate(props.end),
-    } : null,
+    value:
+      props.start && props.end
+        ? {
+            start: dateToCalendarDate(props.start),
+            end: dateToCalendarDate(props.end),
+          }
+        : null,
     onChange: (range: DateRange) => {
-      props.onChange(range.start.toDate(getLocalTimeZone()), range.end.toDate(getLocalTimeZone()))
-    }
-  }
+      props.onChange(
+        range.start.toDate(getLocalTimeZone()),
+        range.end.toDate(getLocalTimeZone()),
+      );
+    },
+  };
   const state = useDateRangePickerState(options);
   const ref = useRef<HTMLDivElement>(null);
   const {
@@ -73,7 +137,7 @@ export const DateRangePicker = (props: DateRangePickerProps) => {
     endFieldProps,
     buttonProps,
     dialogProps,
-    calendarProps
+    calendarProps,
   } = useDateRangePicker(options, state, ref);
 
   return (
@@ -96,53 +160,68 @@ export const DateRangePicker = (props: DateRangePickerProps) => {
           <CalendarIcon className="w-5 h-5 text-gray-700 group-focus-within:text-primary" />
         </FieldButton>
       </div>
-      {state.isOpen && (
-        <Popover triggerRef={ref} state={state} placement="bottom start">
+      {state.isOpen ? (
+        <Popover
+          className="p-8"
+          placement="bottom start"
+          state={state}
+          triggerRef={ref}
+        >
           <Dialog {...dialogProps}>
             <RangeCalendar {...calendarProps} />
           </Dialog>
         </Popover>
-      )}
+      ) : null}
     </div>
   );
-}
+};
 
-export const DateField = <T extends DateValue>(props: DatePickerProps<T>) => {
+export const DateField = <T extends DateValue>(
+  props: DatePickerProps<T>,
+): JSX.Element => {
   const { locale } = useLocale();
   const state = useDateFieldState({
     ...props,
     locale,
-    createCalendar
+    createCalendar,
   });
 
   const ref = useRef<HTMLDivElement>(null);
   const { fieldProps } = useDateField(props, state, ref);
 
   return (
-    <div {...fieldProps} ref={ref} className="flex">
+    <div {...fieldProps} className="flex text-xs" ref={ref}>
       {state.segments.map((segment, i) => (
         <DateSegment key={i} segment={segment} state={state} />
       ))}
     </div>
   );
-}
+};
 
-function DateSegment({ segment, state }: {segment: DateSegment, state: DateFieldState}) {
+function DateSegment({
+  segment,
+  state,
+}: {
+  segment: DateSegment;
+  state: DateFieldState;
+}): JSX.Element {
   const ref = useRef<HTMLDivElement>(null);
   const { segmentProps } = useDateSegment(segment, state, ref);
 
   return (
     <div
       {...segmentProps}
+      className={`px-0.5 box-content tabular-nums text-right outline-none rounded-sm focus:bg-primary focus:text-white group ${
+        !segment.isEditable ? "text-gray-500" : "text-gray-800"
+      }`}
       ref={ref}
       style={{
         ...segmentProps.style,
         minWidth:
-          segment.maxValue !== null ? `${String(segment.maxValue).length}ch` : undefined
+          segment.maxValue !== undefined
+            ? `${String(segment.maxValue).length}ch`
+            : undefined,
       }}
-      className={`px-0.5 box-content tabular-nums text-right outline-none rounded-sm focus:bg-primary focus:text-white group ${
-        !segment.isEditable ? "text-gray-500" : "text-gray-800"
-      }`}
     >
       {/* Always reserve space for the placeholder, to prevent layout shift when editing. */}
       <span
@@ -151,7 +230,7 @@ function DateSegment({ segment, state }: {segment: DateSegment, state: DateField
         style={{
           visibility: segment.isPlaceholder ? undefined : "hidden",
           height: segment.isPlaceholder ? "" : 0,
-          pointerEvents: "none"
+          pointerEvents: "none",
         }}
       >
         {segment.placeholder}
@@ -161,25 +240,30 @@ function DateSegment({ segment, state }: {segment: DateSegment, state: DateField
   );
 }
 
-
-export const Calendar = <T extends DateValue>(props: CalendarProps<T> | {value: Date}) => {
-  const options = props.value && 'getDate' in props.value ? {value: dateToCalendarDate(props.value)} : props as CalendarProps<DateValue>;
+export const Calendar = <T extends DateValue>(
+  props: CalendarProps<T> | { value: Date },
+): JSX.Element => {
+  const options =
+    props.value && "getDate" in props.value
+      ? { value: dateToCalendarDate(props.value) }
+      : (props as CalendarProps<DateValue>);
   const { locale } = useLocale();
   const state = useCalendarState({
     ...options,
     locale,
-    createCalendar
+    createCalendar,
   });
 
   const ref = useRef<HTMLDivElement>(null);
-  const { calendarProps, prevButtonProps, nextButtonProps, title } = useCalendar(
-    options,
-    state,
-    //ref
-  );
+  const { calendarProps, prevButtonProps, nextButtonProps, title } =
+    useCalendar(
+      options,
+      state,
+      //ref
+    );
 
   return (
-    <div {...calendarProps} ref={ref} className="inline-block text-gray-800">
+    <div {...calendarProps} className="inline-block text-gray-800" ref={ref}>
       <div className="flex items-center pb-4">
         <h2 className="flex-1 font-bold text-xl ml-2">{title}</h2>
         <CalendarButton {...prevButtonProps}>
@@ -192,26 +276,24 @@ export const Calendar = <T extends DateValue>(props: CalendarProps<T> | {value: 
       <CalendarGrid state={state} />
     </div>
   );
-}
+};
 
-export const RangeCalendar = <T extends DateValue>(props: RangeCalendarProps<T>) => {
+export const RangeCalendar = <T extends DateValue>(
+  props: RangeCalendarProps<T>,
+): JSX.Element => {
   const { locale } = useLocale();
   const state = useRangeCalendarState({
     ...props,
     locale,
-    createCalendar
+    createCalendar,
   });
 
   const ref = useRef<HTMLDivElement>(null);
-  const {
-    calendarProps,
-    prevButtonProps,
-    nextButtonProps,
-    title
-  } = useRangeCalendar(props, state, ref);
+  const { calendarProps, prevButtonProps, nextButtonProps, title } =
+    useRangeCalendar(props, state, ref);
 
   return (
-    <div {...calendarProps} ref={ref} className="inline-block">
+    <div {...calendarProps} className="inline-block" ref={ref}>
       <div className="flex items-center pb-4">
         <h2 className="flex-1 font-bold text-xl ml-2">{title}</h2>
         <CalendarButton {...prevButtonProps}>
@@ -224,12 +306,15 @@ export const RangeCalendar = <T extends DateValue>(props: RangeCalendarProps<T>)
       <CalendarGrid state={state} />
     </div>
   );
-}
+};
 
 type CalendarGridProps = {
-  state: CalendarState | RangeCalendarState
-} & AriaCalendarGridProps
-export const CalendarGrid = ({ state, ...props }: CalendarGridProps) => {
+  state: CalendarState | RangeCalendarState;
+} & AriaCalendarGridProps;
+export const CalendarGrid = ({
+  state,
+  ...props
+}: CalendarGridProps): JSX.Element => {
   const { locale } = useLocale();
   const { gridProps, headerProps, weekDays } = useCalendarGrid(props, state);
 
@@ -248,29 +333,29 @@ export const CalendarGrid = ({ state, ...props }: CalendarGridProps) => {
         </tr>
       </thead>
       <tbody>
-        {[...new Array(weeksInMonth).keys()].map((weekIndex) => (
+        {[...new Array<number>(weeksInMonth)].map((_, weekIndex) => (
           <tr key={weekIndex}>
             {state
               .getDatesInWeek(weekIndex)
               .map((date, i) =>
                 date ? (
-                  <CalendarCell key={i} state={state} date={date} />
+                  <CalendarCell date={date} key={i} state={state} />
                 ) : (
                   <td key={i} />
-                )
+                ),
               )}
           </tr>
         ))}
       </tbody>
     </table>
   );
-}
+};
 
 interface CalendarCellProps {
-  date: CalendarDate,
-  state: CalendarState | RangeCalendarState
+  date: CalendarDate;
+  state: CalendarState | RangeCalendarState;
 }
-export function CalendarCell({ state, date }: CalendarCellProps) {
+export function CalendarCell({ state, date }: CalendarCellProps): JSX.Element {
   const ref = useRef<HTMLDivElement>(null);
   const {
     cellProps,
@@ -279,17 +364,19 @@ export function CalendarCell({ state, date }: CalendarCellProps) {
     isOutsideVisibleRange,
     isDisabled,
     formattedDate,
-    isInvalid
+    isInvalid,
   } = useCalendarCell({ date }, state, ref);
 
   // The start and end date of the selected range will have
   // an emphasized appearance.
-  const isSelectionStart = 'highlightedRange' in state && state.highlightedRange
-    ? isSameDay(date, state.highlightedRange.start)
-    : isSelected;
-  const isSelectionEnd = 'highlightedRange' in state && state.highlightedRange
-    ? isSameDay(date, state.highlightedRange.end)
-    : isSelected;
+  const isSelectionStart =
+    "highlightedRange" in state
+      ? isSameDay(date, state.highlightedRange.start)
+      : isSelected;
+  const isSelectionEnd =
+    "highlightedRange" in state
+      ? isSameDay(date, state.highlightedRange.end)
+      : isSelected;
 
   // We add rounded corners on the left for the first day of the month,
   // the first day of each week, and the start date of the selection.
@@ -314,13 +401,17 @@ export function CalendarCell({ state, date }: CalendarCellProps) {
     >
       <div
         {...mergeProps(buttonProps, focusProps)}
-        ref={ref}
-        hidden={isOutsideVisibleRange}
         className={`w-10 h-10 outline-none group ${
           isRoundedLeft ? "rounded-l-full" : ""
         } ${isRoundedRight ? "rounded-r-full" : ""} ${
-          isSelected ? (isInvalid ? "bg-red-300" : "bg-primary bg-opacity-30") : ""
+          isSelected
+            ? isInvalid
+              ? "bg-red-300"
+              : "bg-primary bg-opacity-30"
+            : ""
         } ${isDisabled ? "disabled" : ""}`}
+        hidden={isOutsideVisibleRange}
+        ref={ref}
       >
         <div
           className={`w-full h-full rounded-full flex items-center justify-center ${
@@ -346,7 +437,9 @@ export function CalendarCell({ state, date }: CalendarCellProps) {
               : ""
           } ${
             // Hover state for non-selected cells.
-            !isSelected && !isDisabled ? "hover:bg-opacity-10 hover:bg-primary" : ""
+            !isSelected && !isDisabled
+              ? "hover:bg-opacity-10 hover:bg-primary"
+              : ""
           } cursor-default`}
         >
           {formattedDate}
@@ -357,8 +450,8 @@ export function CalendarCell({ state, date }: CalendarCellProps) {
 }
 
 type DialogProps = AriaDialogProps & React.PropsWithChildren;
-export function Dialog({ children, ...props }: DialogProps) {
-  const ref = React.useRef<HTMLDivElement>(null);
+export function Dialog({ children, ...props }: DialogProps): JSX.Element {
+  const ref = useRef<HTMLDivElement>(null);
   const { dialogProps } = useDialog(props, ref);
 
   return (
@@ -368,19 +461,22 @@ export function Dialog({ children, ...props }: DialogProps) {
   );
 }
 
-type PopoverProps = React.PropsWithChildren<Omit<AriaPopoverProps, 'popoverRef'> & {
-  state: OverlayTriggerState
-}>
-export const Popover = (props: PopoverProps) => {
-  const ref = React.useRef<HTMLDivElement>(null);
-  const {children, state} = props;
+type PopoverProps = React.PropsWithChildren<
+  Omit<AriaPopoverProps, "popoverRef"> & {
+    state: OverlayTriggerState;
+    className?: string;
+  }
+>;
+export const Popover = (props: PopoverProps): JSX.Element => {
+  const ref = useRef<HTMLDivElement>(null);
+  const { children, state } = props;
 
   const { popoverProps, underlayProps } = usePopover(
     {
       ...props,
-      popoverRef: ref
+      popoverRef: ref,
     },
-    state
+    state,
   );
 
   return (
@@ -388,8 +484,10 @@ export const Popover = (props: PopoverProps) => {
       <div {...underlayProps} className="fixed inset-0" />
       <div
         {...popoverProps}
+        className={`absolute top-full bg-white border border-gray-300 rounded-md shadow-lg mt-2 z-10 ${
+          props.className || ""
+        }`}
         ref={ref}
-        className="absolute top-full bg-white border border-gray-300 rounded-md shadow-lg mt-2 p-8 z-10"
       >
         <DismissButton onDismiss={state.close.bind(state)} />
         {children}
@@ -397,21 +495,22 @@ export const Popover = (props: PopoverProps) => {
       </div>
     </Overlay>
   );
-}
+};
 
-export function CalendarButton(props: AriaButtonProps) {
+export function CalendarButton(props: AriaButtonProps): JSX.Element {
   const ref = useRef<HTMLButtonElement>(null);
   const { buttonProps } = useButton(props, ref);
   const { focusProps, isFocusVisible } = useFocusRing();
   return (
     <button
       {...mergeProps(buttonProps, focusProps)}
-      ref={ref}
       className={`p-2 rounded-full ${props.isDisabled ? "text-gray-400" : ""} ${
         !props.isDisabled ? "hover:opacity-10 active:opacity-20" : ""
       } outline-none ${
         isFocusVisible ? "ring-2 ring-offset-2 ring-primary" : ""
       }`}
+      ref={ref}
+      type="button"
     >
       {props.children}
     </button>
@@ -419,20 +518,21 @@ export function CalendarButton(props: AriaButtonProps) {
 }
 
 type FieldProps = AriaButtonProps & {
-  isPressed: boolean
-}
-export function FieldButton(props: FieldProps) {
+  isPressed: boolean;
+};
+export function FieldButton(props: FieldProps): JSX.Element {
   const ref = useRef<HTMLButtonElement>(null);
   const { buttonProps, isPressed } = useButton(props, ref);
   return (
     <button
       {...buttonProps}
-      ref={ref}
       className={`px-2 -ml-px border transition-colors rounded-r-md group-focus-within:border-primary group-focus-within:group-hover:border-primary outline-none ${
         isPressed || props.isPressed
           ? "bg-gray-200 border-gray-400"
           : "bg-gray-50 border-gray-300 group-hover:border-gray-400"
       }`}
+      ref={ref}
+      type="button"
     >
       {props.children}
     </button>

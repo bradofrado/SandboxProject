@@ -1,28 +1,26 @@
-import { type NextPage} from 'next';
-import { useRouter } from 'next/router';
-import type { SidePanelItems} from 'ui/src/components/core/side-panel';
-import { SidePanel } from 'ui/src/components/core/side-panel';
-import {useGetPatients} from 'ui/src/services/patient';
-import {PatientViewId} from 'ui/src/components/view/patient/patient-view';
+import { type NextPage } from "next";
+import { useGetPatients } from "ui/src/services/patient";
+import { Layout } from "../util/components/layout";
+import { PatientView } from "../util/components/patient-view";
+import {
+  defaultGetServerProps,
+  requireAuth,
+} from "../util/protected-routes-hoc";
 
+export const getServerSideProps = requireAuth(defaultGetServerProps);
 
 const Patients: NextPage = () => {
-    const router = useRouter();
-    const query = useGetPatients();
-    if (query.isLoading || query.isError) {
-        return <>Loading...</>
-    }
-    const patients = query.data;
+  const query = useGetPatients();
 
-    const items: SidePanelItems[] = patients.map(patient => ({label: patient.name, href: {query: {id: patient.id}}}))
+  if (query.isError || query.isLoading) return <>Loading</>;
 
-    return (
-        <SidePanel items={items} path={router.asPath}>
-            {typeof router.query.id === 'string' && <div className="p-8">
-                <PatientViewId id={router.query.id}/>
-            </div>}
-        </SidePanel>
-	)
-}
+  const items = query.data;
+
+  return (
+    <Layout>
+      <PatientView items={items} />
+    </Layout>
+  );
+};
 
 export default Patients;

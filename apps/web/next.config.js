@@ -7,6 +7,10 @@ module.exports = {
     if (isServer) {
       config.plugins = [...config.plugins, new PrismaPlugin()];
     }
+		config.module.rules.push({
+	    test: /\.node/,
+	    use: 'raw-loader',
+	  });
     return config;
   },
 };
