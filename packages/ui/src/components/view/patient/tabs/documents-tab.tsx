@@ -111,16 +111,17 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
 		setSelectedFiles(copy);
 	}
 
-	const moveToFolder = (toMove: PatientDocument, folder: PatientDocument): void => {
-		alert(`Moving ${toMove.name} into folder ${folder.name}`);
+	const moveToFolder = (toMove: PatientDocument[], folder: PatientDocument): void => {
+		alert(`Moving ${toMove.map(file => file.name)} into folder ${folder.name}`);
 	}
 
 	const onDragEnd = (activeId: UniqueIdentifier, overId: UniqueIdentifier | undefined): void => {
 		if (overId && activeId !== overId) {
-			const toMove: PatientDocument | undefined = documents.find(document => document.name === activeId);
+			const ids = typeof activeId === 'string' && activeId.includes('selected') ? selectedFiles.map(file => file.name) : [activeId];
+			const toMove: PatientDocument[] = documents.filter(document => ids.includes(document.name));
 			const folder: PatientDocument | undefined = documents.find(document => document.name === overId && document.type === 'folder');
 
-			if (toMove && folder) {
+			if (toMove.length > 0 && folder && !toMove.includes(folder)) {
 				moveToFolder(toMove, folder);
 			}
 		}
@@ -145,7 +146,7 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
 								selectFile(document, ctlKey);
 							}}
 							onSendTo={() => {sendToDocument([document])}}
-							selected={selectedFiles.includes(document)}
+							selectedId={selectedFiles.includes(document) ? `selected-${selectedFiles.length}` : undefined}
 						/>
 					))}
 				</DraggableContext>
@@ -173,7 +174,7 @@ interface DocumentLineProps {
 	onExport: () => void;
 	onSendTo: () => void;
 	onSelect: (ctlKey: boolean) => void;
-	selected: boolean;
+	selectedId: string | undefined;
 }
 const DocumentLine: React.FunctionComponent<DocumentLineProps> = ({
   document,
@@ -182,14 +183,14 @@ const DocumentLine: React.FunctionComponent<DocumentLineProps> = ({
 	onExport,
 	onSendTo,
 	onSelect,
-	selected,
+	selectedId,
 }) => {
   const Icon = document.type !== "folder" ? DocumentTextIcon : FolderIcon; 
 
 	const getChildren = (isDropping: boolean): JSX.Element => (
-		<Draggable id={`${document.name}`}>
+		<Draggable id={selectedId ?? document.name}>
 			<button
-				className={`flex justify-between items-center border-b p-4 cursor-pointer outline-none w-full ${isDropping ? 'bg-gray-100' : ''} ${selected ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+				className={`flex justify-between items-center border-b p-4 cursor-pointer outline-none w-full ${isDropping ? 'bg-gray-100' : ''} ${selectedId ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
 				onClick={(e) => {onSelect(e.ctrlKey)}}
 				onDoubleClick={onOpen}
 				type="button"

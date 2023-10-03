@@ -1,5 +1,6 @@
 import type { DragEndEvent} from "@dnd-kit/core";
-import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core"
+import { DndContext, KeyboardSensor, PointerSensor, useDraggable, useDroppable, useSensor, useSensors } from "@dnd-kit/core"
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import React from "react";
 
 export type UniqueIdentifier = string | number;
@@ -8,11 +9,21 @@ export interface DraggableContextProps {
 	children: React.ReactNode
 }
 export const DraggableContext: React.FunctionComponent<DraggableContextProps> = ({children, onDragEnd}) => {
+	const sensors = useSensors(
+    useSensor(PointerSensor, {
+			activationConstraint: {
+				distance: 5,
+			}
+		}),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 	const handleDrag = (e: DragEndEvent): void => {
 		onDragEnd(e.active.id, e.over?.id);
 	}
 	return (
-		<DndContext onDragEnd={handleDrag}>
+		<DndContext onDragEnd={handleDrag} sensors={sensors}>
 			{children}
 		</DndContext>
 	)
