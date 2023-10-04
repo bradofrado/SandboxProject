@@ -1,10 +1,9 @@
 import {createClient as soapCreateClient} from 'soap';
-import {type Charge} from 'model/src/medical'
-import type { Appointment, Patient } from 'model/src/patient';
+import type { Appointment, Patient, PatientFinanceProvider, PatientListItem } from 'model/src/patient';
 import type { MedicalService } from '../medical-service';
-import type { GetAppointmentRequest, GetAppointmentResponse, GetChargesRequest, GetChargesResponse, GetPatientRequest, GetPatientResponse, GetPatientsRequest, GetPatientsResponse, KareoClient, KareoRequest} from './types';
+import type { GetAppointmentRequest, GetAppointmentResponse, GetAppointmentsRequest, GetAppointmentsResponse, GetChargesRequest, GetChargesResponse, GetPatientRequest, GetPatientResponse, GetPatientsRequest, GetPatientsResponse, KareoClient, KareoRequest} from './types';
 import { KareoClientSchema } from './types';
-import { getAppointmentResponseToAppointment, getChargesResponseToCharges, getPatientResponseToPatient, getPatientsResponseToPatients } from './utils';
+import { getAppointmentResponseToAppointment, getAppointmentsResponseToAppointments, getChargesResponseToCharges, getPatientResponseToPatient, getPatientsResponseToPatients } from './utils';
 
 export class KareoMedicalService implements MedicalService {
 	private serviceUrl = 'https://webservice.kareo.com/services/soap/2.1/KareoServices.svc?wsdl'
@@ -39,7 +38,18 @@ export class KareoMedicalService implements MedicalService {
 		return getAppointmentResponseToAppointment(response);
 	}
 
-	public async getCharges(practiceName: string): Promise<Charge[]> {
+	public async getAppointments(practiceName: string, patientId: string): Promise<Appointment[]> {
+		const request: GetAppointmentsRequest = this.createRequest<GetAppointmentsRequest>({
+			PracticeName: practiceName,
+			PatientID: patientId
+		});
+		
+		const response: GetAppointmentsResponse = await this.client.GetAppointments(request);
+
+		return getAppointmentsResponseToAppointments(response);
+	}
+
+	public async getCharges(practiceName: string): Promise<PatientFinanceProvider[]> {
 		const request: GetChargesRequest = this.createRequest<GetChargesRequest>({PracticeName: practiceName});
 
 		const response: GetChargesResponse = await this.client.GetCharges(request);
@@ -55,7 +65,7 @@ export class KareoMedicalService implements MedicalService {
 		return getPatientResponseToPatient(response);
 	}
 
-	public async getPatients(practiceName: string): Promise<Patient[]> {
+	public async getPatients(practiceName: string): Promise<PatientListItem[]> {
 		const request: GetPatientsRequest = this.createRequest<GetPatientsRequest>({PracticeName: practiceName});
 
 		const response: GetPatientsResponse = await this.client.GetPatients(request);

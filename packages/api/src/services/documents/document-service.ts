@@ -1,9 +1,15 @@
+import { injectable, interfaces } from "inversify";
 import { PatientDocument } from "model/src/patient";
 
 export interface DocumentService {
 	getDocuments: (path: string) => Promise<PatientDocument[]>
 }
 
+export namespace DocumentService {
+	export const $: interfaces.ServiceIdentifier<DocumentService> = Symbol('DocumentService');
+}
+
+@injectable()
 export class TestDocumentService implements DocumentService {
 	public async getDocuments(path: string): Promise<PatientDocument[]> {
 		const documents = patientDocuments.filter(doc => doc.patientId === path);

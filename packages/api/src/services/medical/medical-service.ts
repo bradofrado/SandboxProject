@@ -1,3 +1,4 @@
+import { injectable, interfaces } from 'inversify';
 import type {Appointment, Patient, PatientDocument, PatientFinanceProvider, PatientListItem, PatientStatus} from 'model/src/patient';
 
 export interface MedicalService {
@@ -8,6 +9,7 @@ export interface MedicalService {
 	getPatients: (practiceName: string) => Promise<PatientListItem[]>
 }
 
+@injectable()
 export class TestMedicalService implements MedicalService {
 	public getAppointment(appointmentId: string): Promise<Appointment> {
 
@@ -42,6 +44,10 @@ export class TestMedicalService implements MedicalService {
 	public async getPatients(practiceName: string): Promise<PatientListItem[]> {
 		return patients;
 	}
+}
+
+export namespace MedicalService {
+	export const $: interfaces.ServiceIdentifier<MedicalService> = Symbol('MedicalService');
 }
 
 const patients: PatientListItem[] = [

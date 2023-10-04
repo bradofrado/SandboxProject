@@ -6,15 +6,16 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-
+import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { initTRPC } from "@trpc/server";
 import { prisma } from "db/lib/prisma";
 import superjson from "superjson";
 import { ZodError } from "zod";
-import { SmartAdvocateService } from "./services/attorney/smart-advocate/smartadvocate-service";
-import { MedicalService, TestMedicalService } from "./services/medical/medical-service";
-import { AttorneyService, TestAttorneyService } from "./services/attorney/attorney-service";
-import { DocumentService, TestDocumentService } from "./services/documents/document-service";
+import type { Container } from "inversify";
+import { MedicalService} from "./services/medical/medical-service";
+import { AttorneyService} from "./services/attorney/attorney-service";
+import { DocumentService} from "./services/documents/document-service";
+import { testContainer } from "./containers/inversify.test.config";
 
 /**
  * 1. CONTEXT
@@ -23,9 +24,10 @@ import { DocumentService, TestDocumentService } from "./services/documents/docum
  *
  * These allow you to access things when processing a request, like the database, the session, etc.
  */
-const medicalService = new TestMedicalService();
-const attorneyService = new TestAttorneyService();
-const documentService = new TestDocumentService();
+
+interface CreateContextOptions {
+	container: Container
+}
 
 export interface TRPCContext {
 	prisma: typeof prisma,
@@ -44,12 +46,12 @@ export interface TRPCContext {
  *
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
-const createInnerTRPCContext = (): TRPCContext => {
+const createInnerTRPCContext = ({container}: CreateContextOptions): TRPCContext => {
   return {
     prisma,
-		medicalService,
-		attorneyService,
-		documentService
+		medicalService: container.get<MedicalService>(MedicalService.$),
+		attorneyService: container.get<AttorneyService>(AttorneyService.$),
+		documentService: container.get<DocumentService>(DocumentService.$)
   };
 };
 
@@ -59,8 +61,12 @@ const createInnerTRPCContext = (): TRPCContext => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = (): TRPCContext => {
-  return createInnerTRPCContext();
+export const createTRPCContext = (opts: CreateNextContextOptions): TRPCContext => {
+	const {req, res} = opts;
+	//TODO: Get the needed apis from the user session
+	const container = testContainer;
+
+  return createInnerTRPCContext({container});
 };
 
 /**

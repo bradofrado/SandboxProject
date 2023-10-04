@@ -15,8 +15,7 @@ export const patientsRouter = createTRPCRouter({
 		.query(async ({input, ctx}) => {
 			const practiceName = 'SpinalRehab';
 			const patients = await ctx.medicalService.getPatients(practiceName);
-			console.log(patients);
-
+			
 			return patients;
 		}),
 	

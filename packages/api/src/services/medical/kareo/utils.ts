@@ -1,6 +1,5 @@
-import type { Charge } from "model/src/medical";
-import type { Appointment, Patient } from "model/src/patient";
-import type { GetAppointmentResponse, GetChargesResponse, GetPatientResponse, GetPatientsResponse } from "./types";
+import type { Appointment, Patient, PatientFinanceProvider, PatientListItem } from "model/src/patient";
+import type { GetAppointmentResponse, GetAppointmentsResponse, GetChargesResponse, GetPatientResponse, GetPatientsResponse } from "./types";
 
 export function getAppointmentResponseToAppointment(response: GetAppointmentResponse): Appointment {
 	return {
@@ -8,7 +7,11 @@ export function getAppointmentResponseToAppointment(response: GetAppointmentResp
 	}
 }
 
-export function getChargesResponseToCharges(response: GetChargesResponse): Charge[] {
+export function getAppointmentsResponseToAppointments(response: GetAppointmentsResponse): Appointment[] {
+	return []
+}
+
+export function getChargesResponseToCharges(response: GetChargesResponse): PatientFinanceProvider[] {
 	return []
 }
 
@@ -18,6 +21,6 @@ export function getPatientResponseToPatient(response: GetPatientResponse): Patie
 	}
 }
 
-export function getPatientsResponseToPatients(response: GetPatientsResponse): Patient[] {
+export function getPatientsResponseToPatients(response: GetPatientsResponse): PatientListItem[] {
 	return []
 }

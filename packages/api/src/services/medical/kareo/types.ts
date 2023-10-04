@@ -28,6 +28,23 @@ export type GetAppointmentRequest = z.infer<typeof GetAppointmentRequestSchema>;
 export type GetAppointmentResponse = z.infer<typeof GetAppointmentResponseSchema>;
 const getAppointmentSchema = createKareoMethodSchema(GetAppointmentRequestSchema, GetAppointmentResponseSchema);
 
+/** Get Appointments */
+const GetAppointmentsRequestSchema = KareoRequestSchema.extend({
+	PracticeName: z.string(),
+	PatientID: z.string(),
+})
+const GetAppointmentsResponseSchema = z.object({
+	PracticeId: z.string(),
+	ServiceLocationId: z.string(),
+	AppointmentStatus: z.string(),
+	StartTime: z.string(),
+	EndTime: z.string()
+})
+export type GetAppointmentsRequest = z.infer<typeof GetAppointmentsRequestSchema>;
+export type GetAppointmentsResponse = z.infer<typeof GetAppointmentsResponseSchema>;
+const getAppointmentsSchema = createKareoMethodSchema(GetAppointmentsRequestSchema, GetAppointmentsResponseSchema);
+
+
 /* Get Charges */
 const GetChargesRequestSchema = KareoRequestSchema.extend({
 	PracticeName: z.string(),
@@ -66,6 +83,7 @@ const getPatientsSchema = createKareoMethodSchema(GetPatientsRequestSchema, GetP
 
 export const KareoClientSchema = z.object({
 	GetAppointment: getAppointmentSchema,
+	GetAppointments: getAppointmentsSchema,
 	GetCharges: getChargesSchema,
 	GetPatient: getPatientSchema,
 	GetPatients: getPatientsSchema
