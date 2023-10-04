@@ -1,6 +1,5 @@
 import { useRef } from "react";
 import { ModalPortal } from "../../core/modal";
-import { ClosableContent } from "../../core/closable-content";
 import { useClickOutside } from "../../../hooks/click-outside";
 import { PDFViewer } from "./viewers/pdf-viewer"
 import type {DocumentType, DocumentViewerComponent} from './types';
@@ -22,11 +21,9 @@ export const DocumentViewer: React.FunctionComponent<DocumentViewerProps> = ({sr
 	const Component = type && src ? documentComponents[type] : undefined;
 	return (
 		<ModalPortal show={show}>
-			<ClosableContent onClose={onClose}>
-				{type && src && Component ? <div className="w-fit mx-auto" ref={ref}>
-					<Component src={src} />
-				</div> : null}
-			</ClosableContent>
+			{type && src && Component ? <div className="w-fit mx-auto" ref={ref}>
+				<Component src={src} />
+			</div> : null}
 		</ModalPortal>
 	)
 }
