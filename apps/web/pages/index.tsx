@@ -2,10 +2,10 @@ import { type NextPage } from "next";
 import { Layout } from "../util/components/layout";
 import {
   defaultGetServerProps,
-  requireAuth,
+	requireRoute,
 } from "../util/protected-routes-hoc";
 
-export const getServerSideProps = requireAuth(defaultGetServerProps);
+export const getServerSideProps = requireRoute({redirect: '/patients', check: () => true})(defaultGetServerProps);
 
 const Home: NextPage = () => {
   return <Layout />;
