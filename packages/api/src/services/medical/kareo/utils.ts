@@ -1,5 +1,5 @@
-import type { Appointment, Charge } from "model/src/medical";
-import type { Patient } from "model/src/patient";
+import type { Charge } from "model/src/medical";
+import type { Appointment, Patient } from "model/src/patient";
 import type { GetAppointmentResponse, GetChargesResponse, GetPatientResponse, GetPatientsResponse } from "./types";
 
 export function getAppointmentResponseToAppointment(response: GetAppointmentResponse): Appointment {

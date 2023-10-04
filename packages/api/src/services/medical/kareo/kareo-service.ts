@@ -1,6 +1,6 @@
 import {createClient as soapCreateClient} from 'soap';
-import {type Charge, type Appointment} from 'model/src/medical'
-import type { Patient } from 'model/src/patient';
+import {type Charge} from 'model/src/medical'
+import type { Appointment, Patient } from 'model/src/patient';
 import type { MedicalService } from '../medical-service';
 import type { GetAppointmentRequest, GetAppointmentResponse, GetChargesRequest, GetChargesResponse, GetPatientRequest, GetPatientResponse, GetPatientsRequest, GetPatientsResponse, KareoClient, KareoRequest} from './types';
 import { KareoClientSchema } from './types';

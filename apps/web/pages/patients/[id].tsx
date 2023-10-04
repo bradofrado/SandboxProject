@@ -7,13 +7,12 @@ import { PatientView } from "../../util/components/patient-view";
 const PatientPage: NextPage = () => {
   const router = useRouter();
   const query = useGetPatients();
-  const patients = query.data;
-
-  if (!router.isReady || typeof router.query.id !== "string") return <div />;
+  
+  if (query.isError || query.isLoading || !router.isReady || typeof router.query.id !== "string") return <div />;
 
   return (
     <Layout>
-      <PatientView id={router.query.id} items={patients} />
+      <PatientView id={router.query.id} items={query.data} />
     </Layout>
   );
 };

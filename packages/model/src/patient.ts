@@ -1,4 +1,4 @@
-export interface Patient {
+export interface PatientListItem {
   id: string;
   firstName: string;
   lastName: string;
@@ -13,6 +13,11 @@ export interface Patient {
   primaryContact: string;
   lastUpdateDate: Date | null;
   outstandingBalance: number;
+}
+
+export interface Patient extends PatientListItem {
+	status: PatientStatus,
+	charges: PatientFinanceProvider[]
 }
 
 export interface PatientStatus {

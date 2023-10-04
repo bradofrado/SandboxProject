@@ -11,6 +11,10 @@ import { initTRPC } from "@trpc/server";
 import { prisma } from "db/lib/prisma";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { SmartAdvocateService } from "./services/attorney/smart-advocate/smartadvocate-service";
+import { MedicalService, TestMedicalService } from "./services/medical/medical-service";
+import { AttorneyService, TestAttorneyService } from "./services/attorney/attorney-service";
+import { DocumentService, TestDocumentService } from "./services/documents/document-service";
 
 /**
  * 1. CONTEXT
@@ -19,6 +23,16 @@ import { ZodError } from "zod";
  *
  * These allow you to access things when processing a request, like the database, the session, etc.
  */
+const medicalService = new TestMedicalService();
+const attorneyService = new TestAttorneyService();
+const documentService = new TestDocumentService();
+
+export interface TRPCContext {
+	prisma: typeof prisma,
+	medicalService: MedicalService,
+	attorneyService: AttorneyService,
+	documentService: DocumentService
+}
 
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
@@ -30,9 +44,12 @@ import { ZodError } from "zod";
  *
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
-const createInnerTRPCContext = (): { prisma: typeof prisma } => {
+const createInnerTRPCContext = (): TRPCContext => {
   return {
     prisma,
+		medicalService,
+		attorneyService,
+		documentService
   };
 };
 
@@ -42,7 +59,7 @@ const createInnerTRPCContext = (): { prisma: typeof prisma } => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = (): { prisma: typeof prisma } => {
+export const createTRPCContext = (): TRPCContext => {
   return createInnerTRPCContext();
 };
 

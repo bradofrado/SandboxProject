@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Patient } from "model/src/patient";
+import type { PatientListItem } from "model/src/patient";
 import {
   displayDate,
   formatDollarAmount,
@@ -52,13 +52,13 @@ interface PatientGridFilter {
 }
 
 export interface PatientsGridProps {
-  patients: Patient[];
+  patients: PatientListItem[];
   collapse?: boolean;
   children?: React.ReactNode;
   onPatientClick: (id: string) => void;
 }
  
-type PatientType = RecordType<Patient>
+type PatientType = RecordType<PatientListItem>
 export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
   patients,
   children,
@@ -74,21 +74,21 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
   const allLawFirms = groupTogether(patients, "lawFirm");
 
   const filterFunctions: {
-    [P in keyof Patient]?: (key: Patient[P]) => boolean;
+    [P in keyof PatientListItem]?: (key: PatientListItem[P]) => boolean;
   } = {
-    dateOfLoss: (key: Patient["dateOfLoss"]) =>
+    dateOfLoss: (key: PatientListItem["dateOfLoss"]) =>
       isDateInBetween(
         key,
         filter.dateOfLost?.start ?? null,
         filter.dateOfLost?.end ?? null,
       ),
-    lastUpdateDate: (key: Patient["lastUpdateDate"]) =>
+    lastUpdateDate: (key: PatientListItem["lastUpdateDate"]) =>
       isDateInBetween(
         key,
         filter.lastUpdate?.start ?? null,
         filter.lastUpdate?.end ?? null,
       ),
-    lawFirm: (key: Patient["lawFirm"]) =>
+    lawFirm: (key: PatientListItem["lawFirm"]) =>
       filter.attorney !== undefined && filter.attorney > -1
         ? key === allLawFirms[filter.attorney]
         : true,
@@ -158,7 +158,7 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
 		}
 	}
 
-	const filterKeys: (keyof Patient)[] = [
+	const filterKeys: (keyof PatientListItem)[] = [
 		"lastUpdateDate",
 		"firstName",
 		"lastName",
@@ -288,7 +288,7 @@ const LastUpdateComponent: React.FunctionComponent<{
   );
 };
 
-const CollapsedPatient: React.FunctionComponent<{ patient: Patient }> = ({
+const CollapsedPatient: React.FunctionComponent<{ patient: PatientListItem }> = ({
   patient,
 }) => {
   return (

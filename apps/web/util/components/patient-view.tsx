@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import type { Patient } from "model/src/patient";
+import type { PatientListItem } from "model/src/patient";
 import { ClosableContent } from "ui/src/components/core/closable-content";
 import { Header } from "ui/src/components/core/header";
 import { PatientViewId } from "./patient/patient-view";
@@ -7,7 +7,7 @@ import { PatientsGrid } from "./patient/patients-grid";
 
 export interface PatientViewProps {
   id?: string;
-  items: Patient[];
+  items: PatientListItem[];
 }
 export const PatientView: React.FunctionComponent<PatientViewProps> = ({
   id,
