@@ -53,9 +53,9 @@ interface PatientGridFilter {
 
 export interface PatientsGridProps {
   patients: Patient[];
-  collapse?: boolean;
+  currPatient: string | undefined;
   children?: React.ReactNode;
-  onPatientClick: (id: string) => void;
+  onPatientClick: (id: string | undefined) => void;
 }
  
 type PatientType = RecordType<Patient>
@@ -63,13 +63,15 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
   patients,
   children,
   onPatientClick,
-  collapse = false,
+  currPatient
 }) => {
   const [filter, setFilter] = useState<PatientGridFilter>({
     dateOfLost: undefined,
     lastUpdate: undefined,
     attorney: undefined,
   });
+
+	const collapse = currPatient !== undefined;
 
   const allLawFirms = groupTogether(patients, "lawFirm");
 
@@ -193,7 +195,7 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
 					itemsPerPage={12}
 					onChange={onFilterChange}
 					onItemClick={(item) => {
-            onPatientClick(item.id);
+            onPatientClick(item.id === currPatient ? undefined : item.id);
           }}
 					search
         >

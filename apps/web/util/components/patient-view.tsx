@@ -25,7 +25,7 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
     <div className="flex flex-col gap-2 p-2">
       <Header level={2}>Patients</Header>
       <PatientsGrid
-        collapse={id !== undefined}
+        currPatient={id}
         onPatientClick={onPatientClick}
         patients={items}
       >
