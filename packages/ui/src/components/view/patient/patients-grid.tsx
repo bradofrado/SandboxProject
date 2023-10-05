@@ -254,7 +254,7 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
         outstandingBalance: {
           compareKey: outstandingBalance,
           label: (
-            <span className="text-primary">
+            <span className="text-primary font-semibold">
               {formatDollarAmount(outstandingBalance)}
             </span>
           ),
