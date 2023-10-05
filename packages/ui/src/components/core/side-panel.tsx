@@ -60,7 +60,7 @@ export const SidePanel: React.FunctionComponent<SidePanelProps> = ({
                 <li key={i}>
                   <a
                     aria-selected={selected}
-                    className="flex items-center px-4 py-2 text-gray-900 rounded-lg dark:text-white hover:bg-primary-light dark:hover:bg-primary-light group aria-selected:font-bold aria-selected:bg-primary-light dark:aria-selected:bg-primary-light"
+                    className="flex items-center px-4 py-2 text-gray-900 rounded-md dark:text-white hover:bg-primary-light dark:hover:bg-primary-light group aria-selected:font-bold aria-selected:bg-primary-light dark:aria-selected:bg-primary-light"
                     href={link}
                   >
                     {Icon ? (

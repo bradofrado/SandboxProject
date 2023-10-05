@@ -52,7 +52,7 @@ const PatientInfo: React.FunctionComponent<{patient: Patient}> = ({patient}) => 
 
   return (
     <div className="flex flex-col gap-8 flex-wrap">
-      <div className="flex gap-4 px-2 pt-2">
+      <div className="flex gap-4 px-4">
         <PatientBio patient={patient} />
       </div>
       <TabControl items={tabItems} />
@@ -66,7 +66,7 @@ const PatientBio: React.FunctionComponent<{ patient: Patient }> = ({
   return (
     // <Card>
       <div className="flex flex-col gap-4">
-        <div className="flex gap-16 items-center">
+        <div className="flex gap-16">
           <Header>
             {patient.firstName} {patient.lastName}
           </Header>

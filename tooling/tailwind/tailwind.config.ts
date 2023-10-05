@@ -10,12 +10,12 @@ export default {
     extend: {
       colors: {
         primary: {
-          light: "#379bda4d",
+          light: "#66b1eb",
           DEFAULT: "#379BDA",//"#318BD0",
           dark: "#2B7ABF",
         },
 				gray: {
-					DEFAULT: "#f1f1f1"
+					DEFAULT: "#f2f3f5cc"
 				},
 				// white: {
 				// 	DEFAULT: '#f9fafb'

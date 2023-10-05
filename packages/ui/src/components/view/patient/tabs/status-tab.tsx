@@ -18,7 +18,7 @@ export const StatusTab: React.FunctionComponent<StatusTabProps> = ({
   return (
     <div className="flex flex-col gap-4 py-2">
       <StatusTracker
-        className="h-20 justify-center"
+        className="px-2 h-20"
         statuses={patientStatuses}
         value={status.status}
       />

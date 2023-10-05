@@ -38,7 +38,7 @@ export const TabControl: React.FunctionComponent<TabControlProps> = ({
                 className={getClass(
                   "inline-block px-4 py-2 border-b-2 rounded-t-lg outline-none",
                   selected === item.id
-                    ? "border-b-2 border-primary rounded-t-lg active dark:text-primary-light dark:border-primary-light"
+                    ? "border-b-4 border-primary rounded-t-lg active dark:text-primary-light dark:border-primary-light"
                     : "border-transparent hover:border-gray-300 dark:hover:text-gray-300",
                 )}
                 onClick={() => {

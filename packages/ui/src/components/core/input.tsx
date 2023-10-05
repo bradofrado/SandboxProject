@@ -24,7 +24,7 @@ export const Input: React.FunctionComponent<InputProps> = ({
   const props = {
     className: `${
       className || ""
-    } bg-gray-50 border shadow-sm rounded-md px-3 py-1.5 text-sm text-gray-900 focus:ring-primary focus:ring-1 transition-[box-shadow] focus-visible:outline-none `,
+    } bg-gray-50 border shadow-sm rounded-md px-3  py-1.5 text-sm text-gray-900 focus:ring-primary focus:ring-1 transition-[box-shadow] focus-visible:outline-none `,
     onChange: (
       e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
