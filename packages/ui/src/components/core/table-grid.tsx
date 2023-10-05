@@ -112,11 +112,11 @@ export const TableGrid = <T, S extends keyof T>({
   return (
     <div className={`${className} flex flex-col gap-2`}>
       <div className="relative overflow-x-auto">
-        <table className="w-full text-sm text-left rounded-xl shadow-md overflow-hidden">
-          <thead className="text-xs bg-gray-50 dark:bg-gray-700">
+        <table className="w-full text-sm text-left rounded-md shadow-md overflow-hidden">
+          <thead className="text-xs bg-gray dark:bg-gray-700 font-semibold">
             <tr>
               {columns.map(({ label, id }) => (
-                <th className="px-4 py-3 border-b" key={label} scope="col">
+                <th className="px-4 py-1 border-b" key={label} scope="col">
                   <ChevronSwitch
                     label={label}
                     onChange={() => {
@@ -131,7 +131,7 @@ export const TableGrid = <T, S extends keyof T>({
           <tbody>
             {sorted.map((item, i) => (
               <tr
-                className={`bg-gray border-b dark:bg-gray-800 dark:border-gray-700 ${
+                className={`bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700 ${
                   onItemClick ? "hover:bg-gray-100 cursor-pointer" : ""
                 }`}
                 key={i}

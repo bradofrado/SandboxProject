@@ -15,12 +15,12 @@ import type { FilterChildren, FilterItem} from "../../core/filter-button";
 
 const columns: TableGridColumn<'lastName' | 'firstName' | 'lawFirm' | 'primaryContact' | 'lastUpdateDate' | 'outstandingBalance'>[] = [
   {
-    id: "lastName",
-    label: "Last Name",
-  },
-  {
     id: "firstName",
     label: "First Name",
+  },
+	{
+    id: "lastName",
+    label: "Last Name",
   },
   {
     id: "lawFirm",

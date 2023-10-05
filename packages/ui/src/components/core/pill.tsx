@@ -13,7 +13,7 @@ export const Pill: React.FunctionComponent<PillProps> = ({
     primary: "bg-primary-light text-primary",
     secondary: "bg-white text-gray-800 border",
     error: "bg-red-300 text-red-600",
-    success: "bg-[#66b1eb]/20 text-[#318bd0] text-[#fff}",
+    success: "bg-[#66b1eb]/20 text-[#318bd0] text-[#000]",
   };
   const background = backgrounds[mode];
   return (

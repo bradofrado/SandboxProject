@@ -15,7 +15,7 @@ export const ChevronSwitch: React.FunctionComponent<ChevronSwitchProps> = ({
   const Icon = value ? ChevronUpIcon : ChevronDownIcon;
   return (
     <button
-      className={`${className} flex items-center hover:bg-gray-200 rounded-md px-2 py-1`}
+      className={`${className} flex items-center hover:bg-gray-200 rounded-md px-2 py-1 font-semibold`}
       onClick={() => {
         onChange(!value);
       }}

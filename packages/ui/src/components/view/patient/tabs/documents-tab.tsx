@@ -133,7 +133,7 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
 			<div className="flex mb-2 gap-2">
 				{fileButtons.map(button => <Button className={`${button.shouldShow(selectedFiles) ? 'visible' : 'invisible'}`} key={button.label} mode="secondary" onClick={() => {button.action(selectedFiles)}}>{button.label}</Button>)}
 			</div>
-			<div className="flex flex-col rounded-3xl shadow-md overflow-hidden">
+			<div className="flex flex-col rounded-md shadow-md overflow-hidden">
 				<DraggableContext onDragEnd={onDragEnd}>
 					{documents.map((document) => (
 						<DocumentLine
