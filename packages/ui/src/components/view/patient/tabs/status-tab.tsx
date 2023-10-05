@@ -1,9 +1,7 @@
-import dayjs from "dayjs";
 import { patientStatuses, type Patient } from "model/src/patient";
-import { useGetPatientStatus } from "../../../../services/patient";
-import { Label } from "../../../core/label";
-import { StatusTracker } from "../../../feature/status-tracker";
 import { displayDate } from "model/src/utils";
+import { useGetPatientStatus } from "../../../../services/patient";
+import { StatusTracker } from "../../../feature/status-tracker";
 
 export interface StatusTabProps {
   patient: Patient;

@@ -2,6 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+	font-family: AvenirNext;
+	src: url(/fonts/avenir-next-regular.ttf);
+}
+
+@font-face {
+	font-family: AvenirNext;
+	src: url(/fonts/avenir-next-medium.ttf);
+	font-weight: 500;
+}
+
+@font-face {
+	font-family: AvenirNext;
+	src: url(/fonts/avenir-next-demibold.ttf);
+	font-weight: 600;
+}
+
+@font-face {
+	font-family: AvenirNext;
+	src: url(/fonts/avenir-next-bold.ttf);
+	font-weight: 700;
+}
+
+@font-face {
+	font-family: AvenirNext;
+	src: url(/fonts/AvenirNextLTPro-It.otf);
+	font-style: italic;
+}
+
+body {
+	font-family: AvenirNext;
+}
+
 /* width */
 ::-webkit-scrollbar {
 	width: 5px;

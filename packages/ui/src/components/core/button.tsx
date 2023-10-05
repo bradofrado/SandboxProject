@@ -29,7 +29,7 @@ export const Button = <T extends React.ElementType>({
   const Component = as || "button";
   const buttonClasses: { [key in ButtonType]: string } = {
     primary: "bg-primary text-white hover:bg-primary/80 fill-white",
-    secondary: "bg-white text-gray-900 hover:bg-opacity-30",
+    secondary: "bg-gray text-gray-900 hover:bg-opacity-30",
     other: `text-secondary hover:opacity-80`,
   };
   const style = mode === "other" ? { backgroundColor } : undefined;

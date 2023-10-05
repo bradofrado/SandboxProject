@@ -5,7 +5,6 @@ import { type ParsedUrlQueryInput } from "node:querystring";
 import React from "react";
 import type { IconComponent } from "./icons";
 import { NotifyLabel, type NotifyLabelProps } from "./notify-label";
-import { Header } from "./header";
 
 export interface SidePanelItems {
   label: string;
@@ -44,7 +43,9 @@ export const SidePanel: React.FunctionComponent<SidePanelProps> = ({
       >
         <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-700 border-r border-gray-200 dark:border-gray-600">
 					{title ? <a href="/">
-						<Header className="mb-6 text-center" level={2}>{title}</Header>
+						<div className="w-32 p-2">
+							<img alt="Nexa Logo" className="w-full" src="/logo.png"/>
+						</div>
 					</a> : null}
 					<ul className="space-y-2 font-medium">
             {items.map((item, i) => {

@@ -116,7 +116,7 @@ export const TableGrid = <T, S extends keyof T>({
           <thead className="text-xs bg-gray-50 dark:bg-gray-700">
             <tr>
               {columns.map(({ label, id }) => (
-                <th className="px-6 py-3 border-b" key={label} scope="col">
+                <th className="px-4 py-3 border-b" key={label} scope="col">
                   <ChevronSwitch
                     label={label}
                     onChange={() => {
@@ -131,7 +131,7 @@ export const TableGrid = <T, S extends keyof T>({
           <tbody>
             {sorted.map((item, i) => (
               <tr
-                className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700 ${
+                className={`bg-gray border-b dark:bg-gray-800 dark:border-gray-700 ${
                   onItemClick ? "hover:bg-gray-100 cursor-pointer" : ""
                 }`}
                 key={i}
