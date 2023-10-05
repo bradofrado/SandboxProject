@@ -22,7 +22,7 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
     );
   };
   return (
-    <div className="flex flex-col gap-2 p-2">
+    <div className="flex flex-col gap-2 px-2 py-6">
       <Header level={2}>Patients</Header>
       <PatientsGrid
         currPatient={id}

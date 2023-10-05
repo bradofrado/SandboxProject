@@ -42,10 +42,10 @@ export const FinanceTab: React.FunctionComponent<FinanceTabProps> = ({
   ];
 
   const footer = (items: PatientFinanceProviderType[]): TableGridFooter<typeof columns[number]['id']> => ({
-    name: <span className="font-medium text-black">Total Due</span>,
+    name: <span className="font-semibold text-black">Total Due</span>,
     status: "",
     amount: (
-      <span className="font-medium text-black">
+      <span className="font-semibold text-black">
         {formatDollarAmount(items.reduce(
 					(prev, curr) => prev + (curr.status === "Unpaid" ? curr.amount : 0),
 					0,

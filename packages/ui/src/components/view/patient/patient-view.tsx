@@ -19,11 +19,11 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
 }) => {
   return (
 		<div className="flex">
-			<div className="border-x min-w-[550px] overflow-auto flex-1">
+			<div className="border-x overflow-auto flex-1 min-w-[550px]"> {/* min-w-[550px] */}
 				<PatientInfo patient={patient}/>
 			</div>
 			<div className="flex max-w-[600px] flex-col px-2">
-				<Header level={2}>Threads</Header>
+				<Header level={2}>Thread</Header>
 				<ChatBox chatId={patient.id} className="h-[80vh]" user={{id: '0', patientId: patient.id, name: patient.primaryContact, image: '/braydon.jpeg'}}/>
 			</div>
 		</div>
@@ -52,7 +52,7 @@ const PatientInfo: React.FunctionComponent<{patient: Patient}> = ({patient}) => 
 
   return (
     <div className="flex flex-col gap-8 flex-wrap">
-      <div className="flex gap-4 px-2 pt-2">
+      <div className="flex gap-4 px-4">
         <PatientBio patient={patient} />
       </div>
       <TabControl items={tabItems} />
@@ -66,7 +66,7 @@ const PatientBio: React.FunctionComponent<{ patient: Patient }> = ({
   return (
     // <Card>
       <div className="flex flex-col gap-4">
-        <div className="flex gap-16 items-center">
+        <div className="flex gap-16">
           <Header>
             {patient.firstName} {patient.lastName}
           </Header>

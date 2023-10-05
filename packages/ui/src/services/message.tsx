@@ -57,7 +57,7 @@ const _chats: Chat[] = [
 			{
 				id: "0",
 				userId: "0",
-				name: "Bob",
+				name: "Spinal Rehab",
 				text: "Not sure if you saw the notification under status but Maria missed her appointment yesterday at Spinal Rehab",
 				avatar: "/jeremy.jpeg",
 				date: calculateDateDifference(2 * day + 7 * hour)
@@ -73,7 +73,7 @@ const _chats: Chat[] = [
 			{
 				id: "2",
 				userId: "0",
-				name: "Bob",
+				name: "Spinal Rehab",
 				text: "Thanks for reaching out to her! She was seen yesterday at spinal rehab.",
 				avatar: "/jeremy.jpeg",
 				date: calculateDateDifference(day + 7 * hour)
@@ -95,7 +95,7 @@ const _chats: Chat[] = [
 			{
 				id: "0",
 				userId: "0",
-				name: "Bob",
+				name: "Spinal Rehab",
 				text: "Layne is all finished with treatment, could you update the demands?",
 				avatar: "/jeremy.jpeg",
 				date: calculateDateDifference(1 * day + 7 * hour)
@@ -111,7 +111,7 @@ const _chats: Chat[] = [
 			{
 				id: "2",
 				userId: "0",
-				name: "Bob",
+				name: "Spinal Rehab",
 				text: "Ok awesome, thanks so much!",
 				avatar: "/jeremy.jpeg",
 				date: calculateDateDifference(15 * hour)
@@ -125,7 +125,7 @@ const _chats: Chat[] = [
 			{
 				id: "0",
 				userId: "0",
-				name: "Bob",
+				name: "Spinal Rehab",
 				text: "Not sure if you saw the notification under status but Maria missed her appointment yesterday at Spinal Rehab",
 				avatar: "/jeremy.jpeg",
 				date: calculateDateDifference(2 * day + 7 * hour)
@@ -141,7 +141,7 @@ const _chats: Chat[] = [
 			{
 				id: "2",
 				userId: "0",
-				name: "Bob",
+				name: "Spinal Rehab",
 				text: "Thanks for reaching out to her! She was seen yesterday at spinal rehab.",
 				avatar: "/jeremy.jpeg",
 				date: calculateDateDifference(day + 7 * hour)
@@ -163,7 +163,7 @@ const _chats: Chat[] = [
 			{
 				id: "0",
 				userId: "0",
-				name: "Bob",
+				name: "Spinal Rehab",
 				text: "Not sure if you saw the notification under status but Maria missed her appointment yesterday at Spinal Rehab",
 				avatar: "/jeremy.jpeg",
 				date: calculateDateDifference(2 * day + 7 * hour)
@@ -179,7 +179,7 @@ const _chats: Chat[] = [
 			{
 				id: "2",
 				userId: "0",
-				name: "Bob",
+				name: "Spinal Rehab",
 				text: "Thanks for reaching out to her! She was seen yesterday at spinal rehab.",
 				avatar: "/jeremy.jpeg",
 				date: calculateDateDifference(day + 7 * hour)
@@ -201,7 +201,7 @@ const _chats: Chat[] = [
 			{
 				id: "0",
 				userId: "0",
-				name: "Bob",
+				name: "Spinal Rehab",
 				text: "Not sure if you saw the notification under status but Maria missed her appointment yesterday at Spinal Rehab",
 				avatar: "/jeremy.jpeg",
 				date: calculateDateDifference(2 * day + 7 * hour)
@@ -217,7 +217,7 @@ const _chats: Chat[] = [
 			{
 				id: "2",
 				userId: "0",
-				name: "Bob",
+				name: "Spinal Rehab",
 				text: "Thanks for reaching out to her! She was seen yesterday at spinal rehab.",
 				avatar: "/jeremy.jpeg",
 				date: calculateDateDifference(day + 7 * hour)

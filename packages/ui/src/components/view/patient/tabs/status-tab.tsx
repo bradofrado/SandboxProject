@@ -1,9 +1,7 @@
-import dayjs from "dayjs";
 import { patientStatuses, type Patient } from "model/src/patient";
-import { useGetPatientStatus } from "../../../../services/patient";
-import { Label } from "../../../core/label";
-import { StatusTracker } from "../../../feature/status-tracker";
 import { displayDate } from "model/src/utils";
+import { useGetPatientStatus } from "../../../../services/patient";
+import { StatusTracker } from "../../../feature/status-tracker";
 
 export interface StatusTabProps {
   patient: Patient;
@@ -20,7 +18,7 @@ export const StatusTab: React.FunctionComponent<StatusTabProps> = ({
   return (
     <div className="flex flex-col gap-4 py-2">
       <StatusTracker
-        className="h-20 justify-center"
+        className="px-2 h-20"
         statuses={patientStatuses}
         value={status.status}
       />
