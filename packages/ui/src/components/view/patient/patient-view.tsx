@@ -9,7 +9,6 @@ import { TabControl, type TabItem } from "../../core/tab";
 import { DocumentsTab } from "./tabs/documents-tab";
 import { FinanceTab } from "./tabs/finance-tab";
 import { StatusTab } from "./tabs/status-tab";
-import { ChatBox } from "../../feature/chat/chat-box";
 
 export interface PatientViewProps {
   patient: Patient;
@@ -19,13 +18,13 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
 }) => {
   return (
 		<div className="flex">
-			<div className="border-x min-w-[550px] overflow-auto flex-1">
+			<div className="border-x overflow-auto flex-1"> {/* min-w-[550px] */}
 				<PatientInfo patient={patient}/>
 			</div>
-			<div className="flex max-w-[600px] flex-col px-2">
+			{/* <div className="flex max-w-[600px] flex-col px-2">
 				<Header level={2}>Threads</Header>
 				<ChatBox chatId={patient.id} className="h-[80vh]" user={{id: '0', patientId: patient.id, name: patient.primaryContact, image: '/braydon.jpeg'}}/>
-			</div>
+			</div> */}
 		</div>
 
 	)
