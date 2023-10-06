@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { LoginView } from "ui/src/components/view/auth/login-view";
+import { LoginView } from "../util/components/auth/login-view";
 
 const LoginPage: NextPage = () => {
   const router = useRouter();
