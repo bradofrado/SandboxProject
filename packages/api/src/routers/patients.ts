@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trpc";
+import 'reflect-metadata'
 
 const getPatientsRequestSchema = z.object({
 	firmId: z.string()
@@ -7,24 +8,34 @@ const getPatientsRequestSchema = z.object({
 
 const getPatientRequestSchema = getPatientsRequestSchema.extend({
 	patientId: z.string()
-})
+});
 
 export const patientsRouter = createTRPCRouter({
 	getPatients: publicProcedure
 		.input(getPatientsRequestSchema)
 		.query(async ({input, ctx}) => {
-			const practiceName = 'SpinalRehab';
-			const patients = await ctx.medicalService.getPatients(practiceName);
-			
-			return patients;
+			return ctx.patientService.getPatients(input.firmId);
 		}),
 	
 	getPatient: publicProcedure
 		.input(getPatientRequestSchema)
 		.query(async ({input, ctx}) => {
-			//const practiceName = 'SpinalRehab';
-			const patient = await ctx.medicalService.getPatient(input.patientId);
+			return ctx.patientService.getPatient(input.firmId, input.patientId);
+		}),
 
-			return patient;
-		})
+	getAppointments: publicProcedure
+		.input(getPatientRequestSchema)
+		.query(async ({input, ctx}) => {
+			const appointments = await ctx.medicalService.getAppointments(input.firmId, input.patientId);
+
+			return appointments;
+		}),
+
+	getCharges: publicProcedure
+		.input(getPatientRequestSchema)
+		.query(async ({input, ctx}) => {
+			const charges = await ctx.medicalService.getCharges(input.firmId, input.patientId);
+
+			return charges;
+		}),
 })

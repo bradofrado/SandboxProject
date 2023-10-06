@@ -4,31 +4,25 @@ import { api } from "../api";
 // 	[P in keyof typeof api['patients']]: typeof api['patients'][P] extends {useQuery: (...args: any) => infer R} ? R : never
 // }
 
+// type UseQuery<T extends keyof typeof api.patients> = {
+// 	[P in keyof typeof api['patients']]: typeof api['patients'][P] extends {useQuery: (...args: any) => infer R} ? R : never
+// }[T]
+
 export const useGetPatients = () => {
-  return api.patients.getPatients.useQuery({firmId: 'this is an id'});
+  return api.patients.getPatients.useQuery({firmId: 'Spinal Rehab'});
 };
+
 
 export const useGetPatient = (
   id: string,
 ) => {
-  return api.patients.getPatient.useQuery({firmId: 'An id', patientId: id})
+  return api.patients.getPatient.useQuery({firmId: 'Spinal Rehab', patientId: id})
 };
 
 export const useGetPatientStatus = (
   patientId: string,
 ) => {
-  const query = useGetPatient(patientId);
-	if (query.isError || query.isLoading) {
-		return {
-			...query,
-			data: undefined
-		}
-	}
-
-	return {
-		...query,
-		data: query.data?.status
-	};
+  return api.patients.getAppointments.useQuery({firmId: 'Spinal Rehab', patientId})
 };
 
 export const useGetPatientDocuments = (
@@ -40,17 +34,6 @@ export const useGetPatientDocuments = (
 export const useGetPatientFinanceProviders = (
   patientId: string,
 ) => {
-  const query = useGetPatient(patientId);
-	if (query.isError || query.isLoading) {
-		return {
-			...query,
-			data: undefined
-		}
-	}
-
-	return {
-		...query,
-		data: query.data?.charges
-	};
+  return api.patients.getCharges.useQuery({firmId: 'Spinal Rehab', patientId});
 };
 

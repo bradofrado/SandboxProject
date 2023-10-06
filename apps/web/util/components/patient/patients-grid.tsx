@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { PatientListItem } from "model/src/patient";
+import type { Patient } from "model/src/patient";
 import {
   displayDate,
   formatDollarAmount,
@@ -52,13 +52,13 @@ interface PatientGridFilter {
 }
 
 export interface PatientsGridProps {
-  patients: PatientListItem[];
+  patients: Patient[];
   collapse?: boolean;
   children?: React.ReactNode;
   onPatientClick: (id: string) => void;
 }
  
-type PatientType = RecordType<PatientListItem>
+type PatientType = RecordType<Patient>
 export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
   patients,
   children,
@@ -74,21 +74,21 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
   const allLawFirms = groupTogether(patients, "lawFirm");
 
   const filterFunctions: {
-    [P in keyof PatientListItem]?: (key: PatientListItem[P]) => boolean;
+    [P in keyof Patient]?: (key: Patient[P]) => boolean;
   } = {
-    dateOfLoss: (key: PatientListItem["dateOfLoss"]) =>
+    dateOfLoss: (key: Patient["dateOfLoss"]) =>
       isDateInBetween(
         key,
-        filter.dateOfLost?.start ?? null,
-        filter.dateOfLost?.end ?? null,
+        filter.dateOfLost?.start ?? undefined,
+        filter.dateOfLost?.end ?? undefined,
       ),
-    lastUpdateDate: (key: PatientListItem["lastUpdateDate"]) =>
+    lastUpdateDate: (key: Patient["lastUpdateDate"]) =>
       isDateInBetween(
         key,
-        filter.lastUpdate?.start ?? null,
-        filter.lastUpdate?.end ?? null,
+        filter.lastUpdate?.start ?? undefined,
+        filter.lastUpdate?.end ?? undefined,
       ),
-    lawFirm: (key: PatientListItem["lawFirm"]) =>
+    lawFirm: (key: Patient["lawFirm"]) =>
       filter.attorney !== undefined && filter.attorney > -1
         ? key === allLawFirms[filter.attorney]
         : true,
@@ -158,14 +158,14 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
 		}
 	}
 
-	const filterKeys: (keyof PatientListItem)[] = [
+	const filterKeys: (keyof Patient)[] = [
 		"lastUpdateDate",
 		"firstName",
 		"lastName",
 		"outstandingBalance",
 		"lawFirm",
 		"primaryContact",
-		"statuses",
+		"status",
 	]
 
 	const onFilterChange = (newItems: FilterItem<PatientGridFilter>[]): void => {
@@ -234,19 +234,19 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
         primaryContact,
         lastUpdateDate,
         outstandingBalance,
-        statuses,
+        status,
       }) => ({
         id,
         lastName,
         firstName,
         lawFirm,
-        primaryContact,
+        primaryContact: primaryContact ? primaryContact : '---',
         lastUpdateDate: {
           compareKey: lastUpdateDate
-            ? `${displayDate(lastUpdateDate)}${statuses.join("")}`
+            ? `${displayDate(lastUpdateDate)}${status}`
             : "---",
           label: (
-            <LastUpdateComponent date={lastUpdateDate} statuses={statuses} />
+            <LastUpdateComponent date={lastUpdateDate} statuses={status ? [status] : []} />
           ),
         },
         outstandingBalance: {
@@ -271,7 +271,7 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
 };
 
 const LastUpdateComponent: React.FunctionComponent<{
-  date: Date | null;
+  date: Date | undefined;
   statuses: string[];
 }> = ({ date, statuses }) => {
   return date ? (
@@ -288,7 +288,7 @@ const LastUpdateComponent: React.FunctionComponent<{
   );
 };
 
-const CollapsedPatient: React.FunctionComponent<{ patient: PatientListItem }> = ({
+const CollapsedPatient: React.FunctionComponent<{ patient: Patient }> = ({
   patient,
 }) => {
   return (
@@ -305,8 +305,8 @@ const CollapsedPatient: React.FunctionComponent<{ patient: PatientListItem }> = 
         <span className="text-xs">
           Last Update: {displayDate(patient.dateOfBirth)}
         </span>
-        {patient.statuses.length > 0 ? (
-          <Pill className="w-fit">{patient.statuses[0]}</Pill>
+        {patient.status ? (
+          <Pill className="w-fit">{patient.status}</Pill>
         ) : null}
       </div>
     </div>

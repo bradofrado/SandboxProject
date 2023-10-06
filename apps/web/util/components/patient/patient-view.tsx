@@ -23,12 +23,12 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
 			<div className="border-x min-w-[550px] overflow-auto flex-1">
 				<PatientInfo patient={patient}/>
 			</div>
-			<div className="flex max-w-[600px] flex-col px-2">
+			{patient.primaryContact ? <div className="flex max-w-[600px] flex-col px-2">
 				<Header level={2}>Threads</Header>
 				<MessageProvider chatId={patient.id}>
-					{(messages, send) => <ChatBox className="h-[80vh]" messages={messages} user={{id: '0', patientId: patient.id, name: patient.primaryContact, image: '/braydon.jpeg'}} onSendMessage={send}/>}
+					{(messages, send) => <ChatBox className="h-[80vh]" messages={messages} onSendMessage={send} user={{id: '0', patientId: patient.id, name: patient.primaryContact, image: '/braydon.jpeg'}}/>}
 				</MessageProvider>
-			</div>
+			</div> : null}
 		</div>
 
 	)
@@ -74,11 +74,9 @@ const PatientBio: React.FunctionComponent<{ patient: Patient }> = ({
             {patient.firstName} {patient.lastName}
           </Header>
           <div className="flex flex-col gap-1">
-            {patient.statuses.map((status) => (
-              <Pill className="w-fit" key={status}>
-                {status}
-              </Pill>
-            ))}
+						{patient.status ? <Pill className="w-fit" key={patient.status}>
+							{patient.status}
+						</Pill> : null}
           </div>
         </div>
         <div className="flex gap-8">
@@ -117,9 +115,14 @@ export const PatientViewId: React.FunctionComponent<{ id: string }> = ({
   id,
 }) => {
   const query = useGetPatient(id);
-  if (query.isLoading || query.isError) {
-    return <>Loading</>;
+  if (query.isLoading) {
+    return <>Loading patient</>;
   }
+
+	if (query.isError) {
+		return <>{query.error.message}</>;
+	}
+
   const patient = query.data;
   if (!patient) {
     return <Header>Invalid Patient {id}</Header>;

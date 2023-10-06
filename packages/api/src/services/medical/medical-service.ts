@@ -1,135 +1,98 @@
-import { injectable, interfaces } from 'inversify';
-import type {Appointment, Patient, PatientDocument, PatientFinanceProvider, PatientListItem, PatientStatus} from 'model/src/patient';
+import type { interfaces } from 'inversify';
+import { injectable } from 'inversify';
+import type {PatientStatus} from 'model/src/patient';
+import type {MedicalPatient, MedicalCharge, MedicalAppointment} from 'model/src/medical';
+import 'reflect-metadata'
 
 export interface MedicalService {
-	getAppointment: (appointmentId: string) => Promise<Appointment>,
-	getAppointments: (practiceName: string, patientId: string) => Promise<Appointment[]>
-	getCharges: (practiceName: string, patientId: string) => Promise<PatientFinanceProvider[]>,
-	getPatient: (patientId: string) => Promise<Patient | undefined>,
-	getPatients: (practiceName: string) => Promise<PatientListItem[]>
+	getAppointments: (practiceId: string, patientId: string) => Promise<MedicalAppointment[]>
+	getCharges: (practiceId: string, patientId: string) => Promise<MedicalCharge[]>,
+	getPatient: (practiceId: string, patientId: string) => Promise<MedicalPatient | undefined>,
+	getPatients: (practiceId: string) => Promise<MedicalPatient[]>
 }
 
 @injectable()
 export class TestMedicalService implements MedicalService {
-	public getAppointment(appointmentId: string): Promise<Appointment> {
-
+	public async getAppointments(practiceId: string, patientId: string): Promise<MedicalAppointment[]> {
+		const patientStatus = patientStatuses.find(status => status.patientId === patientId);
+		return Promise.resolve(patientStatus?.appointments ?? []);
 	}
 
-	public getAppointments(practiceName: string, patientId: string): Promise<Appointment[]> {
-
+	public async getCharges(practiceId: string, patientId: string): Promise<MedicalCharge[]> {
+		return Promise.resolve(patientFinanceProviders.filter(
+      (financeProvider) => financeProvider.patientId === patientId));
 	}
 
-	public async getCharges(practiceName: string, patientId: string): Promise<PatientFinanceProvider[]> {
-		return patientFinanceProviders.filter(
-      (financeProvider) => financeProvider.patientId === patientId);
-	}
-
-	public async getPatient(patientId: string): Promise<Patient | undefined> {
+	public async getPatient(practiceId: string, patientId: string): Promise<MedicalPatient | undefined> {
 		const patient = patients.find(_patient => _patient.id === patientId);
-		if (patient) {
-			const status = patientStatuses.find(_status => _status.patientId === patient.id);
-			if (status === undefined) return undefined;
-
-			const charges = await this.getCharges('', patientId);
-			return {
-				...patient,
-				status,
-				charges
-			}
-		}
-
-		return undefined;
+		return Promise.resolve(patient);
 	}
 
-	public async getPatients(practiceName: string): Promise<PatientListItem[]> {
-		return patients;
+	public async getPatients(_: string): Promise<MedicalPatient[]> {
+		return Promise.resolve(patients);
 	}
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace -- namespace is ok here
 export namespace MedicalService {
 	export const $: interfaces.ServiceIdentifier<MedicalService> = Symbol('MedicalService');
 }
 
-const patients: PatientListItem[] = [
+const patients: MedicalPatient[] = [
   {
     id: "0",
     firstName: "Maria",
     lastName: "Abarca",
-    lawFirm: "Siegfried and Jensen",
-    primaryContact: "Jeremy Richards",
-    lastUpdateDate: new Date(2023, 7, 23),
-    statuses: ["Trial Scheduled", "Reduction Requested"],
-    outstandingBalance: 1941.69,
     dateOfBirth: new Date(),
     dateOfLoss: new Date(),
-    notes: "",
     email: "maria.abarca@gmail.com",
     phone: "(801) 999-9999",
     incidentType: "Auto",
+		lawFirm: 'Siegfried and Jensen'
   },
   {
     id: "1",
     firstName: "Layne",
     lastName: "Abbott",
-    lawFirm: "Good Guys Law",
-    primaryContact: "Clint Peterson",
-    lastUpdateDate: new Date(2023, 8, 2),
-    statuses: ["In Legation"],
-    outstandingBalance: 3684.38,
     dateOfBirth: new Date(),
     dateOfLoss: new Date(),
-    notes: "",
     email: "maria.abarca@gmail.com",
     phone: "(801) 999-9999",
     incidentType: "Auto",
+		lawFirm: 'Good Guys Law'
   },
   {
     id: "2",
     firstName: "Ola",
     lastName: "Abdullatif",
-    lawFirm: "Flickenger & Sutterfield",
-    primaryContact: "Becca Johnson",
-    lastUpdateDate: null,
-    statuses: [],
-    outstandingBalance: 19076.02,
     dateOfBirth: new Date(),
     dateOfLoss: new Date(),
-    notes: "",
     email: "maria.abarca@gmail.com",
     phone: "(801) 999-9999",
     incidentType: "Auto",
+		lawFirm: 'Flickenger and Sutterfield'
   },
   {
     id: "3",
     firstName: "Abe",
     lastName: "Emmanuel",
-    lawFirm: "Siegfried and Jensen",
-    primaryContact: "Jeremy Richards",
-    lastUpdateDate: new Date(2023, 5, 18),
-    statuses: ["In Legation"],
-    outstandingBalance: 11394,
     dateOfBirth: new Date(),
     dateOfLoss: new Date(),
-    notes: "",
     email: "maria.abarca@gmail.com",
     phone: "(801) 999-9999",
     incidentType: "Auto",
+		lawFirm: 'Siegfried and Jensen',
   },
   {
     id: "4",
     firstName: "Claudia",
     lastName: "Acero",
-    lawFirm: "Siegfried and Jensen",
-    primaryContact: "Jeremy Richards",
-    lastUpdateDate: new Date(2023, 6, 30),
-    statuses: ["Demand Sent", "Reduction Requested"],
-    outstandingBalance: 1941.69,
     dateOfBirth: new Date(),
     dateOfLoss: new Date(),
-    notes: "",
     email: "maria.abarca@gmail.com",
     phone: "(801) 999-9999",
     incidentType: "Auto",
+		lawFirm: 'Siegfried and Jensen'
   },
 ];
 
@@ -202,58 +165,58 @@ const patientStatuses: PatientStatus[] = [
   },
 ];
 
-const patientFinanceProviders: PatientFinanceProvider[] = [
+const patientFinanceProviders: (MedicalCharge & {patientId: string})[] = [
   {
     patientId: "0",
-    name: "Joel Templeton",
+    providerName: "Joel Templeton",
     status: "Paid",
     amount: 185.34,
   },
   {
     patientId: "0",
-    name: "Joel Templeton",
+    providerName: "Joel Templeton",
     status: "Unpaid",
     amount: 200,
   },
   {
     patientId: "0",
-    name: "Joel Templeton",
+    providerName: "Joel Templeton",
     status: "Unpaid",
     amount: 120.5,
   },
   {
     patientId: "0",
-    name: "Joel Templeton",
+    providerName: "Joel Templeton",
     status: "Unpaid",
     amount: 75,
   },
   {
     patientId: "0",
-    name: "Joel Templeton",
+    providerName: "Joel Templeton",
     status: "Unpaid",
     amount: 90.15,
   },
   {
     patientId: "1",
-    name: "Joel Templeton",
+    providerName: "Joel Templeton",
     status: "Paid",
     amount: 185.34,
   },
   {
     patientId: "2",
-    name: "Joel Templeton",
+    providerName: "Joel Templeton",
     status: "Paid",
     amount: 185.34,
   },
   {
     patientId: "3",
-    name: "Joel Templeton",
+    providerName: "Joel Templeton",
     status: "Paid",
     amount: 185.34,
   },
   {
     patientId: "4",
-    name: "Joel Templeton",
+    providerName: "Joel Templeton",
     status: "Paid",
     amount: 185.34,
   },

@@ -16,6 +16,8 @@ import { MedicalService} from "./services/medical/medical-service";
 import { AttorneyService} from "./services/attorney/attorney-service";
 import { DocumentService} from "./services/documents/document-service";
 import { testContainer } from "./containers/inversify.test.config";
+import 'reflect-metadata'
+import { PatientService } from "./services/patient/patient-service";
 
 /**
  * 1. CONTEXT
@@ -33,7 +35,8 @@ export interface TRPCContext {
 	prisma: typeof prisma,
 	medicalService: MedicalService,
 	attorneyService: AttorneyService,
-	documentService: DocumentService
+	documentService: DocumentService,
+	patientService: PatientService
 }
 
 /**
@@ -51,7 +54,8 @@ const createInnerTRPCContext = ({container}: CreateContextOptions): TRPCContext 
     prisma,
 		medicalService: container.get<MedicalService>(MedicalService.$),
 		attorneyService: container.get<AttorneyService>(AttorneyService.$),
-		documentService: container.get<DocumentService>(DocumentService.$)
+		documentService: container.get<DocumentService>(DocumentService.$),
+		patientService: container.get<PatientService>(PatientService.$)
   };
 };
 
@@ -62,7 +66,7 @@ const createInnerTRPCContext = ({container}: CreateContextOptions): TRPCContext 
  * @see https://trpc.io/docs/context
  */
 export const createTRPCContext = (opts: CreateNextContextOptions): TRPCContext => {
-	const {req, res} = opts;
+	const {req: _, res: _2} = opts;
 	//TODO: Get the needed apis from the user session
 	const container = testContainer;
 

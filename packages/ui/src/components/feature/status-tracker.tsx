@@ -2,7 +2,7 @@ import { CheckmarkIcon } from "../core/icons";
 
 export interface StatusTrackerProps {
   statuses: readonly string[];
-  value: string;
+  value: string | undefined;
   className?: string;
 }
 export const StatusTracker: React.FunctionComponent<StatusTrackerProps> = ({
@@ -10,7 +10,7 @@ export const StatusTracker: React.FunctionComponent<StatusTrackerProps> = ({
   value,
   className,
 }) => {
-  const valueIndex = statuses.indexOf(value);
+  const valueIndex = value ? statuses.indexOf(value) : statuses.length;
   if (valueIndex < 0) throw new Error("Status must contain value");
   return (
     <div className={`flex gap-4 ${className}`}>

@@ -1,20 +1,21 @@
-import { injectable, interfaces } from "inversify";
-import { PatientDocument } from "model/src/patient";
+import type { interfaces } from "inversify";
+import { injectable } from "inversify";
+import type { PatientDocument } from "model/src/patient";
 
 export interface DocumentService {
 	getDocuments: (path: string) => Promise<PatientDocument[]>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace -- namespace is ok here
 export namespace DocumentService {
 	export const $: interfaces.ServiceIdentifier<DocumentService> = Symbol('DocumentService');
 }
 
 @injectable()
 export class TestDocumentService implements DocumentService {
-	public async getDocuments(path: string): Promise<PatientDocument[]> {
+	public getDocuments(path: string): Promise<PatientDocument[]> {
 		const documents = patientDocuments.filter(doc => doc.patientId === path);
-		console.log(documents);
-		return documents;
+		return Promise.resolve(documents);
 	}
 }
 

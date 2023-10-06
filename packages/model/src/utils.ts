@@ -160,15 +160,15 @@ export const groupTogetherDistinct = function <
 };
 
 export function isDateInBetween(
-  test: Date | null,
-  start: Date | null,
-  end: Date | null,
+  test: Date | undefined,
+  start: Date | undefined,
+  end: Date | undefined,
 ): boolean {
-  if (test === null) {
+  if (test === undefined) {
     return true;
   }
   return (
-    (start !== null ? start <= test : true) &&
-    (end !== null ? test <= end : true)
+    (start !== undefined ? start <= test : true) &&
+    (end !== undefined ? test <= end : true)
   );
 }

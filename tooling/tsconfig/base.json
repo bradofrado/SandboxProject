@@ -15,11 +15,7 @@
     "preserveWatchOutput": true,
     "skipLibCheck": true,
     "strict": true,
-    "strictNullChecks": true,
-		"lib": ["es6"],
-    "types": ["reflect-metadata"],
-		"experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "strictNullChecks": true
   },
   "exclude": ["node_modules"]
 }

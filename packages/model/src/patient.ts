@@ -1,23 +1,21 @@
-export interface PatientListItem {
-  id: string;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: Date;
-  dateOfLoss: Date;
-  statuses: string[];
-  incidentType: string;
-  email: string;
-  phone: string;
+export interface PatientBase {
+	id: string;
+	firstName: string;
+	lastName: string;
+	dateOfBirth: Date;
+	dateOfLoss: Date;
+	incidentType: string;
+	email: string;
+	phone: string;
+}
+
+export interface Patient extends PatientBase {
   notes: string;
   lawFirm: string;
   primaryContact: string;
-  lastUpdateDate: Date | null;
+  lastUpdateDate: Date | undefined;
   outstandingBalance: number;
-}
-
-export interface Patient extends PatientListItem {
-	status: PatientStatus,
-	charges: PatientFinanceProvider[]
+	status: PatientStatusType | undefined;
 }
 
 export interface PatientStatus {
@@ -31,6 +29,7 @@ export const patientStatuses = [
   "Treatment",
   "Demand",
   "Negotiation",
+	"Litigation",
   "Settlement",
 ] as const;
 export type PatientStatusType = (typeof patientStatuses)[number];

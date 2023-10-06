@@ -12,22 +12,21 @@ export const StatusTab: React.FunctionComponent<StatusTabProps> = ({
   const query = useGetPatientStatus(patient.id);
   if (query.isError || query.isLoading) return <>Loading</>;
 
-  const status = query.data;
-  if (!status) return <>There was an error</>;
-
+  const appointments = query.data;
+  
   return (
     <div className="flex flex-col gap-4 py-2">
-      <StatusTracker
+      {patient.primaryContact ? <StatusTracker
         className="h-20 justify-center"
         statuses={patientStatuses}
-        value={status.status}
-      />
+        value={patient.status}
+      /> : null}
       <div className="flex gap-4">
         <ul>
-          {status.appointments.map((appointment, i) => {
+          {appointments.map((appointment) => {
             //const day = dayjs(appointment.date);
             return (
-              <li key={i}>
+              <li key={appointment.date.toString()}>
                 <div className="flex gap-2 rounded-lg py-1 px-2">
                   {/* <Label label={day.format("ddd, MMM DD")} sameLine>
                     {day.format("hh:mm a")}

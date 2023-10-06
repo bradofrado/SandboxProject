@@ -1,4 +1,4 @@
-import type { Patient, PatientFinanceProvider } from "model/src/patient";
+import type { Patient } from "model/src/patient";
 import { formatDollarAmount, groupTogether } from "model/src/utils";
 import type { RecordType } from "model/src/core/utils";
 import { useState } from "react";
@@ -7,13 +7,14 @@ import type { TableGridColumn, TableGridFooter } from "ui/src/components/core/ta
 import { FilterTableGrid } from "ui/src/components/core/table-grid";
 import type { FilterChildren, FilterItem } from "ui/src/components/core/filter-button";
 import { Dropdown } from "ui/src/components/core/dropdown";
+import type { MedicalCharge } from "model/src/medical";
 import { useGetPatientFinanceProviders } from "../../../services/patient";
 
 interface PatientFinanceProviderFilter {
 	status: number | undefined,
 	name: number | undefined
 }
-type PatientFinanceProviderType = RecordType<PatientFinanceProvider>
+type MedicalChargeType = RecordType<MedicalCharge>
 export interface FinanceTabProps {
   patient: Patient;
 }
@@ -24,11 +25,11 @@ export const FinanceTab: React.FunctionComponent<FinanceTabProps> = ({
 	const [filter, setFilter] = useState<PatientFinanceProviderFilter>({status: undefined, name: undefined})
   if (query.isError || query.isLoading) return <>Loading</>;
 
-  const providers = query.data as PatientFinanceProviderType[];
+  const providers = query.data as MedicalChargeType[];
 
-  const columns: TableGridColumn<'name' | 'status' | 'amount'>[] = [
+  const columns: TableGridColumn<'providerName' | 'status' | 'amount'>[] = [
     {
-      id: "name",
+      id: "providerName",
       label: "Provider",
     },
     {
@@ -41,8 +42,8 @@ export const FinanceTab: React.FunctionComponent<FinanceTabProps> = ({
     },
   ];
 
-  const footer = (items: PatientFinanceProviderType[]): TableGridFooter<typeof columns[number]['id']> => ({
-    name: <span className="font-medium text-black">Total Due</span>,
+  const footer = (items: MedicalChargeType[]): TableGridFooter<typeof columns[number]['id']> => ({
+    providerName: <span className="font-medium text-black">Total Due</span>,
     status: "",
     amount: (
       <span className="font-medium text-black">
@@ -54,7 +55,7 @@ export const FinanceTab: React.FunctionComponent<FinanceTabProps> = ({
     ),
   });
 
-	const allProviders = groupTogether(providers, 'name');
+	const allProviders = groupTogether(providers, 'providerName');
 
 	const getFilterContent: FilterChildren<PatientFinanceProviderFilter> = (item, changeItem) => {
 		switch(item.id) {
@@ -93,7 +94,7 @@ export const FinanceTab: React.FunctionComponent<FinanceTabProps> = ({
     setFilter(newFilter);
 	}
 
-  const onItemClick = (_: PatientFinanceProviderType): void => {
+  const onItemClick = (_: MedicalChargeType): void => {
     //TODO: Make this functional
   };
   return (
@@ -102,7 +103,7 @@ export const FinanceTab: React.FunctionComponent<FinanceTabProps> = ({
 				columns={columns}
         data={providers}
         filterFunctions={filterFunctions}
-        filterKeys={['amount', 'name', 'status']}
+        filterKeys={['amount', 'providerName', 'status']}
 				footer={footer}
 				getFilterContent={getFilterContent}
 				items={filterItems}

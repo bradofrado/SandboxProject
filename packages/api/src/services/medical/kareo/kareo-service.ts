@@ -1,5 +1,5 @@
 import {createClient as soapCreateClient} from 'soap';
-import type { Appointment, Patient, PatientFinanceProvider, PatientListItem } from 'model/src/patient';
+import type { Appointment, Patient, PatientFinanceProvider, Patient } from 'model/src/patient';
 import type { MedicalService } from '../medical-service';
 import type { GetAppointmentRequest, GetAppointmentResponse, GetAppointmentsRequest, GetAppointmentsResponse, GetChargesRequest, GetChargesResponse, GetPatientRequest, GetPatientResponse, GetPatientsRequest, GetPatientsResponse, KareoClient, KareoRequest} from './types';
 import { KareoClientSchema } from './types';
@@ -65,7 +65,7 @@ export class KareoMedicalService implements MedicalService {
 		return getPatientResponseToPatient(response);
 	}
 
-	public async getPatients(practiceName: string): Promise<PatientListItem[]> {
+	public async getPatients(practiceName: string): Promise<Patient[]> {
 		const request: GetPatientsRequest = this.createRequest<GetPatientsRequest>({PracticeName: practiceName});
 
 		const response: GetPatientsResponse = await this.client.GetPatients(request);

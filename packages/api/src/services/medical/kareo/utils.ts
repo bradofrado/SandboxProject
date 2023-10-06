@@ -1,4 +1,4 @@
-import type { Appointment, Patient, PatientFinanceProvider, PatientListItem } from "model/src/patient";
+import type { Appointment, Patient, PatientFinanceProvider, Patient } from "model/src/patient";
 import type { GetAppointmentResponse, GetAppointmentsResponse, GetChargesResponse, GetPatientResponse, GetPatientsResponse } from "./types";
 
 export function getAppointmentResponseToAppointment(response: GetAppointmentResponse): Appointment {
@@ -21,6 +21,6 @@ export function getPatientResponseToPatient(response: GetPatientResponse): Patie
 	}
 }
 
-export function getPatientsResponseToPatients(response: GetPatientsResponse): PatientListItem[] {
+export function getPatientsResponseToPatients(response: GetPatientsResponse): Patient[] {
 	return []
 }

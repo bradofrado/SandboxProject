@@ -8,7 +8,6 @@ export const documentRouter = createTRPCRouter({
 	getDocuments: publicProcedure
 		.input(getDocumentsSchema)
 		.query(async ({input, ctx}) => {
-			console.log(input.path);
 			const documents = await ctx.documentService.getDocuments(input.path);
 
 			return documents;
