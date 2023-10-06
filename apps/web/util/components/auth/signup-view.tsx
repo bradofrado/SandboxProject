@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Signup } from "model/src/auth";
-
-import { useSignup } from "../../../services/auth";
-import { Header } from "../../core/header";
-import { Hyperlink } from "../../core/hyperlink";
-import { SignupForm } from "../../feature/auth/signup-form";
+import type { Signup } from "model/src/auth";
+import { Header } from "ui/src/components/core/header";
+import { Hyperlink } from "ui/src/components/core/hyperlink";
+import { SignupForm } from "ui/src/components/feature/auth/signup-form";
+import { useSignup } from "../../services/auth";
 
 export const SignupView: React.FunctionComponent = () => {
   const { mutate: signUp, ...signUpUtils } = useSignup();

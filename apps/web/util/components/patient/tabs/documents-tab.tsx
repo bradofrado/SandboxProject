@@ -1,22 +1,22 @@
 import React, { useRef, useState } from "react";
 import type { Patient, PatientDocument } from "model/src/patient";
 import { displayElapsedTime, displayStorageSpace } from "model/src/utils";
-import { useGetPatientDocuments } from "../../../../services/patient";
-import type { DropdownItem } from "../../../core/dropdown";
-import { DropdownLineItem, ListBoxPopover } from "../../../core/dropdown";
+import type { DropdownItem } from "ui/src/components/core/dropdown";
+import { DropdownLineItem, ListBoxPopover } from "ui/src/components/core/dropdown";
 import {
   CheckmarkIcon,
   DocumentTextIcon,
   FolderIcon,
   TridotIcon,
   UploadIcon,
-} from "../../../core/icons";
-import { Pill } from "../../../core/pill";
-import { DocumentViewer } from "../../../feature/document-viewer/document-viewer";
-import { Button } from "../../../core/button";
-import { useClickOutside } from "../../../../hooks/click-outside";
-import type { UniqueIdentifier } from "../../../core/draggable";
-import { Draggable, DraggableContext, Droppable } from "../../../core/draggable";
+} from "ui/src/components/core/icons";
+import { Pill } from "ui/src/components/core/pill";
+import { DocumentViewer } from "ui/src/components/feature/document-viewer/document-viewer";
+import { Button } from "ui/src/components/core/button";
+import { useClickOutside } from "ui/src/hooks/click-outside";
+import type { UniqueIdentifier } from "ui/src/components/core/draggable";
+import { Draggable, DraggableContext, Droppable } from "ui/src/components/core/draggable";
+import { useGetPatientDocuments } from "../../../services/patient";
 
 interface FileButton {
 	label: string,

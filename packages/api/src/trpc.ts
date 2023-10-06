@@ -6,11 +6,18 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-
+import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { initTRPC } from "@trpc/server";
 import { prisma } from "db/lib/prisma";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import type { Container } from "inversify";
+import { MedicalService} from "./services/medical/medical-service";
+import { AttorneyService} from "./services/attorney/attorney-service";
+import { DocumentService} from "./services/documents/document-service";
+import { testContainer } from "./containers/inversify.test.config";
+import 'reflect-metadata'
+import { PatientService } from "./services/patient/patient-service";
 
 /**
  * 1. CONTEXT
@@ -19,6 +26,18 @@ import { ZodError } from "zod";
  *
  * These allow you to access things when processing a request, like the database, the session, etc.
  */
+
+interface CreateContextOptions {
+	container: Container
+}
+
+export interface TRPCContext {
+	prisma: typeof prisma,
+	medicalService: MedicalService,
+	attorneyService: AttorneyService,
+	documentService: DocumentService,
+	patientService: PatientService
+}
 
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
@@ -30,9 +49,13 @@ import { ZodError } from "zod";
  *
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
-const createInnerTRPCContext = (): { prisma: typeof prisma } => {
+const createInnerTRPCContext = ({container}: CreateContextOptions): TRPCContext => {
   return {
     prisma,
+		medicalService: container.get<MedicalService>(MedicalService.$),
+		attorneyService: container.get<AttorneyService>(AttorneyService.$),
+		documentService: container.get<DocumentService>(DocumentService.$),
+		patientService: container.get<PatientService>(PatientService.$)
   };
 };
 
@@ -42,8 +65,12 @@ const createInnerTRPCContext = (): { prisma: typeof prisma } => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = (): { prisma: typeof prisma } => {
-  return createInnerTRPCContext();
+export const createTRPCContext = (opts: CreateNextContextOptions): TRPCContext => {
+	const {req: _, res: _2} = opts;
+	//TODO: Get the needed apis from the user session
+	const container = testContainer;
+
+  return createInnerTRPCContext({container});
 };
 
 /**

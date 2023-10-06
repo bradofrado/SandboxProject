@@ -1,10 +1,9 @@
 import { useState } from "react";
 import type { Login } from "model/src/auth";
-
-import { useSignIn } from "../../../services/auth";
-import { Header } from "../../core/header";
-import { Hyperlink } from "../../core/hyperlink";
-import { LoginForm } from "../../feature/auth/login-form";
+import { Header } from "ui/src/components/core/header";
+import { Hyperlink } from "ui/src/components/core/hyperlink";
+import { LoginForm } from "ui/src/components/feature/auth/login-form";
+import { useSignIn } from "../../services/auth";
 
 export interface LoginViewProps {
   onSuccessfullLogin: () => void;

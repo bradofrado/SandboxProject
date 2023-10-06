@@ -13,7 +13,7 @@ export const MessageContext = createContext<MessageContextType>([
 ]);
 
 export interface MessageProviderProps {
-  children: (messages: Message[]) => React.ReactNode;
+  children: (messages: Message[], sendMessage: (chatId: string, message: string, user: User) => void) => React.ReactNode;
 	chatId: string
 }
 export const MessageProvider: React.FunctionComponent<MessageProviderProps> = ({ children, chatId }) => {
@@ -40,7 +40,7 @@ export const MessageProvider: React.FunctionComponent<MessageProviderProps> = ({
 	const sorted = chat.messages.slice().sort((a, b) => a.date.getTime() - b.date.getTime());
   return (
     <MessageContext.Provider value={[sorted, sendMessage]}>
-      {children(sorted)}
+      {children(sorted, sendMessage)}
     </MessageContext.Provider>
   );
 };

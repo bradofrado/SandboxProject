@@ -1,12 +1,11 @@
 import { useState } from "react";
 import type { HexColor } from "model/src/core/colors";
 import { formatDollarAmount } from "model/src/utils";
-
-import { Card } from "../../core/card";
-import { Header } from "../../core/header";
-import { Pill } from "../../core/pill";
-import { ProfileImage } from "../../feature/profile/profile-image";
-import { StatusLaneContainer } from "../../feature/reporting/status-lane";
+import { Card } from "ui/src/components/core/card";
+import { Header } from "ui/src/components/core/header";
+import { Pill } from "ui/src/components/core/pill";
+import { ProfileImage } from "ui/src/components/feature/profile/profile-image";
+import { StatusLaneContainer } from "ui/src/components/feature/reporting/status-lane";
 
 interface ARClient {
   id: number;

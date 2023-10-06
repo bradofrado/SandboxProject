@@ -7,11 +7,11 @@ import {
   isDateInBetween,
 } from "model/src/utils";
 import type {RecordType} from 'model/src/core/utils';
-import { DatePicker } from "../../core/date-picker";
-import { Dropdown } from "../../core/dropdown";
-import { Pill } from "../../core/pill";
-import { FilterTableGrid, type TableGridColumn } from "../../core/table-grid";
-import type { FilterChildren, FilterItem} from "../../core/filter-button";
+import { DatePicker } from "ui/src/components/core/date-picker";
+import { Dropdown } from "ui/src/components/core/dropdown";
+import { Pill } from "ui/src/components/core/pill";
+import { FilterTableGrid, type TableGridColumn } from "ui/src/components/core/table-grid";
+import type { FilterChildren, FilterItem} from "ui/src/components/core/filter-button";
 
 const columns: TableGridColumn<'lastName' | 'firstName' | 'lawFirm' | 'primaryContact' | 'lastUpdateDate' | 'outstandingBalance'>[] = [
   {
@@ -81,14 +81,14 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
     dateOfLoss: (key: Patient["dateOfLoss"]) =>
       isDateInBetween(
         key,
-        filter.dateOfLost?.start ?? null,
-        filter.dateOfLost?.end ?? null,
+        filter.dateOfLost?.start ?? undefined,
+        filter.dateOfLost?.end ?? undefined,
       ),
     lastUpdateDate: (key: Patient["lastUpdateDate"]) =>
       isDateInBetween(
         key,
-        filter.lastUpdate?.start ?? null,
-        filter.lastUpdate?.end ?? null,
+        filter.lastUpdate?.start ?? undefined,
+        filter.lastUpdate?.end ?? undefined,
       ),
     lawFirm: (key: Patient["lawFirm"]) =>
       filter.attorney !== undefined && filter.attorney > -1
@@ -167,7 +167,7 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
 		"outstandingBalance",
 		"lawFirm",
 		"primaryContact",
-		"statuses",
+		"status",
 	]
 
 	const onFilterChange = (newItems: FilterItem<PatientGridFilter>[]): void => {
@@ -236,19 +236,19 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
         primaryContact,
         lastUpdateDate,
         outstandingBalance,
-        statuses,
+        status,
       }) => ({
         id,
         lastName,
         firstName,
         lawFirm,
-        primaryContact,
+        primaryContact: primaryContact ? primaryContact : '---',
         lastUpdateDate: {
           compareKey: lastUpdateDate
-            ? `${displayDate(lastUpdateDate)}${statuses.join("")}`
+            ? `${displayDate(lastUpdateDate)}${status}`
             : "---",
           label: (
-            <LastUpdateComponent date={lastUpdateDate} statuses={statuses} />
+            <LastUpdateComponent date={lastUpdateDate} statuses={status ? [status] : []} />
           ),
         },
         outstandingBalance: {
@@ -273,7 +273,7 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
 };
 
 const LastUpdateComponent: React.FunctionComponent<{
-  date: Date | null;
+  date: Date | undefined;
   statuses: string[];
 }> = ({ date, statuses }) => {
   return date ? (
@@ -307,8 +307,8 @@ const CollapsedPatient: React.FunctionComponent<{ patient: Patient }> = ({
         <span className="text-xs">
           Last Update: {displayDate(patient.dateOfBirth)}
         </span>
-        {patient.statuses.length > 0 ? (
-          <Pill className="w-fit">{patient.statuses[0]}</Pill>
+        {patient.status ? (
+          <Pill className="w-fit">{patient.status}</Pill>
         ) : null}
       </div>
     </div>
