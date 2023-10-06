@@ -3,15 +3,20 @@ import { ClosableContent } from "ui/src/components/core/closable-content";
 import { Header } from "ui/src/components/core/header";
 import type { Patient } from "model/src/patient";
 import { PatientViewId } from "./patient/patient-view";
+import type { PatientGridFilter} from "./patient/patients-grid";
 import { PatientsGrid } from "./patient/patients-grid";
 
 export interface PatientViewProps {
   id?: string;
   items: Patient[];
+	filter: PatientGridFilter;
+	setFilter: (filter: PatientGridFilter) => void
 }
 export const PatientView: React.FunctionComponent<PatientViewProps> = ({
   id,
   items,
+	filter,
+	setFilter
 }) => {
   const router = useRouter();
   const onPatientClick = (_id: string | undefined): void => {
@@ -22,12 +27,14 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
     );
   };
   return (
-    <div className="flex flex-col gap-2 px-2 py-6">
+    <div className="flex flex-col gap-2 pl-4 pr-2 pt-6">
       <Header level={2}>Patients</Header>
       <PatientsGrid
         currPatient={id}
+        filter={filter}
         onPatientClick={onPatientClick}
-        patients={items}
+				patients={items}
+				setFilter={setFilter}
       >
         <ClosableContent
 					className="h-full"

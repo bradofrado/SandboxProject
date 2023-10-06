@@ -3,8 +3,9 @@ import { useRouter } from "next/router";
 import { useGetPatients } from "../../util/services/patient";
 import { Layout } from "../../util/components/layout";
 import { PatientView } from "../../util/components/patient-view";
+import type { PatientGridFilter } from "../../util/components/patient/patients-grid";
 
-const PatientPage: NextPage = () => {
+const PatientPage: NextPage<{filter: PatientGridFilter, setFilter: (filter: PatientGridFilter) => void}> = ({filter, setFilter}) => {
   const router = useRouter();
   const query = useGetPatients();
   
@@ -12,7 +13,7 @@ const PatientPage: NextPage = () => {
 
   return (
     <Layout>
-      <PatientView id={router.query.id} items={query.data} />
+      <PatientView filter={filter} id={router.query.id} items={query.data} setFilter={setFilter}/>
     </Layout>
   );
 };

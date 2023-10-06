@@ -3,7 +3,6 @@ import { displayDate } from "model/src/utils";
 import { Button } from "ui/src/components/core/button";
 import { Header } from "ui/src/components/core/header";
 import { Label } from "ui/src/components/core/label";
-import { Pill } from "ui/src/components/core/pill";
 import { TabControl, type TabItem } from "ui/src/components/core/tab";
 import { ChatBox } from "ui/src/components/feature/chat/chat-box";
 import { useGetPatient } from "../../services/patient";
@@ -20,10 +19,10 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
 }) => {
   return (
 		<div className="flex h-full">
-			<div className="border-x min-w-[550px] overflow-auto flex-1">
+			<div className="border-x min-w-[550px] overflow-auto flex-1 pb-6">
 				<PatientInfo patient={patient}/>
 			</div>
-			{patient.primaryContact ? <div className="flex max-w-[450px] flex-col px-4">
+			{patient.primaryContact ? <div className="flex max-w-[450px] flex-col px-4 pb-6">
 				<Header level={2}>Threads</Header>
 				<MessageProvider chatId={patient.id}>
 					{(messages, send) => <ChatBox className="h-full" messages={messages} onSendMessage={send} user={{id: '0', patientId: patient.id, name: patient.primaryContact, image: '/braydon.jpeg'}}/>}
