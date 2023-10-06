@@ -18,7 +18,7 @@ export const StatusTracker: React.FunctionComponent<StatusTrackerProps> = ({
         <div className="flex flex-col items-center" key={status}>
           <div
             className={`flex rounded-full h-full aspect-square ${
-              i <= valueIndex ? "bg-primary" : "bg-gray-100"
+              i <= valueIndex ? "bg-primary" : "bg-gray"
             }`}
           >
             {i < valueIndex ? (

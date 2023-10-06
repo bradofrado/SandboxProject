@@ -14,7 +14,7 @@ export const ChatMessage: React.FunctionComponent<ChatMessageProps> = ({ message
 			)}
 			<div className="flex flex-col gap-2 flex-1">
 				<div
-					className={`rounded-3xl  ${
+					className={`rounded-md  ${
 						isUser
 							? "rounded-br-sm bg-primary"
 							: "dark:bg-[#343434] border border-[#ecebeb] rounded-bl-sm"
@@ -25,7 +25,7 @@ export const ChatMessage: React.FunctionComponent<ChatMessageProps> = ({ message
 					</div>
 				</div>
 				<div className={`text-[#72767e] text-sm ${isUser ? "self-end" : ""}`}>
-					<span>{!isUser ? message.name : ""} {displayTime(message.date)}</span>
+					<span>{message.name} {displayTime(message.date)}</span>
 				</div>
 			</div>
 		</div>

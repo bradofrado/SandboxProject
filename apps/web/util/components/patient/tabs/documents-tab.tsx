@@ -130,10 +130,7 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
 	}
   return (
 		<div ref={ref}>
-			<div className="flex mb-2 gap-2">
-				{fileButtons.map(button => <Button className={`${button.shouldShow(selectedFiles) ? 'visible' : 'invisible'}`} key={button.label} mode="secondary" onClick={() => {button.action(selectedFiles)}}>{button.label}</Button>)}
-			</div>
-			<div className="flex flex-col rounded-3xl shadow-md overflow-hidden">
+			<div className="flex flex-col rounded-md shadow-md overflow-hidden">
 				<DraggableContext onDragEnd={onDragEnd}>
 					{documents.map((document) => (
 						<DocumentLine
@@ -156,10 +153,10 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
 					<FileUploadArea onUpload={uploadFiles} />
 				</div>
 				<div className="bg-primary py-3 px-4 flex items-center gap-2">
-					<div className="rounded-full border border-gray-900 p-[.125rem]">
-						<CheckmarkIcon className="w-3 h-3 fill-gray-900" />
+					<div className="rounded-full border border-white p-[.125rem]">
+						<CheckmarkIcon className="w-3 h-3 fill-white" />
 					</div>
-					<span className="text-sm font-medium text-gray-900">
+					<span className="text-sm font-medium text-white">
 						Last Synced: 3m ago
 					</span>
 				</div>
@@ -321,16 +318,16 @@ const FileUploadArea: React.FunctionComponent<FileUploadAreaProps> = ({
       onDragEnter={handleDrag}
     >
       <label
-        className={`flex flex-col items-center justify-center w-full h-52 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer ${
+        className={`flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer ${
           dragActive
             ? "bg-gray-100 dark:bg-gray-600"
             : "bg-gray-50 dark:bg-gray-700"
         } hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600`}
         htmlFor="dropzone-file"
       >
-        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-          <UploadIcon className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
-          <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+        <div className="flex flex-col items-center justify-center py-4">
+          {/* <UploadIcon className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" /> */}
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             <span className="font-semibold">Click to upload</span> or drag and
             drop
           </p>

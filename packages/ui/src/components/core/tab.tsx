@@ -30,16 +30,16 @@ export const TabControl: React.FunctionComponent<TabControlProps> = ({
 
   return (
     <div className={className}>
-      <div className="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700">
-        <ul className="flex flex-wrap -mb-px">
+      <div className="text-sm font-medium text-center border-b border-gray-200 dark:text-gray-400 dark:border-gray-700">
+        <ul className="flex flex-wrap -mb-px font-semibold text-2xl">
           {items.map((item, i) => (
             <li className="mr-2" key={i}>
               <button
                 className={getClass(
-                  "inline-block p-4 border-b-2 rounded-t-lg outline-none",
+                  "inline-block px-4 py-2 border-b-2 rounded-t-lg outline-none",
                   selected === item.id
-                    ? "text-primary border-b-2 border-primary rounded-t-lg active dark:text-primary-light dark:border-primary-light"
-                    : "border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300",
+                    ? "border-b-4 border-primary rounded-t-lg active dark:text-primary-light dark:border-primary-light"
+                    : "border-transparent hover:border-gray-300 dark:hover:text-gray-300",
                 )}
                 onClick={() => {
                   onTabSelect(item.id);
@@ -52,7 +52,7 @@ export const TabControl: React.FunctionComponent<TabControlProps> = ({
           ))}
         </ul>
       </div>
-      <div className="mt-2 mx-2">{selectedComponent}</div>
+      <div className="mt-8 mx-2">{selectedComponent}</div>
     </div>
   );
 };

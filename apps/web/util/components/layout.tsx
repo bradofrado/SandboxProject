@@ -1,12 +1,8 @@
 import { useRouter } from "next/router";
 import {
-  UserCircleIcon,
   UserIcon,
-  UsersGroupIcon,
 } from "ui/src/components/core/icons";
 import type { SidePanelItems } from "ui/src/components/core/side-panel";
-import { NavbarComponent } from "ui/src/components/feature/navigation/navbar";
-import type { NavItem } from "ui/src/components/feature/navigation/navbar";
 import { SideNavComponent } from "ui/src/components/feature/navigation/sidenav";
 import {ModalProvider} from 'ui/src/components/core/modal';
 
@@ -20,16 +16,16 @@ export const Layout: React.FunctionComponent<React.PropsWithChildren> = ({
   );
 };
 
-const Navbar: React.FunctionComponent = () => {
-  const router = useRouter();
-  const items: NavItem[] = [
-    {
-      label: <UserCircleIcon className="w-6 h-6" />,
-      link: "/profile",
-    },
-  ];
-  return <NavbarComponent items={items} path={router.asPath} title="Nexa" />;
-};
+// const Navbar: React.FunctionComponent = () => {
+//   const router = useRouter();
+//   const items: NavItem[] = [
+//     {
+//       label: <UserCircleIcon className="w-6 h-6" />,
+//       link: "/profile",
+//     },
+//   ];
+//   return <NavbarComponent items={items} path={router.asPath} title="Nexa" />;
+// };
 
 type SideNavProps = {
   className?: string;
@@ -44,11 +40,6 @@ const SideNav: React.FunctionComponent<SideNavProps> = ({
       label: "Patients",
       icon: UserIcon,
       href: { pathname: "/patients" },
-    },
-    {
-      label: "Partners",
-      icon: UsersGroupIcon,
-      href: { pathname: "/partners" },
     },
   ];
   return (
