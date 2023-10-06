@@ -97,7 +97,12 @@ export class TestPatientService implements PatientService {
 	}
 
 	private createLinking(mid: string, patientId: string, aid: string): PatientLinking {
-
+		return {
+			medicalId: mid,
+			attorneyId: aid,
+			patientMedicalId: patientId,
+			patientAttorneyId: patientId
+		}
 	}
 
 	private getIdForFirm(firmName: string): string | undefined {
