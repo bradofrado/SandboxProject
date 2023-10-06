@@ -30,6 +30,7 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
         patients={items}
       >
         <ClosableContent
+					className="h-full"
           onClose={() => {
             onPatientClick(undefined);
           }}

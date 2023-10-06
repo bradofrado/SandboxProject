@@ -19,14 +19,14 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
   patient,
 }) => {
   return (
-		<div className="flex">
+		<div className="flex h-full">
 			<div className="border-x min-w-[550px] overflow-auto flex-1">
 				<PatientInfo patient={patient}/>
 			</div>
-			{patient.primaryContact ? <div className="flex max-w-[500px] flex-col px-4">
+			{patient.primaryContact ? <div className="flex max-w-[450px] flex-col px-4">
 				<Header level={2}>Threads</Header>
 				<MessageProvider chatId={patient.id}>
-					{(messages, send) => <ChatBox className="h-[80vh]" messages={messages} onSendMessage={send} user={{id: '0', patientId: patient.id, name: patient.primaryContact, image: '/braydon.jpeg'}}/>}
+					{(messages, send) => <ChatBox className="h-full" messages={messages} onSendMessage={send} user={{id: '0', patientId: patient.id, name: patient.primaryContact, image: '/braydon.jpeg'}}/>}
 				</MessageProvider>
 			</div> : null}
 		</div>
