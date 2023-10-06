@@ -1,4 +1,4 @@
-import type { Patient } from "model/src/patient";
+import type { Patient, PatientBase } from "model/src/patient";
 import type { AttorneyClient } from "model/src/attorney";
 import type { MedicalPatient } from "model/src/medical";
 import type { interfaces } from "inversify";
@@ -17,10 +17,10 @@ export namespace PatientService {
 }
 
 interface PatientLinking {
-	medicalId: string;
-	attorneyId: string;
-	patientMedicalId: string;
-	patientAttorneyId: string
+	medicalId: string; //Medical provider's account id
+	attorneyId: string; //Attorney's account id
+	patientMedicalId: string; //Patient id in medical provider's api system
+	patientAttorneyId: string //Client id in attorney's api system
 }
 
 /**
@@ -60,13 +60,9 @@ export class TestPatientService implements PatientService {
 				status: undefined
 			};
 		}
-	
-		let linking = this.getLinking('Spinal Rehab', patient.id);
-		if (linking === undefined) {
-			linking = this.createLinking(medicalId, patient.id, firmId);
-		}
-	
-		const client = await this.getClientFromLinking(linking);
+
+		const client = await this.getClientFromMedicalPatient(medicalId, firmId, patient);
+		
 		if (client === undefined) {
 			throw new Error("There was an error finding the client");
 		}
@@ -92,24 +88,65 @@ export class TestPatientService implements PatientService {
 		return balance;
 	}
 
+	private async getClientFromMedicalPatient(medicalId: string, firmId: string, patient: MedicalPatient): Promise<AttorneyClient | undefined> {
+		//See if there is a linking for this medical patient
+		const linking = this.getLinking(medicalId, patient.id);
+		
+		//If there is not, then find the matching client and create a linking
+		if (linking === undefined) {
+			const client = await this.findMatchingClientFromMedicalPatient(firmId, patient);
+			if (client === undefined) {
+				throw new Error(`There are no matching clients for ${patient.id}`);
+			}
+			this.createLinking(medicalId, patient.id, firmId, client.id);
+
+			return client;
+		}
+	
+		return this.getClientFromLinking(linking);
+	}
+
+	private async findMatchingClientFromMedicalPatient(firmId: string, patient: MedicalPatient): Promise<AttorneyClient | undefined> {
+		//Matches when a set of properties are true for both parties.
+		// TODO: Will definately have to update this function because of bad data
+		const isMatch = (_client: AttorneyClient, _patient: MedicalPatient): boolean => {
+			const keys: (keyof PatientBase)[] = ['firstName', 'lastName', 'dateOfBirth', 'dateOfLoss'];
+
+			const count = keys.reduce((prev, curr) => prev + (_client[curr] === _patient[curr] ? 1 : 0), 0);
+
+			return count === keys.length;
+		}
+		
+		const clients = await this.attorneyService.getClients(firmId);
+
+		return clients.find(client => isMatch(client, patient));
+	}
+
 	private async getClientFromLinking(linking: PatientLinking): Promise<AttorneyClient | undefined> {
 		return this.attorneyService.getClient(linking.attorneyId, linking.patientAttorneyId);
 	}
 
-	private createLinking(mid: string, patientId: string, aid: string): PatientLinking {
+	private createLinking(mid: string, patientId: string, aid: string, clientId: string): PatientLinking {
+		//TODO: Create an entry in the Linking table that represents a linking between a 
+		//      medical patient and an attorney client
 		return {
 			medicalId: mid,
 			attorneyId: aid,
 			patientMedicalId: patientId,
-			patientAttorneyId: patientId
+			patientAttorneyId: clientId
 		}
 	}
 
 	private getIdForFirm(firmName: string): string | undefined {
+		//TODO: look in database in Attorney table and see if we have an account for this law firm
+		//      and return its id
 		return firmName === 'Siegfried and Jensen' ? '123' : undefined;
 	}
 	
 	private getLinking(id: string, patientId: string): PatientLinking | undefined {
+		//TODO: Look in the Linking table for an entry for this given medical patient.
+		//      if there is then return that linking, otherwise return undefined
+		//      meaning there is not currently a link for this patient
 		return {
 			medicalId: id,
 			patientMedicalId: patientId,
