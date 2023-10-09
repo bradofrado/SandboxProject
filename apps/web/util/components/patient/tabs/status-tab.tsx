@@ -17,7 +17,7 @@ export const StatusTab: React.FunctionComponent<StatusTabProps> = ({
   return (
     <div className="flex flex-col gap-4 py-2">
       {patient.primaryContact ? <StatusTracker
-        className="px-2 h-20"
+        className="px-2"
         statuses={patientStatuses}
         value={patient.status}
       /> : null}

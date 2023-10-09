@@ -17,7 +17,7 @@ export const StatusTracker: React.FunctionComponent<StatusTrackerProps> = ({
       {statuses.map((status, i) => (
         <div className="flex flex-col items-center" key={status}>
           <div
-            className={`flex rounded-full h-full aspect-square ${
+            className={`flex rounded-full h-16 aspect-square ${
               i <= valueIndex ? "bg-primary" : "bg-gray"
             }`}
           >

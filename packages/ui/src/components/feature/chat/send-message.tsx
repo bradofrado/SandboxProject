@@ -4,9 +4,10 @@ import { RightArrowIcon } from "../../core/icons";
 
 export interface SendMessageProps {
   user: User;
-	onSendMessage: (id: string, message: string, user: User) => void
+	onSendMessage: (id: string, message: string, user: User) => void;
+	placeholder?: string
 }
-export const SendMessage: React.FunctionComponent<SendMessageProps> = ({ user, onSendMessage }) => {
+export const SendMessage: React.FunctionComponent<SendMessageProps> = ({ user, onSendMessage, placeholder }) => {
   const [message, setMessage] = useState("");
 
   const sendMessage: React.FormEventHandler = (e): void => {
@@ -26,7 +27,7 @@ export const SendMessage: React.FunctionComponent<SendMessageProps> = ({ user, o
             onChange={(e) => {
               setMessage(e.target.value);
             }}
-            placeholder="Type your message"
+            placeholder={placeholder ?? 'Type your message'}
             tabIndex={0}
 						value={message}
           />
