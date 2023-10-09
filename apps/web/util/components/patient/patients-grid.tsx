@@ -1,4 +1,3 @@
-import { useState } from "react";
 import type { Patient } from "model/src/patient";
 import {
   displayDate,
@@ -45,7 +44,7 @@ interface DateRange {
   end: Date | null;
 }
 
-interface PatientGridFilter {
+export interface PatientGridFilter {
   dateOfLost: DateRange | undefined;
   lastUpdate: DateRange | undefined;
   attorney: number | undefined;
@@ -56,6 +55,8 @@ export interface PatientsGridProps {
   currPatient: string | undefined;
   children?: React.ReactNode;
   onPatientClick: (id: string | undefined) => void;
+	filter: PatientGridFilter;
+	setFilter: (filter: PatientGridFilter) => void
 }
  
 type PatientType = RecordType<Patient>
@@ -63,14 +64,10 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
   patients,
   children,
   onPatientClick,
-  currPatient
+  currPatient,
+	filter,
+	setFilter
 }) => {
-  const [filter, setFilter] = useState<PatientGridFilter>({
-    dateOfLost: undefined,
-    lastUpdate: undefined,
-    attorney: undefined,
-  });
-
 	const collapse = currPatient !== undefined;
 
   const allLawFirms = groupTogether(patients, "lawFirm");

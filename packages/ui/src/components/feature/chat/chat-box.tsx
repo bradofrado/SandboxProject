@@ -9,9 +9,10 @@ export interface ChatBoxProps {
   user: User;
 	className?: string;
 	messages: Message[];
-	onSendMessage: (id: string, message: string, user: User) => void
+	onSendMessage: (id: string, message: string, user: User) => void;
+	sendMessagePlaceholder?: string;
 }
-export const ChatBox: React.FunctionComponent<ChatBoxProps> = ({ user, className, messages, onSendMessage }) => {
+export const ChatBox: React.FunctionComponent<ChatBoxProps> = ({ user, className, messages, onSendMessage, sendMessagePlaceholder }) => {
 	const groupedByTime = groupBy(messages.map(message => ({...message, day: displayDate(message.date)})), 'day');
 	return (
 		<div className={`${className} flex flex-col max-h-screen dark:bg-[#282a2d]`}>
@@ -20,7 +21,7 @@ export const ChatBox: React.FunctionComponent<ChatBoxProps> = ({ user, className
 					<MessageDateSegment date={date} key={date} messages={_messages} user={user}/>
 				))}
 			</div>
-			<SendMessage onSendMessage={onSendMessage} user={user}/>
+			<SendMessage onSendMessage={onSendMessage} placeholder={sendMessagePlaceholder} user={user}/>
 		</div>
 	)
 }

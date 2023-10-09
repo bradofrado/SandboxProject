@@ -6,10 +6,11 @@ import {
   defaultGetServerProps,
   requireAuth,
 } from "../util/protected-routes-hoc";
+import type { PatientGridFilter } from "../util/components/patient/patients-grid";
 
 export const getServerSideProps = requireAuth(defaultGetServerProps);
 
-const Patients: NextPage = () => {
+const Patients: NextPage<{filter: PatientGridFilter, setFilter: (filter: PatientGridFilter) => void}> = ({filter, setFilter}) => {
   const query = useGetPatients();
 
   if (query.isError || query.isLoading) return <>Loading</>;
@@ -18,7 +19,7 @@ const Patients: NextPage = () => {
 
   return (
     <Layout>
-      <PatientView items={items} />
+      <PatientView filter={filter} items={items} setFilter={setFilter}/>
     </Layout>
   );
 };
