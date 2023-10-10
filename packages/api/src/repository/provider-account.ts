@@ -1,6 +1,7 @@
 import { PrismaClient } from "db/lib/generated/client"
 import type { interfaces } from "inversify";
 import { inject, injectable } from "inversify";
+import 'reflect-metadata';
 
 export interface ProviderAccountRepository {
 	getAccount: (name: string) => Promise<ProviderAccount | undefined>

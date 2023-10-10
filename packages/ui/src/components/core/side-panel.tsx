@@ -20,6 +20,7 @@ export type SidePanelProps = {
   onBodyClick?: () => void;
   path: string;
 	title?: string;
+	bottomContent?: React.ReactNode;
 } & React.PropsWithChildren;
 export const SidePanel: React.FunctionComponent<SidePanelProps> = ({
   className,
@@ -27,7 +28,8 @@ export const SidePanel: React.FunctionComponent<SidePanelProps> = ({
   children,
   onBodyClick,
   path,
-	title
+	title,
+	bottomContent
 }) => {
   const queryToString = (query: ParsedUrlQueryInput): string => {
     return Object.entries(query)
@@ -41,41 +43,46 @@ export const SidePanel: React.FunctionComponent<SidePanelProps> = ({
           className || ""
         } z-40 transition-transform sm:translate-x-0`}
       >
-        <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-700 border-r border-gray-200 dark:border-gray-600">
-					{title ? <a href="/">
-						<div className="w-32 p-2">
-							<img alt="Nexa Logo" className="w-full" src="/logo.png"/>
-						</div>
-					</a> : null}
-					<ul className="space-y-2 font-medium">
-            {items.map((item, i) => {
-              const Icon = item.icon;
-              const includesLink =
-                item.href.pathname ?? queryToString(item.href.query);
-              const selected = path.includes(includesLink);
-              const link =
-                item.href.pathname ??
-                `${path.split("?")[0]}?${queryToString(item.href.query)}`;
-              return (
-                <li key={i}>
-                  <a
-                    aria-selected={selected}
-                    className="flex items-center px-4 py-2 text-gray-900 rounded-md dark:text-white hover:bg-primary-light dark:hover:bg-primary-light group aria-selected:font-bold aria-selected:bg-primary-light dark:aria-selected:bg-primary-light"
-                    href={link}
-                  >
-                    {Icon ? (
-                      <Icon className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-primary dark:group-hover:text-white group-aria-selected:text-primary dark:group-aria-selected:text-white" />
-                    ) : null}
-                    <span className="ml-3 flex-1">{item.label}</span>
-                    {item.notifyLabelItem ? (
-                      <NotifyLabel {...item.notifyLabelItem} />
-                    ) : null}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+        <div className="flex flex-col justify-between h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-700 border-r border-gray-200 dark:border-gray-600">
+					<div>
+						{title ? <a href="/">
+							<div className="w-32 p-2">
+								<img alt="Nexa Logo" className="w-full" src="/logo.png"/>
+							</div>
+						</a> : null}
+						<ul className="space-y-2 font-medium">
+							{items.map((item, i) => {
+								const Icon = item.icon;
+								const includesLink =
+									item.href.pathname ?? queryToString(item.href.query);
+								const selected = path.includes(includesLink);
+								const link =
+									item.href.pathname ??
+									`${path.split("?")[0]}?${queryToString(item.href.query)}`;
+								return (
+									<li key={i}>
+										<a
+											aria-selected={selected}
+											className="flex items-center px-4 py-2 text-gray-900 rounded-md dark:text-white hover:bg-primary-light dark:hover:bg-primary-light group aria-selected:font-bold aria-selected:bg-primary-light dark:aria-selected:bg-primary-light"
+											href={link}
+										>
+											{Icon ? (
+												<Icon className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-primary dark:group-hover:text-white group-aria-selected:text-primary dark:group-aria-selected:text-white" />
+											) : null}
+											<span className="ml-3 flex-1">{item.label}</span>
+											{item.notifyLabelItem ? (
+												<NotifyLabel {...item.notifyLabelItem} />
+											) : null}
+										</a>
+									</li>
+								);
+							})}
+						</ul>
+					</div>
+					{bottomContent ? <div>
+						{bottomContent}
+					</div> : null}
+				</div>
       </div>
 
       <div

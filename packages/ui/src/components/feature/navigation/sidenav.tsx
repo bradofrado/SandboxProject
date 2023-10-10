@@ -7,10 +7,11 @@ export type SideNavComponentProps = {
   className?: string;
   path: string;
 	title?: string;
+  profileContent?: React.ReactNode;
 } & React.PropsWithChildren;
 export const SideNavComponent: React.FunctionComponent<
   SideNavComponentProps
-> = ({ children, items, className, path, title }) => {
+> = ({ children, items, className, path, title, profileContent }) => {
   const { onExpand, expandClass } = useExpand(
     "translate-x-0",
     "-translate-x-full",
@@ -31,12 +32,13 @@ export const SideNavComponent: React.FunctionComponent<
       </button>
 
       <SidePanel
+        bottomContent={profileContent}
         className={`${className || ""} ${expandClass}`}
         items={items}
         onBodyClick={() => {
           onExpand(false);
         }}
-        path={path}
+				path={path}
 				title={title}
       >
         {children}

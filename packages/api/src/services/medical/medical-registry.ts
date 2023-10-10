@@ -1,6 +1,7 @@
 import type { interfaces } from "inversify";
 import { inject, injectable } from "inversify";
 import { MedicalService } from "./medical-service";
+import 'reflect-metadata'
 
 export interface MedicalRegistry {
 	getService: (name: string) => MedicalService
