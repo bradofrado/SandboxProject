@@ -1,9 +1,15 @@
 import { z } from "zod";
+import { User } from "./user";
+import { ProviderAccount } from "./patient";
+
+export type AuthContext = {
+	userId: string;
+	user: User
+} | null;
 
 export interface Session {
-  user: {
-    role: UserRole;
-  };
+  auth: AuthContext,
+	account: ProviderAccount | undefined
 }
 
 export interface Login {

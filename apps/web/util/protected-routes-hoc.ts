@@ -1,6 +1,7 @@
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "api/src/auth";
 import { UserRoleSchema, type Session, type UserRole } from "model/src/auth";
+import { CreateNextContextOptions } from "@trpc/server/adapters/next";
 
 interface RequireRouteProps {
   redirect: string;
@@ -9,10 +10,10 @@ interface RequireRouteProps {
 export const requireRoute =
   ({ redirect, check }: RequireRouteProps) =>
   (func: GetServerSideProps) =>
-  async (ctx: GetServerSidePropsContext) => {
-    const session = getServerAuthSession(ctx);
+  async (ctx: CreateNextContextOptions) => {
+    const session = await getServerAuthSession(ctx);
 
-    if (!session?.user || (check && check(session))) {
+    if (!session?.auth || (check && check(session))) {
       return {
         redirect: {
           destination: redirect, // login path
@@ -39,13 +40,15 @@ export const isNotRole =
     return role !== desiredRole && role !== "admin";
   };
 
-export const requireAuth = requireRoute({ redirect: "/login" });
+export const requireAuth = requireRoute({ redirect: "/setup", check: (session) => {
+	return session.account === undefined;
+} });
 
-export const requireRole = (role: UserRole) =>
-  requireRoute({
-    redirect: "/",
-    check: isNotRole(role, (session) => session.user.role),
-  });
+// export const requireRole = (role: UserRole) =>
+//   requireRoute({
+//     redirect: "/",
+//     check: isNotRole(role, (session) => session.user.role),
+//   });
 
 export const defaultGetServerProps: GetServerSideProps = () =>
   new Promise((resolve) => {

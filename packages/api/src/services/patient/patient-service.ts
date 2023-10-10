@@ -58,7 +58,7 @@ export class TestPatientService implements PatientService {
 			throw new Error(`Cannot find provider with id ${medicalId}`);
 		}
 
-		const medicalService = this.medicalRegistry.getService(medicalProvider.name);
+		const medicalService = this.medicalRegistry.getService(medicalProvider.integration);
 
 		return medicalService;
 	}

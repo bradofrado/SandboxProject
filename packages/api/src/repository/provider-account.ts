@@ -1,6 +1,7 @@
 import { PrismaClient } from "db/lib/generated/client"
 import type { interfaces } from "inversify";
 import { inject, injectable } from "inversify";
+import type { ProviderAccount } from "model/src/patient";
 import 'reflect-metadata';
 
 export interface ProviderAccountRepository {
@@ -12,12 +13,6 @@ export interface ProviderAccountRepository {
 // eslint-disable-next-line @typescript-eslint/no-namespace -- namespace is ok here
 export namespace ProviderAccountRepository {
 	export const $: interfaces.ServiceIdentifier<ProviderAccountRepository> = Symbol('ProviderAccount');
-}
-
-export interface ProviderAccount {
-	id: string,
-	name: string,
-	integration: string
 }
 
 @injectable()

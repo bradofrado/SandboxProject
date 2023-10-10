@@ -1,42 +1,41 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 import 'reflect-metadata'
 
-const getPatientsRequestSchema = z.object({
-	firmId: z.string()
-})
-
-const getPatientRequestSchema = getPatientsRequestSchema.extend({
+const getPatientRequestSchema = z.object({
 	patientId: z.string()
 });
 
 export const patientsRouter = createTRPCRouter({
-	getPatients: publicProcedure
-		.input(getPatientsRequestSchema)
-		.query(async ({input, ctx}) => {
-			return ctx.patientService.getPatients(input.firmId);
+	getPatients: protectedProcedure
+		.query(async ({ctx}) => {
+			const firmId = ctx.auth.userId;
+			return ctx.patientService.getPatients(firmId);
 		}),
 	
-	getPatient: publicProcedure
+	getPatient: protectedProcedure
 		.input(getPatientRequestSchema)
 		.query(async ({input, ctx}) => {
-			return ctx.patientService.getPatient(input.firmId, input.patientId);
+			const firmId = ctx.auth.userId;
+			return ctx.patientService.getPatient(firmId, input.patientId);
 		}),
 
-	getAppointments: publicProcedure
+	getAppointments: protectedProcedure
 		.input(getPatientRequestSchema)
 		.query(async ({input, ctx}) => {
-			const medicalService = ctx.medicalRegistry.getService(input.firmId);
-			const appointments = await medicalService.getAppointments(input.firmId, input.patientId);
+			const firmId = ctx.auth.userId;
+			const medicalService = ctx.medicalRegistry.getService(firmId);
+			const appointments = await medicalService.getAppointments(firmId, input.patientId);
 
 			return appointments;
 		}),
 
-	getCharges: publicProcedure
+	getCharges: protectedProcedure
 		.input(getPatientRequestSchema)
 		.query(async ({input, ctx}) => {
-			const medicalService = ctx.medicalRegistry.getService(input.firmId);
-			const charges = await medicalService.getCharges(input.firmId, input.patientId);
+			const firmId = ctx.auth.userId;
+			const medicalService = ctx.medicalRegistry.getService(firmId);
+			const charges = await medicalService.getCharges(firmId, input.patientId);
 
 			return charges;
 		}),

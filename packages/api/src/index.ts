@@ -1,5 +1,6 @@
 import { documentRouter } from "./routers/documents";
 import { patientsRouter } from "./routers/patients";
+import { setupRoute } from "./routers/setup";
 import { createTRPCRouter } from "./trpc";
 
 /**
@@ -9,7 +10,8 @@ import { createTRPCRouter } from "./trpc";
  */
 export const appRouter = createTRPCRouter({
   patients: patientsRouter,
-	documents: documentRouter
+	documents: documentRouter,
+	setup: setupRoute
 });
 
 // export type definition of API

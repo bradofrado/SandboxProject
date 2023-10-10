@@ -20,3 +20,23 @@ export class TestMedicalRegistry implements MedicalRegistry {
 		return this.medicalService
 	}
 }
+
+// export class RealMedicalRegistry implements MedicalRegistry {
+// 	constructor(kareoService: KareoMedicalService, janeService: JaneService) {
+// 		this.services = {
+// 			'Kareo': kareoService,
+// 			'Jane': janeService
+// 		}
+// 	}
+
+// 	private services: Record<string, MedicalService> = {};
+
+// 	public getService(name: string): MedicalService {
+// 		const service = this.services[name];
+// 		if (!service) {
+// 			throw new Error("Cannot find service with name " + name);
+// 		}
+
+// 		return service;
+// 	}
+// }

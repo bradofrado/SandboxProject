@@ -55,3 +55,10 @@ export interface PatientFinanceProvider {
   amount: number;
 }
 export type PatientFinanceStatus = "Paid" | "Unpaid";
+
+export interface ProviderAccount {
+	id: string,
+	name: string,
+	integration: string
+}
+
