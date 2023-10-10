@@ -50,6 +50,9 @@ importers:
       db:
         specifier: workspace:^
         version: link:../../packages/db
+      dotenv-cli:
+        specifier: ^7.3.0
+        version: 7.3.0
       next:
         specifier: ^13.4.19
         version: 13.4.19(react-dom@18.2.0)(react@18.2.0)
@@ -166,6 +169,9 @@ importers:
       dotenv-cli:
         specifier: ^7.3.0
         version: 7.3.0
+      prisma:
+        specifier: ^5.3.1
+        version: 5.3.1
     devDependencies:
       '@types/node':
         specifier: ^20.6.2
@@ -182,9 +188,6 @@ importers:
       prettier-config:
         specifier: workspace:^
         version: link:../../tooling/prettier-config
-      prisma:
-        specifier: ^5.3.1
-        version: 5.3.1
       tsconfig:
         specifier: workspace:^
         version: link:../../tooling/tsconfig
@@ -1104,6 +1107,7 @@ packages:
   /@prisma/engines@5.3.1:
     resolution: {integrity: sha512-6QkILNyfeeN67BNEPEtkgh3Xo2tm6D7V+UhrkBbRHqKw9CTaz/vvTP/ROwYSP/3JT2MtIutZm/EnhxUiuOPVDA==}
     requiresBuild: true
+    dev: false
 
   /@prisma/nextjs-monorepo-workaround-plugin@5.3.1:
     resolution: {integrity: sha512-SrM068G8BEUmxtyis97/NGTcVodJLcG+YV7fYW7A19ls549WEXvEjXt9jMBAtd2AUw6d8PER+0G6nCfeOtSQhQ==}
@@ -6468,6 +6472,7 @@ packages:
     requiresBuild: true
     dependencies:
       '@prisma/engines': 5.3.1
+    dev: false
 
   /prop-types@15.8.1:
     resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}

@@ -1,4 +1,4 @@
-import { PrismaClient } from "db/lib/generated/client";
+import { PrismaClient } from "db/lib/prisma";
 import type { interfaces } from "inversify";
 import { inject, injectable } from "inversify";
 import 'reflect-metadata';

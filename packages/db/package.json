@@ -20,7 +20,8 @@
   "prettier": "prettier-config",
   "dependencies": {
     "@prisma/client": "^5.3.1",
-    "dotenv-cli": "^7.3.0"
+    "dotenv-cli": "^7.3.0",
+		"prisma": "^5.3.1"
   },
   "devDependencies": {
     "@types/node": "^20.6.2",
@@ -28,7 +29,6 @@
     "eslint-config-custom": "workspace:^",
     "prettier": "^3.0.3",
     "prettier-config": "workspace:^",
-    "prisma": "^5.3.1",
     "tsconfig": "workspace:^",
     "typescript": "^5.2.2"
   }

@@ -1,4 +1,4 @@
-import type { Patient, PatientBase } from "model/src/patient";
+import type { Patient, PatientBase, ProviderAccount } from "model/src/patient";
 import type { AttorneyClient } from "model/src/attorney";
 import type { MedicalPatient } from "model/src/medical";
 import type { interfaces } from "inversify";
@@ -7,7 +7,6 @@ import type { AttorneyService } from "../attorney/attorney-service";
 import type { MedicalService } from "../medical/medical-service";
 import type { PatientLinking} from "../../repository/patient-linking";
 import { PatientLinkingRepository } from "../../repository/patient-linking";
-import type { ProviderAccount} from "../../repository/provider-account";
 import { ProviderAccountRepository } from "../../repository/provider-account";
 import { AttorneyRegistry } from "../attorney/attorney-registry";
 import { MedicalRegistry } from "../medical/medical-registry";

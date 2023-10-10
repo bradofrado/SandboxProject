@@ -1,7 +1,6 @@
-import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
+import { GetServerSidePropsContext, type GetServerSideProps } from "next";
 import { getServerAuthSession } from "api/src/auth";
 import { UserRoleSchema, type Session, type UserRole } from "model/src/auth";
-import { CreateNextContextOptions } from "@trpc/server/adapters/next";
 
 interface RequireRouteProps {
   redirect: string;
@@ -10,8 +9,8 @@ interface RequireRouteProps {
 export const requireRoute =
   ({ redirect, check }: RequireRouteProps) =>
   (func: GetServerSideProps) =>
-  async (ctx: CreateNextContextOptions) => {
-    const session = await getServerAuthSession(ctx);
+  async (ctx: GetServerSidePropsContext) => {
+    const session = await getServerAuthSession(ctx.req);
 
     if (!session?.auth || (check && check(session))) {
       return {
