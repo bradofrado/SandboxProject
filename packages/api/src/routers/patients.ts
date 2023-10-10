@@ -26,7 +26,8 @@ export const patientsRouter = createTRPCRouter({
 	getAppointments: publicProcedure
 		.input(getPatientRequestSchema)
 		.query(async ({input, ctx}) => {
-			const appointments = await ctx.medicalService.getAppointments(input.firmId, input.patientId);
+			const medicalService = ctx.medicalRegistry.getService(input.firmId);
+			const appointments = await medicalService.getAppointments(input.firmId, input.patientId);
 
 			return appointments;
 		}),
@@ -34,7 +35,8 @@ export const patientsRouter = createTRPCRouter({
 	getCharges: publicProcedure
 		.input(getPatientRequestSchema)
 		.query(async ({input, ctx}) => {
-			const charges = await ctx.medicalService.getCharges(input.firmId, input.patientId);
+			const medicalService = ctx.medicalRegistry.getService(input.firmId);
+			const charges = await medicalService.getCharges(input.firmId, input.patientId);
 
 			return charges;
 		}),

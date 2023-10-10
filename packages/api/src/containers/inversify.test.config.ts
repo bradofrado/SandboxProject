@@ -9,12 +9,14 @@ import { PatientService, TestPatientService } from "../services/patient/patient-
 import { PatientLinkingRepository, PrismaPatientLinkingRepository } from "../repository/patient-linking";
 import { PrismaProviderAccount, ProviderAccountRepository } from "../repository/provider-account";
 import { AttorneyRegistry, TestAttorneyRegistry } from "../services/attorney/attorney-registry";
+import { MedicalRegistry, TestMedicalRegistry } from "../services/medical/medical-registry";
 
 
 
 const testContainer = new Container();
 testContainer.bind<PrismaClient>('Prisma').toConstantValue(prisma);
 testContainer.bind<AttorneyRegistry>(AttorneyRegistry.$).to(TestAttorneyRegistry);
+testContainer.bind<MedicalRegistry>(MedicalRegistry.$).to(TestMedicalRegistry);
 testContainer.bind<MedicalService>(MedicalService.$).to(TestMedicalService);
 testContainer.bind<AttorneyService>(AttorneyService.$).to(TestAttorneyService);
 testContainer.bind<DocumentService>(DocumentService.$).to(TestDocumentService);

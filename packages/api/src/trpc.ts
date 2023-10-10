@@ -12,12 +12,12 @@ import { prisma } from "db/lib/prisma";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import type { Container } from "inversify";
-import { MedicalService} from "./services/medical/medical-service";
-import { AttorneyService} from "./services/attorney/attorney-service";
 import { DocumentService} from "./services/documents/document-service";
 import { testContainer } from "./containers/inversify.test.config";
 import 'reflect-metadata'
 import { PatientService } from "./services/patient/patient-service";
+import { MedicalRegistry } from "./services/medical/medical-registry";
+import { AttorneyRegistry } from "./services/attorney/attorney-registry";
 
 /**
  * 1. CONTEXT
@@ -33,8 +33,8 @@ interface CreateContextOptions {
 
 export interface TRPCContext {
 	prisma: typeof prisma,
-	medicalService: MedicalService,
-	attorneyService: AttorneyService,
+	medicalRegistry: MedicalRegistry,
+	attorneyRegistry: AttorneyRegistry,
 	documentService: DocumentService,
 	patientService: PatientService
 }
@@ -52,8 +52,8 @@ export interface TRPCContext {
 const createInnerTRPCContext = ({container}: CreateContextOptions): TRPCContext => {
   return {
     prisma,
-		medicalService: container.get<MedicalService>(MedicalService.$),
-		attorneyService: container.get<AttorneyService>(AttorneyService.$),
+		medicalRegistry: container.get<MedicalRegistry>(MedicalRegistry.$),
+		attorneyRegistry: container.get<AttorneyRegistry>(AttorneyRegistry.$),
 		documentService: container.get<DocumentService>(DocumentService.$),
 		patientService: container.get<PatientService>(PatientService.$)
   };

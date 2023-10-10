@@ -4,6 +4,7 @@ import { inject, injectable } from "inversify";
 
 export interface ProviderAccountRepository {
 	getAccount: (name: string) => Promise<ProviderAccount | undefined>
+	getAccountById: (id: string) => Promise<ProviderAccount | undefined>
 	createAccount: (providerAccount: ProviderAccount) => Promise<ProviderAccount>
 }
 
@@ -25,6 +26,16 @@ export class PrismaProviderAccount implements ProviderAccountRepository {
 		const account = await this.primsa.providerAccount.findFirst({
 			where: {
 				name
+			}
+		});
+
+		return account ?? undefined;
+	}
+
+	public async getAccountById(id: string): Promise<ProviderAccount | undefined> {
+		const account = await this.primsa.providerAccount.findFirst({
+			where: {
+				id
 			}
 		});
 

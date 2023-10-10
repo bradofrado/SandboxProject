@@ -4,12 +4,13 @@ import type { MedicalPatient } from "model/src/medical";
 import type { interfaces } from "inversify";
 import { inject, injectable } from "inversify";
 import type { AttorneyService } from "../attorney/attorney-service";
-import { MedicalService } from "../medical/medical-service";
+import type { MedicalService } from "../medical/medical-service";
 import type { PatientLinking} from "../../repository/patient-linking";
 import { PatientLinkingRepository } from "../../repository/patient-linking";
 import type { ProviderAccount} from "../../repository/provider-account";
 import { ProviderAccountRepository } from "../../repository/provider-account";
 import { AttorneyRegistry } from "../attorney/attorney-registry";
+import { MedicalRegistry } from "../medical/medical-registry";
 
 export interface PatientService {
 	getPatient: (firmId: string, patientId: string) => Promise<Patient | undefined>
@@ -32,25 +33,40 @@ export namespace PatientService {
  */
 @injectable()
 export class TestPatientService implements PatientService {
-	constructor(@inject(MedicalService.$) private medicalService: MedicalService, 
+	constructor(@inject(MedicalRegistry.$) private medicalRegistry: MedicalRegistry, 
 		@inject(AttorneyRegistry.$) private attorneyRegistry: AttorneyRegistry, @inject(PatientLinkingRepository.$) private patientLinkingRepository: PatientLinkingRepository,
 		@inject(ProviderAccountRepository.$) private providerAccountRepository: ProviderAccountRepository) {}
 	public async getPatients(firmId: string): Promise<Patient[]> {
-		const patients = await this.medicalService.getPatients(firmId);
+		const medicalService = await this.getMedicalService(firmId);
+		const patients = await medicalService.getPatients(firmId);
 
-		return Promise.all(patients.map(async (patient) => this.getPatientFromMedical(patient, firmId)))
+		return Promise.all(patients.map(async (patient) => this.getPatientFromMedical(patient, firmId, medicalService)))
 	}
 
 	public async getPatient(firmId: string, patientId: string): Promise<Patient | undefined>{
-		const patient = await this.medicalService.getPatient(firmId, patientId);
+		const medicalService = await this.getMedicalService(firmId);
+		const patient = await medicalService.getPatient(firmId, patientId);
 
-		return patient ? this.getPatientFromMedical(patient, firmId) : undefined;
+		return patient ? this.getPatientFromMedical(patient, firmId, medicalService) : undefined;
 	}
 
-	private async getPatientFromMedical(patient: MedicalPatient, medicalId: string): Promise<Patient> {
+	private async getMedicalService(medicalId: string): Promise<MedicalService> {
+		const medicalProvider = await this.providerAccountRepository.getAccountById(medicalId);
+
+		if (!medicalProvider) {
+			throw new Error(`Cannot find provider with id ${medicalId}`);
+		}
+
+		const medicalService = this.medicalRegistry.getService(medicalProvider.name);
+
+		return medicalService;
+	}
+
+	private async getPatientFromMedical(patient: MedicalPatient, medicalId: string, medicalService: MedicalService): Promise<Patient> {
 		const firm = await this.getFirmProvider(patient.lawFirm);
+		const outstandingBalance = await this.getOustandingBalance(medicalId, patient.id, medicalService);
+
 		if (firm === undefined) {
-			const outstandingBalance = await this.getOustandingBalance(medicalId, patient.id);
 			return {
 				...patient,
 				primaryContact: '',
@@ -67,12 +83,10 @@ export class TestPatientService implements PatientService {
 			throw new Error("There was an error finding the client");
 		}
 	
-		return this.getPatientFromMedicalAndClient(medicalId, patient, client);
+		return this.getPatientFromMedicalAndClient(medicalId, patient, client, outstandingBalance);
 	}
 
-	private async getPatientFromMedicalAndClient(firmId: string, medicalPatient: MedicalPatient, attorneyClient: AttorneyClient): Promise<Patient> {
-		const outstandingBalance = await this.getOustandingBalance(firmId, medicalPatient.id);
-
+	private getPatientFromMedicalAndClient(firmId: string, medicalPatient: MedicalPatient, attorneyClient: AttorneyClient, outstandingBalance: number): Patient {
 		return {
 			...medicalPatient,
 			...attorneyClient,
@@ -81,8 +95,8 @@ export class TestPatientService implements PatientService {
 		}
 	}
 
-	private async getOustandingBalance(firmId: string, medicalId: string): Promise<number> {
-		const charges = await this.medicalService.getCharges(firmId, medicalId);
+	private async getOustandingBalance(firmId: string, medicalId: string, medicalService: MedicalService): Promise<number> {
+		const charges = await medicalService.getCharges(firmId, medicalId);
 		const balance = charges.reduce((prev, curr) => prev + (curr.status === 'Unpaid' ? curr.amount : 0), 0);
 
 		return balance;
