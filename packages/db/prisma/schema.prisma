@@ -5,12 +5,20 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgres://postgres:password@localhost:5432/app"
 }
 
-model Post {
-  id      String @id @default(cuid())
-  title   String
-  content String
-  likes   Int
+model ProviderAccount {
+	id					String @id @default(cuid())
+	name				String @unique
+	integration	String
+}
+
+model PatientLinking {
+	medicalId					String
+	attorneyId				String
+	medicalPatientId 	String
+	attorneyPatientId String
+
+	@@id([medicalId, medicalPatientId])
 }
