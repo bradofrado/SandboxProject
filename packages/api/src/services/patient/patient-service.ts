@@ -3,8 +3,13 @@ import type { AttorneyClient } from "model/src/attorney";
 import type { MedicalPatient } from "model/src/medical";
 import type { interfaces } from "inversify";
 import { inject, injectable } from "inversify";
-import { AttorneyService } from "../attorney/attorney-service";
+import type { AttorneyService } from "../attorney/attorney-service";
 import { MedicalService } from "../medical/medical-service";
+import type { PatientLinking} from "../../repository/patient-linking";
+import { PatientLinkingRepository } from "../../repository/patient-linking";
+import type { ProviderAccount} from "../../repository/provider-account";
+import { ProviderAccountRepository } from "../../repository/provider-account";
+import { AttorneyRegistry } from "../attorney/attorney-registry";
 
 export interface PatientService {
 	getPatient: (firmId: string, patientId: string) => Promise<Patient | undefined>
@@ -14,13 +19,6 @@ export interface PatientService {
 // eslint-disable-next-line @typescript-eslint/no-namespace -- namespace is ok here
 export namespace PatientService {
 	export const $: interfaces.ServiceIdentifier<PatientService> = Symbol('PatientService');
-}
-
-interface PatientLinking {
-	medicalId: string; //Medical provider's account id
-	attorneyId: string; //Attorney's account id
-	patientMedicalId: string; //Patient id in medical provider's api system
-	patientAttorneyId: string //Client id in attorney's api system
 }
 
 /**
@@ -34,7 +32,9 @@ interface PatientLinking {
  */
 @injectable()
 export class TestPatientService implements PatientService {
-	constructor(@inject(MedicalService.$) private medicalService: MedicalService, @inject(AttorneyService.$) private attorneyService: AttorneyService) {}
+	constructor(@inject(MedicalService.$) private medicalService: MedicalService, 
+		@inject(AttorneyRegistry.$) private attorneyRegistry: AttorneyRegistry, @inject(PatientLinkingRepository.$) private patientLinkingRepository: PatientLinkingRepository,
+		@inject(ProviderAccountRepository.$) private providerAccountRepository: ProviderAccountRepository) {}
 	public async getPatients(firmId: string): Promise<Patient[]> {
 		const patients = await this.medicalService.getPatients(firmId);
 
@@ -48,8 +48,8 @@ export class TestPatientService implements PatientService {
 	}
 
 	private async getPatientFromMedical(patient: MedicalPatient, medicalId: string): Promise<Patient> {
-		const firmId = this.getIdForFirm(patient.lawFirm);
-		if (firmId === undefined) {
+		const firm = await this.getFirmProvider(patient.lawFirm);
+		if (firm === undefined) {
 			const outstandingBalance = await this.getOustandingBalance(medicalId, patient.id);
 			return {
 				...patient,
@@ -61,7 +61,7 @@ export class TestPatientService implements PatientService {
 			};
 		}
 
-		const client = await this.getClientFromMedicalPatient(medicalId, firmId, patient);
+		const client = await this.getClientFromMedicalPatient(medicalId, firm, patient);
 		
 		if (client === undefined) {
 			throw new Error("There was an error finding the client");
@@ -88,70 +88,65 @@ export class TestPatientService implements PatientService {
 		return balance;
 	}
 
-	private async getClientFromMedicalPatient(medicalId: string, firmId: string, patient: MedicalPatient): Promise<AttorneyClient | undefined> {
+	private async getClientFromMedicalPatient(medicalId: string, firm: ProviderAccount, patient: MedicalPatient): Promise<AttorneyClient | undefined> {
 		//See if there is a linking for this medical patient
-		const linking = this.getLinking(medicalId, patient.id);
-		
+		const linking = await this.getLinking(medicalId, patient.id);
+		const attorneyService = this.attorneyRegistry.getService(firm.name);
+
 		//If there is not, then find the matching client and create a linking
 		if (linking === undefined) {
-			const client = await this.findMatchingClientFromMedicalPatient(firmId, patient);
+			const client = await this.findMatchingClientFromMedicalPatient(firm.name, patient, attorneyService);
 			if (client === undefined) {
-				throw new Error(`There are no matching clients for ${patient.id}`);
+				throw new Error(`There are no matching clients for patient ${patient.id} and firm ${firm.name}`);
 			}
-			this.createLinking(medicalId, patient.id, firmId, client.id);
+			await this.createLinking(medicalId, patient.id, firm.id, client.id);
 
 			return client;
 		}
 	
-		return this.getClientFromLinking(linking);
+		return this.getClientFromLinking(linking, attorneyService);
 	}
 
-	private async findMatchingClientFromMedicalPatient(firmId: string, patient: MedicalPatient): Promise<AttorneyClient | undefined> {
+	private async findMatchingClientFromMedicalPatient(firmId: string, patient: MedicalPatient, attorneyService: AttorneyService): Promise<AttorneyClient | undefined> {
 		//Matches when a set of properties are true for both parties.
 		// TODO: Will definately have to update this function because of bad data
 		const isMatch = (_client: AttorneyClient, _patient: MedicalPatient): boolean => {
-			const keys: (keyof PatientBase)[] = ['firstName', 'lastName', 'dateOfBirth', 'dateOfLoss'];
+			const keys: (keyof PatientBase)[] = ['firstName', 'lastName'];
 
 			const count = keys.reduce((prev, curr) => prev + (_client[curr] === _patient[curr] ? 1 : 0), 0);
 
 			return count === keys.length;
 		}
 		
-		const clients = await this.attorneyService.getClients(firmId);
+		const clients = await attorneyService.getClients(firmId);
 
 		return clients.find(client => isMatch(client, patient));
 	}
 
-	private async getClientFromLinking(linking: PatientLinking): Promise<AttorneyClient | undefined> {
-		return this.attorneyService.getClient(linking.attorneyId, linking.patientAttorneyId);
+	private async getClientFromLinking(linking: PatientLinking, attorneyService: AttorneyService): Promise<AttorneyClient | undefined> {
+		return attorneyService.getClient(linking.attorneyId, linking.attorneyPatientId);
 	}
 
-	private createLinking(mid: string, patientId: string, aid: string, clientId: string): PatientLinking {
-		//TODO: Create an entry in the Linking table that represents a linking between a 
-		//      medical patient and an attorney client
-		return {
+	private async createLinking(mid: string, patientId: string, aid: string, clientId: string): Promise<PatientLinking> {
+		const newLinking = await this.patientLinkingRepository.createLinking({
 			medicalId: mid,
 			attorneyId: aid,
-			patientMedicalId: patientId,
-			patientAttorneyId: clientId
-		}
+			medicalPatientId: patientId,
+			attorneyPatientId: clientId
+		})
+		
+		return newLinking;
 	}
 
-	private getIdForFirm(firmName: string): string | undefined {
-		//TODO: look in database in Attorney table and see if we have an account for this law firm
-		//      and return its id
-		return firmName === 'Siegfried and Jensen' ? '123' : undefined;
+	private async getFirmProvider(firmName: string): Promise<ProviderAccount | undefined> {
+		const provider = await this.providerAccountRepository.getAccount(firmName);
+		
+		return provider;
 	}
 	
-	private getLinking(id: string, patientId: string): PatientLinking | undefined {
-		//TODO: Look in the Linking table for an entry for this given medical patient.
-		//      if there is then return that linking, otherwise return undefined
-		//      meaning there is not currently a link for this patient
-		return {
-			medicalId: id,
-			patientMedicalId: patientId,
-			attorneyId: '123',
-			patientAttorneyId: patientId
-		}
+	private async getLinking(id: string, patientId: string): Promise<PatientLinking | undefined> {
+		const linking = await this.patientLinkingRepository.getLinking(id, patientId);
+		
+		return linking;
 	}
 }
