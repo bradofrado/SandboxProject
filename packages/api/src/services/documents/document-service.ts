@@ -1,6 +1,7 @@
 import type { interfaces } from "inversify";
 import { injectable } from "inversify";
 import type { PatientDocument } from "model/src/patient";
+import 'reflect-metadata';
 
 export interface DocumentService {
 	getDocuments: (path: string) => Promise<PatientDocument[]>

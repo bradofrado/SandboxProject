@@ -25,7 +25,7 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
 			{patient.primaryContact ? <div className="flex max-w-[450px] flex-col px-4 pb-6">
 				<Header level={2}>Threads</Header>
 				<MessageProvider chatId={patient.id}>
-					{(messages, send) => <ChatBox className="h-full" messages={messages} onSendMessage={send} sendMessagePlaceholder={`Send to ${patient.primaryContact}`} user={{id: '0', patientId: patient.id, name: patient.primaryContact, image: '/braydon.jpeg'}}/>}
+					{(messages, send) => <ChatBox chatId={patient.id} className="h-full" messages={messages} onSendMessage={send} sendMessagePlaceholder={`Send to ${patient.primaryContact}`} user={{id: '0', name: patient.primaryContact, image: '/braydon.jpeg'}}/>}
 				</MessageProvider>
 			</div> : null}
 		</div>

@@ -1,6 +1,5 @@
 import React, { useEffect, useState, type PropsWithChildren } from "react";
 import type { AllOrNothing } from "model/src/core/utils";
-
 import { Button } from "./button";
 import { ChevronDownIcon, type IconComponent } from "./icons";
 import { CheckboxInput } from "./input";
@@ -49,7 +48,7 @@ export const ListBox = <T,>({
 }: ListBoxProps<T>): JSX.Element => {
   const button = (
     <Button className={className} mode={mode}>
-      <div className="flex items-center">{children}</div>
+      <div className="flex items-center w-full">{children}</div>
     </Button>
   );
   return (
@@ -117,8 +116,8 @@ export const Dropdown = <T,>({
       mode={value === undefined ? "secondary" : "primary"}
       setIsOpen={setIsOpen}
     >
-      {value === undefined ? children : value.name}{" "}
-      {chevron ? <ChevronDownIcon className="w-4 h-4 ml-1" /> : null}
+      <div className="flex w-full justify-between items-center">{value === undefined ? children : value.name}{" "}
+      {chevron ? <ChevronDownIcon className="w-4 h-4 ml-1" /> : null}</div>
     </ListBox>
   );
 };

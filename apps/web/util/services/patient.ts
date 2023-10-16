@@ -9,20 +9,20 @@ import { api } from "../api";
 // }[T]
 
 export const useGetPatients = () => {
-  return api.patients.getPatients.useQuery({firmId: 'Spinal Rehab'});
+  return api.patients.getPatients.useQuery();
 };
 
 
 export const useGetPatient = (
   id: string,
 ) => {
-  return api.patients.getPatient.useQuery({firmId: 'Spinal Rehab', patientId: id})
+  return api.patients.getPatient.useQuery({patientId: id})
 };
 
 export const useGetPatientStatus = (
   patientId: string,
 ) => {
-  return api.patients.getAppointments.useQuery({firmId: 'Spinal Rehab', patientId})
+  return api.patients.getAppointments.useQuery({patientId})
 };
 
 export const useGetPatientDocuments = (
@@ -34,6 +34,6 @@ export const useGetPatientDocuments = (
 export const useGetPatientFinanceProviders = (
   patientId: string,
 ) => {
-  return api.patients.getCharges.useQuery({firmId: 'Spinal Rehab', patientId});
+  return api.patients.getCharges.useQuery({patientId});
 };
 

@@ -1,9 +1,16 @@
 import { z } from "zod";
+import { User } from "./user";
+import { ProviderAccount } from "./patient";
+import { stringUnionSchema } from "./utils";
+
+export type AuthContext = {
+	userId: string;
+	user: User
+} | null;
 
 export interface Session {
-  user: {
-    role: UserRole;
-  };
+  auth: AuthContext,
+	account: ProviderAccount | undefined
 }
 
 export interface Login {
@@ -30,7 +37,4 @@ export const EmailSchema = z.custom<Email>((val) => {
 
 const roles = ["user", "admin"] as const;
 export type UserRole = (typeof roles)[number];
-export const UserRoleSchema = z.custom<UserRole>(
-  (data) =>
-    typeof data === "string" && (roles as ReadonlyArray<string>).includes(data),
-);
+export const UserRoleSchema = stringUnionSchema(roles);

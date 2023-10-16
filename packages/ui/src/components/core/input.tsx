@@ -1,10 +1,10 @@
 import React from "react";
-
 import { CheckmarkIcon } from "./icons";
 import { Label } from "./label";
 
 interface InputProps {
   onChange?: (value: string) => void;
+	onBlur?: (value: string) => void;
   value?: string | number | readonly string[] | undefined;
   className?: string;
   type?: "input" | "textarea" | "password" | "email";
@@ -14,6 +14,7 @@ interface InputProps {
 }
 export const Input: React.FunctionComponent<InputProps> = ({
   onChange,
+	onBlur,
   value,
   className,
   label,
@@ -30,6 +31,9 @@ export const Input: React.FunctionComponent<InputProps> = ({
     ) => {
       onChange && onChange(e.target.value);
     },
+		onBlur: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+			onBlur && onBlur(e.target.value);
+		},
     placeholder,
     required,
   };

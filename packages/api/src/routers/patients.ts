@@ -1,41 +1,57 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { providerIntegrationSchema } from "model/src/patient";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 import 'reflect-metadata'
+import type { MedicalService } from "../services/medical/medical-service";
+import type { ProviderAccountRepository } from "../repository/provider-account";
+import type { MedicalRegistry } from "../services/medical/medical-registry";
 
-const getPatientsRequestSchema = z.object({
-	firmId: z.string()
-})
-
-const getPatientRequestSchema = getPatientsRequestSchema.extend({
+const getPatientRequestSchema = z.object({
 	patientId: z.string()
 });
 
 export const patientsRouter = createTRPCRouter({
-	getPatients: publicProcedure
-		.input(getPatientsRequestSchema)
-		.query(async ({input, ctx}) => {
-			return ctx.patientService.getPatients(input.firmId);
+	getPatients: protectedProcedure
+		.query(async ({ctx}) => {
+			const firmId = ctx.auth.userId;
+			return ctx.patientService.getPatients(firmId);
 		}),
 	
-	getPatient: publicProcedure
+	getPatient: protectedProcedure
 		.input(getPatientRequestSchema)
 		.query(async ({input, ctx}) => {
-			return ctx.patientService.getPatient(input.firmId, input.patientId);
+			const firmId = ctx.auth.userId;
+			return ctx.patientService.getPatient(firmId, input.patientId);
 		}),
 
-	getAppointments: publicProcedure
+	getAppointments: protectedProcedure
 		.input(getPatientRequestSchema)
 		.query(async ({input, ctx}) => {
-			const appointments = await ctx.medicalService.getAppointments(input.firmId, input.patientId);
+			const firmId = ctx.auth.userId;
+			const medicalService = await getMedicalServiceFromId(firmId, ctx.providerAccountRepository, ctx.medicalRegistry);
+			const appointments = await medicalService.getAppointments(firmId, input.patientId);
 
 			return appointments;
 		}),
 
-	getCharges: publicProcedure
+	getCharges: protectedProcedure
 		.input(getPatientRequestSchema)
 		.query(async ({input, ctx}) => {
-			const charges = await ctx.medicalService.getCharges(input.firmId, input.patientId);
+			const firmId = ctx.auth.userId;
+			const medicalService = await getMedicalServiceFromId(firmId, ctx.providerAccountRepository, ctx.medicalRegistry);
+			const charges = await medicalService.getCharges(firmId, input.patientId);
 
 			return charges;
 		}),
 })
+
+const getMedicalServiceFromId = async (firmId: string, providerAccountRepository: ProviderAccountRepository, medicalRegistry: MedicalRegistry): Promise<MedicalService> => {
+	const account = await providerAccountRepository.getAccountById(firmId);
+	if (!account) {
+		throw new Error(`Cannot find account ${firmId}`);
+	}
+	const integration = providerIntegrationSchema.parse(account.integration);
+	const medicalService = medicalRegistry.getService(integration);
+
+	return medicalService;
+}

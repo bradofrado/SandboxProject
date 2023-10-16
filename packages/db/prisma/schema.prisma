@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../lib/generated/client"
 }
 
 datasource db {
@@ -8,9 +7,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id      String @id @default(cuid())
-  title   String
-  content String
-  likes   Int
+model ProviderAccount {
+	id					String @id @default(cuid())
+	name				String @unique
+	integration	IntegrationType
+	accountType AccountType
+}
+
+enum AccountType {
+	provider
+	firm
+}
+
+enum IntegrationType {
+	kareo
+	smartAdvocate
+}
+
+model PatientLinking {
+	medicalId					String
+	attorneyId				String
+	medicalPatientId 	String
+	attorneyPatientId String
+
+	@@id([medicalId, medicalPatientId])
 }

@@ -18,6 +18,7 @@
   },
   "prettier": "prettier-config",
   "dependencies": {
+    "@clerk/nextjs": "^4.25.3",
     "@trpc/client": "^10.38.3",
     "@trpc/server": "^10.38.3",
     "db": "workspace:^",

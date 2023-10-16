@@ -5,8 +5,9 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "turbo run format",
-	"db:generate": "turbo run db:generate",
-    "db:push": "turbo run db:push"
+		"db:generate": "turbo run db:generate",
+    "db:push": "turbo run db:push",
+		"db:studio": "turbo run db:studio"
   },
   "devDependencies": {
     "eslint": "^8.48.0",

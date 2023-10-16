@@ -3,16 +3,17 @@ import type { User } from "model/src/user";
 import { RightArrowIcon } from "../../core/icons";
 
 export interface SendMessageProps {
+	chatId: string;
   user: User;
 	onSendMessage: (id: string, message: string, user: User) => void;
 	placeholder?: string
 }
-export const SendMessage: React.FunctionComponent<SendMessageProps> = ({ user, onSendMessage, placeholder }) => {
+export const SendMessage: React.FunctionComponent<SendMessageProps> = ({ chatId, user, onSendMessage, placeholder }) => {
   const [message, setMessage] = useState("");
 
   const sendMessage: React.FormEventHandler = (e): void => {
 		e.preventDefault();
-    message && onSendMessage(user.patientId, message, user);
+    message && onSendMessage(chatId, message, user);
     setMessage("");
   };
   return (
