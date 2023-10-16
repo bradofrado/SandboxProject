@@ -1,4 +1,4 @@
-import type { Patient, PatientBase, ProviderAccount } from "model/src/patient";
+import { providerIntegrationSchema, type Patient, type PatientBase, type ProviderAccount } from "model/src/patient";
 import type { AttorneyClient } from "model/src/attorney";
 import type { MedicalPatient } from "model/src/medical";
 import type { interfaces } from "inversify";
@@ -57,7 +57,8 @@ export class TestPatientService implements PatientService {
 			throw new Error(`Cannot find provider with id ${medicalId}`);
 		}
 
-		const medicalService = this.medicalRegistry.getService(medicalProvider.integration);
+		const integration = providerIntegrationSchema.parse(medicalProvider.integration);
+		const medicalService = this.medicalRegistry.getService(integration);
 
 		return medicalService;
 	}

@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { z } from "zod";
 
 export const displayDate = (date: Date) => {
   return dayjs(date).format("MM/DD/YY");
@@ -172,3 +173,10 @@ export function isDateInBetween(
     (end !== undefined ? test <= end : true)
   );
 }
+
+export const arrayOfAll = <T,>() => <U extends T[]>(
+  array: U & ([T] extends [U[number]] ? unknown : Exclude<T, U[number]>)
+) => array;
+
+export const stringUnionSchema = <T extends readonly string[]>(array: T) => z.custom<T[number]>((data) => typeof data === 'string' && array.includes(data));
+

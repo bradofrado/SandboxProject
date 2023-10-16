@@ -1,10 +1,11 @@
 import type { interfaces } from "inversify";
 import { inject, injectable } from "inversify";
+import type { ProviderIntegration } from "model/src/patient";
 import { MedicalService } from "./medical-service";
 import 'reflect-metadata'
 
 export interface MedicalRegistry {
-	getService: (name: string) => MedicalService
+	getService: (name: ProviderIntegration) => MedicalService
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace -- namespace is ok here
@@ -21,22 +22,19 @@ export class TestMedicalRegistry implements MedicalRegistry {
 	}
 }
 
-// export class RealMedicalRegistry implements MedicalRegistry {
-// 	constructor(kareoService: KareoMedicalService, janeService: JaneService) {
-// 		this.services = {
-// 			'Kareo': kareoService,
-// 			'Jane': janeService
-// 		}
-// 	}
+export class RealMedicalRegistry implements MedicalRegistry {
+	constructor(kareoService: MedicalService) {
+		this.services = {
+			'kareo': kareoService,
+			//'jane': janeService
+		}
+	}
 
-// 	private services: Record<string, MedicalService> = {};
+	private services!: Record<ProviderIntegration, MedicalService>;
 
-// 	public getService(name: string): MedicalService {
-// 		const service = this.services[name];
-// 		if (!service) {
-// 			throw new Error("Cannot find service with name " + name);
-// 		}
+	public getService(name: ProviderIntegration): MedicalService {
+		const service = this.services[name];
 
-// 		return service;
-// 	}
-// }
+		return service;
+	}
+}

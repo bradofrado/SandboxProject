@@ -1,6 +1,10 @@
 import { z } from "zod";
+import { providerIntegrationSchema } from "model/src/patient";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import 'reflect-metadata'
+import type { MedicalService } from "../services/medical/medical-service";
+import type { ProviderAccountRepository } from "../repository/provider-account";
+import type { MedicalRegistry } from "../services/medical/medical-registry";
 
 const getPatientRequestSchema = z.object({
 	patientId: z.string()
@@ -24,7 +28,7 @@ export const patientsRouter = createTRPCRouter({
 		.input(getPatientRequestSchema)
 		.query(async ({input, ctx}) => {
 			const firmId = ctx.auth.userId;
-			const medicalService = ctx.medicalRegistry.getService(firmId);
+			const medicalService = await getMedicalServiceFromId(firmId, ctx.providerAccountRepository, ctx.medicalRegistry);
 			const appointments = await medicalService.getAppointments(firmId, input.patientId);
 
 			return appointments;
@@ -34,9 +38,20 @@ export const patientsRouter = createTRPCRouter({
 		.input(getPatientRequestSchema)
 		.query(async ({input, ctx}) => {
 			const firmId = ctx.auth.userId;
-			const medicalService = ctx.medicalRegistry.getService(firmId);
+			const medicalService = await getMedicalServiceFromId(firmId, ctx.providerAccountRepository, ctx.medicalRegistry);
 			const charges = await medicalService.getCharges(firmId, input.patientId);
 
 			return charges;
 		}),
 })
+
+const getMedicalServiceFromId = async (firmId: string, providerAccountRepository: ProviderAccountRepository, medicalRegistry: MedicalRegistry): Promise<MedicalService> => {
+	const account = await providerAccountRepository.getAccountById(firmId);
+	if (!account) {
+		throw new Error(`Cannot find account ${firmId}`);
+	}
+	const integration = providerIntegrationSchema.parse(account.integration);
+	const medicalService = medicalRegistry.getService(integration);
+
+	return medicalService;
+}

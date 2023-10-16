@@ -8,6 +8,7 @@
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { initTRPC, TRPCError } from "@trpc/server";
+import type { PrismaClient } from "db/lib/prisma";
 import { prisma } from "db/lib/prisma";
 import superjson from "superjson";
 import { ZodError } from "zod";
@@ -36,7 +37,7 @@ interface CreateContextOptions {
 }
 
 export interface TRPCContext {
-	prisma: typeof prisma,
+	prisma: PrismaClient,
 	medicalRegistry: MedicalRegistry,
 	attorneyRegistry: AttorneyRegistry,
 	documentService: DocumentService,

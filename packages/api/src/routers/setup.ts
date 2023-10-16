@@ -1,9 +1,11 @@
 import { z } from "zod";
-import type { ProviderAccount } from "model/src/patient";
+import { accountTypeSchema, integrationTypeSchema, type ProviderAccount } from "model/src/patient";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 const createProviderAccountSchema = z.object({
-	integration: z.string()
+	integration: integrationTypeSchema,
+	name: z.string(),
+	accountType: accountTypeSchema,
 })
 
 export const setupRoute = createTRPCRouter({
@@ -17,7 +19,7 @@ export const setupRoute = createTRPCRouter({
 	createProviderAccount: protectedProcedure
 		.input(createProviderAccountSchema)
 		.mutation(async ({ctx, input}) => {
-			const newAccount: ProviderAccount = {id: ctx.auth.userId, name: ctx.auth.user.name, integration: input.integration};
+			const newAccount: ProviderAccount = {id: ctx.auth.userId, name: input.name, integration: input.integration, accountType: input.accountType};
 			const account = await ctx.providerAccountRepository.createAccount(newAccount);
 
 			return account;

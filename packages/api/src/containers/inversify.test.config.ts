@@ -1,6 +1,6 @@
 import { Container } from "inversify";
 import { prisma } from "db/lib/prisma";
-import type { PrismaClient } from "db/lib/generated/client";
+import type { PrismaClient } from "db/lib/prisma";
 import { MedicalService, TestMedicalService } from "../services/medical/medical-service";
 import { AttorneyService, TestAttorneyService } from "../services/attorney/attorney-service";
 import { DocumentService, TestDocumentService } from "../services/documents/document-service";

@@ -10,7 +10,18 @@ datasource db {
 model ProviderAccount {
 	id					String @id @default(cuid())
 	name				String @unique
-	integration	String
+	integration	IntegrationType
+	accountType AccountType
+}
+
+enum AccountType {
+	provider
+	firm
+}
+
+enum IntegrationType {
+	kareo
+	smartAdvocate
 }
 
 model PatientLinking {
