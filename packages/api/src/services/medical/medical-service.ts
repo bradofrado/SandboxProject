@@ -50,6 +50,17 @@ const patients: MedicalPatient[] = [
     incidentType: "Auto",
 		lawFirm: 'Siegfried and Jensen'
   },
+	{
+    id: "3",
+    firstName: "Abe",
+    lastName: "Emmanuel",
+    dateOfBirth: new Date(),
+    dateOfLoss: new Date(),
+    email: "maria.abarca@gmail.com",
+    phone: "(801) 999-9999",
+    incidentType: "Auto",
+		lawFirm: 'Siegfried and Jensen',
+  },
   {
     id: "1",
     firstName: "Layne",
@@ -71,17 +82,6 @@ const patients: MedicalPatient[] = [
     phone: "(801) 999-9999",
     incidentType: "Auto",
 		lawFirm: 'Flickenger and Sutterfield'
-  },
-  {
-    id: "3",
-    firstName: "Abe",
-    lastName: "Emmanuel",
-    dateOfBirth: new Date(),
-    dateOfLoss: new Date(),
-    email: "maria.abarca@gmail.com",
-    phone: "(801) 999-9999",
-    incidentType: "Auto",
-		lawFirm: 'Siegfried and Jensen',
   },
   {
     id: "4",

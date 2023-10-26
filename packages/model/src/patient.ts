@@ -35,7 +35,7 @@ export const patientStatuses = [
 	"Litigation",
   "Settlement",
 ] as const;
-export type PatientStatusType = (typeof patientStatuses)[number];
+export type PatientStatusType = (typeof patientStatuses)[number] | 'Referral' | 'Document Requested';
 
 export interface Appointment {
   date: Date;

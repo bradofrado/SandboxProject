@@ -5,6 +5,7 @@ export interface TabItem {
   label: string;
   component: React.ReactElement;
   id: string | number;
+	notification?: NotificationDotColor
 }
 
 interface TabControlProps {
@@ -34,20 +35,22 @@ export const TabControl: React.FunctionComponent<TabControlProps> = ({
         <ul className="flex flex-wrap -mb-px font-semibold text-2xl">
           {items.map((item, i) => (
             <li className="mr-2" key={i}>
-              <button
-                className={getClass(
-                  "inline-block px-4 py-2 border-b-2 rounded-t-lg outline-none",
-                  selected === item.id
-                    ? "border-b-4 border-primary rounded-t-lg active dark:text-primary-light dark:border-primary-light"
-                    : "border-transparent hover:border-gray-300 dark:hover:text-gray-300",
-                )}
-                onClick={() => {
-                  onTabSelect(item.id);
-                }}
-                type="button"
-              >
-                {item.label}
-              </button>
+							<NotificationDot color={item.notification}>
+								<button
+									className={getClass(
+										"inline-block px-4 py-2 border-b-2 rounded-t-lg outline-none",
+										selected === item.id
+											? "border-b-4 border-primary rounded-t-lg active dark:text-primary-light dark:border-primary-light"
+											: "border-transparent hover:border-gray-300 dark:hover:text-gray-300",
+									)}
+									onClick={() => {
+										onTabSelect(item.id);
+									}}
+									type="button"
+								>
+									{item.label}
+								</button>
+							</NotificationDot>
             </li>
           ))}
         </ul>
@@ -56,3 +59,29 @@ export const TabControl: React.FunctionComponent<TabControlProps> = ({
     </div>
   );
 };
+
+type NotificationDotColor = 'gray' | 'red' | 'green'
+export interface NotificationDotProps {
+	children: React.ReactNode,
+	color: NotificationDotColor | undefined
+}
+export const NotificationDot: React.FunctionComponent<NotificationDotProps> = ({children, color}) => {
+	if (color === undefined) {
+		return <>{children}</>;
+	}
+
+	const colors: Record<NotificationDotColor, string> = {
+		'gray': 'bg-gray-300',
+		'red': 'bg-red-400',
+		'green': 'bg-green-400'
+	}
+
+	const dotColor = colors[color];
+
+	return (
+		<span className="relative">
+			{children}
+			<span className={`absolute right-0 top-0 block h-1.5 w-1.5 rounded-full ${dotColor} ring-2 ring-white`} />
+		</span>
+	)
+}

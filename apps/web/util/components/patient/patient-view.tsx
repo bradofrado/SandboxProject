@@ -39,11 +39,13 @@ const PatientInfo: React.FunctionComponent<{patient: Patient}> = ({patient}) => 
       id: 0,
       label: "Status",
       component: <StatusTab patient={patient} />,
+			notification: patient.status === 'Referral' ? 'green' : undefined
     },
     {
       id: 1,
       label: "Documents",
       component: <DocumentsTab patient={patient} />,
+			notification: patient.status === 'Document Requested' ? 'red' : undefined
     },
     {
       id: 2,

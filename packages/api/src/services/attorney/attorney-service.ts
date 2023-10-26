@@ -38,7 +38,7 @@ const clients: AttorneyClient[] = [
     email: "maria.abarca@gmail.com",
     phone: "(801) 999-9999",
     incidentType: "Auto",
-		status: 'Negotiation',
+		status: 'Document Requested',//'Negotiation',
 		limit: 1000000,
   },
   {
@@ -86,7 +86,7 @@ const clients: AttorneyClient[] = [
     email: "maria.abarca@gmail.com",
     phone: "(801) 999-9999",
     incidentType: "Auto",
-		status: 'Litigation',
+		status: 'Referral',//'Litigation',
 		limit: 1000000
   },
   {

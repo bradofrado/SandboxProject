@@ -130,6 +130,7 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
 	}
   return (
 		<div ref={ref}>
+			{patient.status === 'Document Requested' ? <span className="text-red-500 p-2">Upload Documents</span> : null}
 			<div className="flex flex-col rounded-md shadow-md overflow-hidden">
 				<DraggableContext onDragEnd={onDragEnd}>
 					{documents.map((document) => (

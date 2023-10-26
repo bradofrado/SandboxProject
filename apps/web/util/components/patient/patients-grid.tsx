@@ -157,6 +157,14 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
 		}
 	}
 
+	const getCellBackground = (patient: Patient): {background: string, backgroundHover: string} | undefined => {
+		switch (patient.status) {
+			case 'Document Requested': return {background: 'bg-red-200', backgroundHover: 'hover:bg-red-300'};
+			case 'Referral': return {background: 'bg-green-200', backgroundHover: 'hover:bg-green-300'};
+			default: return undefined;
+		}
+	}
+
 	const filterKeys: (keyof Patient)[] = [
 		"lastUpdateDate",
 		"firstName",
@@ -198,12 +206,15 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
         >
 					{(patient) => {
 						return {
-							id: patient.id,
-							name: {
-								compareKey: patient.name,
-								label: <CollapsedPatient patient={patient} />,
+							gridItem: {
+								id: patient.id,
+								name: {
+									compareKey: patient.name,
+									label: <CollapsedPatient patient={patient} />,
+								},
 							},
-						};
+							...getCellBackground(patient)
+						}
 					}}
 				</FilterTableGrid>
       );
@@ -235,27 +246,29 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
         outstandingBalance,
         status,
       }) => ({
-        id,
-        lastName,
-        firstName,
-        lawFirm,
-        primaryContact: primaryContact ? primaryContact : '---',
-        lastUpdateDate: {
-          compareKey: lastUpdateDate
-            ? `${displayDate(lastUpdateDate)}${status}`
-            : "---",
-          label: (
-            <LastUpdateComponent date={lastUpdateDate} statuses={status ? [status] : []} />
-          ),
-        },
-        outstandingBalance: {
-          compareKey: outstandingBalance,
-          label: (
-            <span className="text-primary font-semibold">
-              {formatDollarAmount(outstandingBalance)}
-            </span>
-          ),
-        },
+        gridItem: {
+					id,
+					lastName,
+					firstName,
+					lawFirm,
+					primaryContact: primaryContact ? primaryContact : '---',
+					lastUpdateDate: {
+						compareKey: lastUpdateDate
+							? `${displayDate(lastUpdateDate)}${status}`
+							: "---",
+						label: (
+							<LastUpdateComponent date={lastUpdateDate} statuses={status ? [status] : []} />
+						),
+					},
+					outstandingBalance: {
+						compareKey: outstandingBalance,
+						label: (
+							<span className="text-primary font-semibold">
+								{formatDollarAmount(outstandingBalance)}
+							</span>
+						),
+					},
+				}
       })}
 			</FilterTableGrid>
     );
