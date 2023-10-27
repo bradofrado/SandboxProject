@@ -47,12 +47,13 @@ export const SetupForm: React.FunctionComponent<SetupFormProps> = ({onChange}) =
 	)
 }
 
-interface AccountTypeProps {
+export interface AccountTypeProps {
 	accountType: AccountType,
+	integration?: IntegrationType,
 	onChange: (params: Omit<ProviderAccount, 'id' | 'name' | 'accountType'> | undefined) => void
 }
-const AccountTypeForm: React.FunctionComponent<AccountTypeProps> = ({onChange, accountType}) => {
-	const [integration, setIntegration] = useState<IntegrationType | undefined>();
+export const AccountTypeForm: React.FunctionComponent<AccountTypeProps> = ({onChange, accountType, integration: initialIntegration}) => {
+	const [integration, setIntegration] = useState<IntegrationType | undefined>(initialIntegration);
 	const filteredItems = integrationItems.filter(item => accountType === 'provider' ? (providerIntegrations as readonly IntegrationType[]).includes(item.id) : (firmIntegrations as readonly IntegrationType[]).includes(item.id));
 
 	const IntegrationControl = integration ? integrationControls[integration] : undefined;

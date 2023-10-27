@@ -69,7 +69,7 @@ const PatientBio: React.FunctionComponent<{ patient: Patient }> = ({
 }) => {
   return (
     // <Card>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 text-sm">
         <div className="flex gap-8">
           <div className="flex flex-col gap-2">
 						<Header>

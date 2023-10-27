@@ -11,6 +11,7 @@ interface InputProps {
   label?: string;
   placeholder?: string;
   required?: boolean;
+	inlineLabel?: string;
 }
 export const Input: React.FunctionComponent<InputProps> = ({
   onChange,
@@ -21,11 +22,12 @@ export const Input: React.FunctionComponent<InputProps> = ({
   type = "input",
   placeholder,
   required,
+	inlineLabel
 }) => {
   const props = {
     className: `${
       className || ""
-    } bg-gray-50 border shadow-sm rounded-md px-3  py-1.5 text-sm text-gray-900 focus:ring-primary focus:ring-1 transition-[box-shadow] focus-visible:outline-none `,
+    } w-full border focus:outline-0 focus:border-gray-300 border-gray-300 shadow-sm rounded-md px-3  py-1.5 text-sm text-gray-900 focus:ring-primary focus:ring-1 transition-[box-shadow] focus-visible:outline-none placeholder:text-gray-400`,
     onChange: (
       e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
@@ -37,12 +39,22 @@ export const Input: React.FunctionComponent<InputProps> = ({
     placeholder,
     required,
   };
-  const input =
+  let input =
     type === "textarea" ? (
       <textarea {...props} value={value} />
     ) : (
       <input {...props} type={type} value={value} />
     );
+	if (inlineLabel !== undefined) {
+		input = <div className="flex border border-gray-300 rounded-md shadow-sm focus-within:ring-primary focus-within:ring-1 transition-[box-shadow] focus-visible:outline-none sm:max-w-md">
+			<span className="flex select-none items-center pl-3 text-gray-500 sm:text-sm">{inlineLabel}</span>
+			<input
+				className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+				placeholder={placeholder}
+				type="text"
+			/>
+		</div>
+	}
   if (label) {
     return <Label label={label}>{input}</Label>;
   }

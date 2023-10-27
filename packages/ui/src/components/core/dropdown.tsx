@@ -20,7 +20,7 @@ export const ListBoxPopover = <T,>({
 }: ListBoxPopoverProps<T>): JSX.Element => {
   return (
     <Popover button={children} className={className} {...isOpenStuff}>
-      {header ? <div className="p-2 bg-gray-50">{header}</div> : null}
+      {header ? <div className="p-2">{header}</div> : null}
       <div className="min-w-[11rem]">
         <ul
           aria-labelledby="dropdownDefaultButton"
@@ -113,7 +113,7 @@ export const Dropdown = <T,>({
       className={className}
       isOpen={isOpen}
       items={dropdownItems}
-      mode={value === undefined ? "secondary" : "primary"}
+      mode='secondary'
       setIsOpen={setIsOpen}
     >
       <div className="flex w-full justify-between items-center">{value === undefined ? children : value.name}{" "}
