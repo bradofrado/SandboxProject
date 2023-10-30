@@ -21,10 +21,17 @@ export interface Patient extends PatientBase {
 	status: PatientStatusType | undefined;
 }
 
-export interface PatientStatus {
+export type PatientFeedType = 'request' | 'send' | 'appointment' | 'comment' | 'status'
+export interface PatientFeed {
+	id: string,
   patientId: string;
-  appointments: Appointment[];
-  status: PatientStatusType;
+  date: Date;
+	note: string;
+	person: {
+		name: string,
+		imageUrl?: string
+	};
+	type: PatientFeedType
 }
 
 export const patientStatuses = [
@@ -36,11 +43,6 @@ export const patientStatuses = [
   "Settlement",
 ] as const;
 export type PatientStatusType = (typeof patientStatuses)[number] | 'Referral' | 'Document Requested';
-
-export interface Appointment {
-  date: Date;
-  note: string;
-}
 
 export interface PatientDocument {
   patientId: string;

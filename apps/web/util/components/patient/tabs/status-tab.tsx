@@ -21,7 +21,7 @@ export const StatusTab: React.FunctionComponent<StatusTabProps> = ({
         statuses={patientStatuses}
         value={patient.status}
       /> : null}
-      <FeedTree/>
+      <FeedTree items={appointments}/>
     </div>
   );
 };

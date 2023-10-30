@@ -1,80 +1,100 @@
-import { Fragment, useState } from 'react'
-import { Listbox, Transition } from '@headlessui/react'
-import {calculateDateDifference, day, displayElapsedTime, getClass} from 'model/src/utils';
+import {displayElapsedTime, getClass} from 'model/src/utils';
+import type { PatientFeedType} from 'model/src/patient';
+import { patientStatuses } from 'model/src/patient';
 import {
-  FaceFrownIcon,
-  FaceSmileIcon,
-  FireIcon,
-  HandThumbUpIcon,
-  HeartIcon,
-  PaperClipIcon,
-  XMarkIcon,
-	CheckCircleSolidIcon
+  CheckCircleSolidIcon
 } from '../core/icons'
 
-type FeedActivityType = 'created' | 'edited' | 'sent' | 'commented' | 'viewed' | 'paid';
+type FeedActivityType = PatientFeedType;
 interface FeedActivityPerson {
 	name: string,
 	imageUrl?: string
 }
 interface FeedActivity {
-	id: number,
+	id: string,
 	type: FeedActivityType,
-	object: string,
+	note: string,
 	person: FeedActivityPerson,
 	date: Date
 }
 
-const activity: FeedActivity[] = [
-  { id: 1, type: 'created', object: 'invoice', person: { name: 'Chelsea Hagon' }, date: calculateDateDifference(7 * day)},
-  { id: 2, type: 'edited', object: 'invoice', person: { name: 'Chelsea Hagon' }, date: calculateDateDifference(6 * day)},
-  { id: 3, type: 'sent', object: 'invoice', person: { name: 'Chelsea Hagon' }, date: calculateDateDifference(6 * day)},
-  {
-    id: 4,
-    type: 'commented',
-    person: {
-      name: 'Chelsea Hagon',
-      imageUrl:
-        'https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    object: 'Called client, they reassured me the invoice would be paid by the 25th.',
-    date: calculateDateDifference(3*day)
-  },
-  { id: 5, type: 'viewed', object: 'invoice', person: { name: 'Alex Curren' }, date: calculateDateDifference(2*day)},
-  { id: 6, type: 'paid', object: 'invoice', person: { name: 'Alex Curren' }, date: calculateDateDifference(day)},
-]
-const moods = [
-  { name: 'Excited', value: 'excited', icon: FireIcon, iconColor: 'text-white', bgColor: 'bg-red-500' },
-  { name: 'Loved', value: 'loved', icon: HeartIcon, iconColor: 'text-white', bgColor: 'bg-pink-400' },
-  { name: 'Happy', value: 'happy', icon: FaceSmileIcon, iconColor: 'text-white', bgColor: 'bg-green-400' },
-  { name: 'Sad', value: 'sad', icon: FaceFrownIcon, iconColor: 'text-white', bgColor: 'bg-yellow-400' },
-  { name: 'Thumbsy', value: 'thumbsy', icon: HandThumbUpIcon, iconColor: 'text-white', bgColor: 'bg-blue-500' },
-  { name: 'I feel nothing', value: null, icon: XMarkIcon, iconColor: 'text-gray-400', bgColor: 'bg-transparent' },
-]
+// const activity: FeedActivity[] = [
+//   { id: 1, type: 'created', note: 'invoice', person: { name: 'Chelsea Hagon' }, date: calculateDateDifference(7 * day)},
+//   { id: 2, type: 'edited', note: 'invoice', person: { name: 'Chelsea Hagon' }, date: calculateDateDifference(6 * day)},
+//   { id: 3, type: 'sent', note: 'invoice', person: { name: 'Chelsea Hagon' }, date: calculateDateDifference(6 * day)},
+//   {
+//     id: 4,
+//     type: 'commented',
+//     person: {
+//       name: 'Chelsea Hagon',
+//       imageUrl:
+//         'https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+//     },
+//     object: 'Called client, they reassured me the invoice would be paid by the 25th.',
+//     date: calculateDateDifference(3*day)
+//   },
+//   { id: 5, type: 'viewed', object: 'invoice', person: { name: 'Alex Curren' }, date: calculateDateDifference(2*day)},
+//   { id: 6, type: 'paid', object: 'invoice', person: { name: 'Alex Curren' }, date: calculateDateDifference(day)},
+// ]
+// const moods = [
+//   { name: 'Excited', value: 'excited', icon: FireIcon, iconColor: 'text-white', bgColor: 'bg-red-500' },
+//   { name: 'Loved', value: 'loved', icon: HeartIcon, iconColor: 'text-white', bgColor: 'bg-pink-400' },
+//   { name: 'Happy', value: 'happy', icon: FaceSmileIcon, iconColor: 'text-white', bgColor: 'bg-green-400' },
+//   { name: 'Sad', value: 'sad', icon: FaceFrownIcon, iconColor: 'text-white', bgColor: 'bg-yellow-400' },
+//   { name: 'Thumbsy', value: 'thumbsy', icon: HandThumbUpIcon, iconColor: 'text-white', bgColor: 'bg-blue-500' },
+//   { name: 'I feel nothing', value: null, icon: XMarkIcon, iconColor: 'text-gray-400', bgColor: 'bg-transparent' },
+// ]
 
-export const FeedTree: React.FunctionComponent = () => {
-  const [selected, setSelected] = useState(moods[5])
+const getFeedDescription = (item: FeedActivity): React.ReactNode => {
+	switch(item.type) {
+		case 'comment':
+		case 'appointment': return item.note;
+		case 'request': return 'requested documents';
+		case 'send': return 'sent documents';
+		case 'status': {
+			const statusIndex = patientStatuses.findIndex(status => status === item.note);
+			if (statusIndex < 0) throw new Error(`Invalid status ${item.note}`);
+
+			const prevStatus = statusIndex > 0 ? patientStatuses[statusIndex - 1] : undefined;
+			const currStatus = patientStatuses[statusIndex];
+
+			if (prevStatus === undefined) {
+				return <span>status was moved to <span className="font-medium text-gray-900">{currStatus}</span></span>
+			}
+
+			return <span>status was moved from <span className="font-medium text-gray-900">{prevStatus}</span> to <span className="font-medium text-gray-900">{currStatus}</span></span>;
+		}
+	}
+}
+
+export interface FeedTreeProps {
+	items: FeedActivity[]
+}
+export const FeedTree: React.FunctionComponent<FeedTreeProps> = ({items}) => {
+  //const [selected, setSelected] = useState(moods[5])
 
   return (
     <>
       <ul className="space-y-6">
-        {activity.map((activityItem, activityItemIdx) => (
+        {items.map((activityItem, activityItemIdx) => (
           <li className="relative flex gap-x-4" key={activityItem.id}>
             <div
               className={getClass(
-                activityItemIdx === activity.length - 1 ? 'h-6' : '-bottom-6',
+                activityItemIdx === items.length - 1 ? 'h-6' : '-bottom-6',
                 'absolute left-0 top-0 flex w-6 justify-center'
               )}
             >
               <div className="w-px bg-gray-200" />
             </div>
-            {activityItem.type === 'commented' ? (
+            {activityItem.type === 'comment' ? (
               <>
-                <img
+                {activityItem.person.imageUrl ? <img
                   alt=""
                   className="relative mt-3 h-6 w-6 flex-none rounded-full bg-gray-50"
                   src={activityItem.person.imageUrl}
-                />
+                /> : <div className="relative flex h-6 w-6 flex-none items-center justify-center bg-white">
+									<div className="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300" />
+								</div>}
                 <div className="flex-auto rounded-md p-3 ring-1 ring-inset ring-gray-200">
                   <div className="flex justify-between gap-x-4">
                     <div className="py-0.5 text-xs leading-5 text-gray-500">
@@ -84,21 +104,20 @@ export const FeedTree: React.FunctionComponent = () => {
                       {displayElapsedTime(activityItem.date)}
                     </time>
                   </div>
-                  <p className="text-sm leading-6 text-gray-500">{activityItem.object}</p>
+                  <p className="text-sm leading-6 text-gray-500">{activityItem.note}</p>
                 </div>
               </>
             ) : (
               <>
                 <div className="relative flex h-6 w-6 flex-none items-center justify-center bg-white">
-                  {activityItem.type === 'paid' ? (
+                  {activityItem.type === 'send' ? (
                     <CheckCircleSolidIcon aria-hidden="true" className="h-6 w-6 text-primary" />
                   ) : (
                     <div className="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300" />
                   )}
                 </div>
                 <p className="flex-auto py-0.5 text-xs leading-5 text-gray-500">
-                  <span className="font-medium text-gray-900">{activityItem.person.name}</span> {activityItem.type} the
-                  invoice.
+                  <span className="font-medium text-gray-900">{activityItem.person.name}</span> {getFeedDescription(activityItem)}
                 </p>
                 <time className="flex-none py-0.5 text-xs leading-5 text-gray-500" dateTime={activityItem.date.toLocaleTimeString()}>
                   {displayElapsedTime(activityItem.date)}
