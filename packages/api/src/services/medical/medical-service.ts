@@ -1,11 +1,11 @@
 import type { interfaces } from 'inversify';
 import { injectable } from 'inversify';
-import type {PatientStatus} from 'model/src/patient';
-import type {MedicalPatient, MedicalCharge, MedicalAppointment} from 'model/src/medical';
+import {type PatientFeed} from 'model/src/patient';
+import type {MedicalPatient, MedicalCharge} from 'model/src/medical';
 import 'reflect-metadata'
 
 export interface MedicalService {
-	getAppointments: (practiceId: string, patientId: string) => Promise<MedicalAppointment[]>
+	getAppointments: (practiceId: string, patientId: string) => Promise<PatientFeed[]>
 	getCharges: (practiceId: string, patientId: string) => Promise<MedicalCharge[]>,
 	getPatient: (practiceId: string, patientId: string) => Promise<MedicalPatient | undefined>,
 	getPatients: (practiceId: string) => Promise<MedicalPatient[]>
@@ -13,9 +13,9 @@ export interface MedicalService {
 
 @injectable()
 export class TestMedicalService implements MedicalService {
-	public async getAppointments(practiceId: string, patientId: string): Promise<MedicalAppointment[]> {
-		const patientStatus = patientStatuses.find(status => status.patientId === patientId);
-		return Promise.resolve(patientStatus?.appointments ?? []);
+	public async getAppointments(practiceId: string, patientId: string): Promise<PatientFeed[]> {
+		//const patientStatus = patientStatuses.filter(status => status.patientId === patientId);
+		return Promise.resolve([]);
 	}
 
 	public async getCharges(practiceId: string, patientId: string): Promise<MedicalCharge[]> {
@@ -93,75 +93,6 @@ const patients: MedicalPatient[] = [
     phone: "(801) 999-9999",
     incidentType: "Auto",
 		lawFirm: 'Siegfried and Jensen'
-  },
-];
-
-const patientStatuses: PatientStatus[] = [
-  {
-    patientId: "0",
-    appointments: [
-      {
-        date: new Date(2023, 7, 27),
-        note: "Maria has finished her inital file setup @ Joel",
-      },
-			{
-        date: new Date(2023, 8, 3),
-        note: "Maria's status has moved to 'Treatment'- Maria was notified",
-      },
-			{
-        date: new Date(2023, 8, 3),
-        note: "Maria was seen by Dr. Templeton for an initial consultation and massage",
-      },
-			{
-        date: new Date(2023, 8, 15),
-        note: "Maria missed her appointment @Todd @Luke",
-      },
-			{
-        date: new Date(2023, 8, 23),
-        note: "Maria was seen for a chiropractic appointment",
-      },
-    ],
-    status: "Treatment",
-  },
-  {
-    patientId: "1",
-    appointments: [
-      {
-        date: new Date(2023, 1, 10),
-        note: "Maria has finished her inital file setup @ Joel",
-      },
-    ],
-    status: "Demand",
-  },
-  {
-    patientId: "2",
-    appointments: [
-      {
-        date: new Date(2023, 1, 10),
-        note: "Maria has finished her inital file setup @ Joel",
-      },
-    ],
-    status: "File Setup",
-  },
-  {
-    patientId: "3",
-    appointments: [
-      {
-        date: new Date(2023, 1, 10),
-        note: "Maria has finished her inital file setup @ Joel",
-      },
-    ],
-    status: "Settlement",
-  },
-  {
-    patientId: "4",
-    appointments: [
-      {
-        date: new Date(2023, 1, 10),
-        note: "Maria has finished her inital file setup @ Joel",
-      },
-    ],
-    status: "Treatment",
   },
 ];
 
