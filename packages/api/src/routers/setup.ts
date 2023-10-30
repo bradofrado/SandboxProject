@@ -23,5 +23,14 @@ export const setupRoute = createTRPCRouter({
 			const account = await ctx.providerAccountRepository.createAccount(newAccount);
 
 			return account;
+		}),
+	
+	updateProviderAccount: protectedProcedure
+		.input(createProviderAccountSchema)
+		.mutation(async ({ctx, input}) => {
+			const newAccount: ProviderAccount = {id: ctx.auth.userId, name: input.name, integration: input.integration, accountType: input.accountType};
+			const account = await ctx.providerAccountRepository.updateAccount(ctx.auth.userId, newAccount);
+
+			return account;
 		})
 })

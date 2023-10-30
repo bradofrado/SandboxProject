@@ -21,10 +21,10 @@ export const SendMessage: React.FunctionComponent<SendMessageProps> = ({ chatId,
       <label hidden htmlFor="messageInput">
         Enter Message
       </label>
-      <div className="flex-1 bg-gray-50 dark:bg-[#323437] border-2 border-[#00000029] rounded-md dark:text-white focus-within:ring-primary focus-within:ring-2 transition-[box-shadow]">
+      <div className="flex-1 dark:bg-[#323437] border-2 border-[#00000029] rounded-md dark:text-white focus-within:ring-primary focus-within:ring-2 transition-[box-shadow]">
         <div className="py-2 px-4">
           <input
-            className="bg-transparent outline-none text-sm w-full "
+            className="bg-transparent outline-0 border-0 focus:outline-0 focus:ring-0 text-sm w-full p-0 placeholder:text-gray-300"
             onChange={(e) => {
               setMessage(e.target.value);
             }}

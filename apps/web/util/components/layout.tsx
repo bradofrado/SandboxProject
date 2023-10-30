@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import {
   UserIcon,
 } from "ui/src/components/core/icons";
-import type { SidePanelItems } from "ui/src/components/core/side-panel";
+import type { ProfileItem, SidePanelItems } from "ui/src/components/core/side-panel";
 import { SideNavComponent } from "ui/src/components/feature/navigation/sidenav";
 import {ModalProvider} from 'ui/src/components/core/modal';
 import {ClerkProvider, UserButton, useUser} from '@clerk/nextjs';
@@ -39,15 +39,22 @@ const SideNav: React.FunctionComponent<SideNavProps> = ({
   className,
 }: SideNavProps) => {
   const router = useRouter();
+	const {user} = useUser();
   const items: SidePanelItems[] = [
     {
       label: "Patients",
       icon: UserIcon,
-      href: { pathname: "/patients" },
+      href: "/patients",
+			current: router.asPath.includes("patients")
     },
   ];
+	const profileItem: ProfileItem | undefined = user ? {
+		img: user.imageUrl,
+		name: user.fullName ?? '',
+		href: "/settings"
+	} : undefined;
   return (
-    <SideNavComponent className={className} items={items} path={router.asPath} profileContent={<ProfileButton/>} title="Nexa">
+    <SideNavComponent className={className} items={items} profileItem={profileItem} title="Nexa">
       {children}
     </SideNavComponent>
   );

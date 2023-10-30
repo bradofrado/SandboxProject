@@ -8,6 +8,7 @@ export interface ProviderAccountRepository {
 	getAccount: (name: string) => Promise<ProviderAccount | undefined>
 	getAccountById: (id: string) => Promise<ProviderAccount | undefined>
 	createAccount: (providerAccount: ProviderAccount) => Promise<ProviderAccount>
+	updateAccount: (id: string, providerAccount: ProviderAccount) => Promise<ProviderAccount>
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace -- namespace is ok here
@@ -41,6 +42,17 @@ export class PrismaProviderAccount implements ProviderAccountRepository {
 	public async createAccount(providerAccount: ProviderAccount): Promise<ProviderAccount> {
 		const newAccount = await this.primsa.providerAccount.create({
 			data: providerAccount
+		});
+
+		return newAccount;
+	}
+
+	public async updateAccount(id: string, providerAccount: ProviderAccount): Promise<ProviderAccount> {
+		const newAccount = await this.primsa.providerAccount.update({
+			data: providerAccount,
+			where: {
+				id
+			}
 		});
 
 		return newAccount;

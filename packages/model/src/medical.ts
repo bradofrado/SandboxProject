@@ -9,8 +9,3 @@ export interface MedicalCharge {
 	amount: number;
 	status: 'Paid' | 'Unpaid'
 }
-
-export interface MedicalAppointment {
-	date: Date;
-	note: string;
-}

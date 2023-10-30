@@ -7,7 +7,7 @@ import {
   CheckmarkIcon,
   DocumentTextIcon,
   FolderIcon,
-  TridotIcon,
+  EllipsisHorizontalIcon,
   UploadIcon,
 } from "ui/src/components/core/icons";
 import { Pill } from "ui/src/components/core/pill";
@@ -16,6 +16,7 @@ import { Button } from "ui/src/components/core/button";
 import { useClickOutside } from "ui/src/hooks/click-outside";
 import type { UniqueIdentifier } from "ui/src/components/core/draggable";
 import { Draggable, DraggableContext, Droppable } from "ui/src/components/core/draggable";
+import {FileUploadArea} from 'ui/src/components/core/file-upload-area';
 import { useGetPatientDocuments } from "../../../services/patient";
 
 interface FileButton {
@@ -130,6 +131,7 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
 	}
   return (
 		<div ref={ref}>
+			{patient.status === 'Document Requested' ? <span className="text-red-500 p-2">Upload Documents</span> : null}
 			<div className="flex flex-col rounded-md shadow-md overflow-hidden">
 				<DraggableContext onDragEnd={onDragEnd}>
 					{documents.map((document) => (
@@ -190,7 +192,7 @@ const DocumentLine: React.FunctionComponent<DocumentLineProps> = ({
 		//The selected id is so that selecting multiple files will drag all of them at the same time
 		<Draggable id={selectedId ?? document.name}>
 			<button
-				className={`flex justify-between items-center border-b p-4 cursor-pointer outline-none w-full ${isDropping ? 'bg-gray-100' : ''} ${selectedId ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+				className={`flex justify-between items-center border-b p-4 cursor-pointer outline-none w-full ${isDropping ? 'bg-gray-50' : ''} ${selectedId ? 'bg-gray-100' : 'hover:bg-gray-50'}`}
 				onClick={(e) => {onSelect(e.ctrlKey)}}
 				onDoubleClick={onOpen}
 				type="button"
@@ -230,7 +232,7 @@ const TridotButtonOptions: React.FunctionComponent<TridotButtonOptionsProps> = (
   const [isOpen, setIsOpen] = useState(false);
   const TridotButton = (
     <button className="hover:bg-gray-200 rounded-full p-1" type="button">
-      <TridotIcon className="w-5 h-5" />
+      <EllipsisHorizontalIcon className="w-5 h-5" />
     </button>
   );
   const items: DropdownItem<number>[] = [
@@ -278,76 +280,5 @@ const TridotButtonOptions: React.FunctionComponent<TridotButtonOptionsProps> = (
     <ListBoxPopover isOpen={isOpen} items={items} setIsOpen={setIsOpen}>
       {TridotButton}
     </ListBoxPopover>
-  );
-};
-
-interface FileUploadAreaProps {
-  onUpload: (files: FileList) => void;
-}
-const FileUploadArea: React.FunctionComponent<FileUploadAreaProps> = ({
-  onUpload,
-}) => {
-  const [dragActive, setDragActive] = useState(false);
-  const onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    e.target.files && e.target.files.length > 0 && onUpload(e.target.files);
-  };
-
-  const handleDrag: React.DragEventHandler<HTMLDivElement> = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
-  };
-
-  const handleDrop: React.DragEventHandler<HTMLDivElement> = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    setDragActive(false);
-    if (e.dataTransfer.files.length > 0) {
-      onUpload(e.dataTransfer.files);
-    }
-  };
-
-  return (
-    <div
-      className="flex items-center justify-center w-full relative"
-      onDragEnter={handleDrag}
-    >
-      <label
-        className={`flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer ${
-          dragActive
-            ? "bg-gray-100 dark:bg-gray-600"
-            : "bg-gray-50 dark:bg-gray-700"
-        } hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600`}
-        htmlFor="dropzone-file"
-      >
-        <div className="flex flex-col items-center justify-center py-4">
-          {/* <UploadIcon className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" /> */}
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            <span className="font-semibold">Click to upload</span> or drag and
-            drop
-          </p>
-        </div>
-        <input
-          className="hidden"
-          id="dropzone-file"
-          onChange={onChange}
-          type="file"
-        />
-      </label>
-      {dragActive ? (
-        <div
-          className="absolute top-0 left-0 w-full h-full"
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
-          onDrop={handleDrop}
-        />
-      ) : null}
-    </div>
   );
 };

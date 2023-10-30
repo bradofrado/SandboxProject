@@ -1,4 +1,5 @@
 import { Config } from "tailwindcss";
+import formPlugin from '@tailwindcss/forms';
 
 export default {
   content: [
@@ -10,7 +11,7 @@ export default {
     extend: {
       colors: {
         primary: {
-          light: "#66b1eb33",
+          light: "#dbeafe",
           DEFAULT: "#379BDA",//"#318BD0",
           dark: "#2B7ABF",
         },
@@ -24,6 +25,8 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+		formPlugin
+	],
   darkMode: "class",
 } satisfies Config;

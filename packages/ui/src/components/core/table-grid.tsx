@@ -7,13 +7,18 @@ import { FilterButton } from "./filter-button";
 
 export type TableGridItemValue =
   | string
-  | { compareKey: string | number; label: React.ReactNode };
+  | { compareKey: string | number; label: React.ReactNode, background?: string };
 export type TableGridItem<T, S extends keyof T = keyof T> = {[Key in S]: TableGridItemValue};
 export interface TableGridColumn<S> {
   id: S;
   label: string;
 }
 export type TableGridFooter<S extends string | number | symbol> = Record<S, React.ReactNode>
+export interface TableGridItemParams<T, S extends keyof T> {
+	gridItem: TableGridItem<T, S>, 
+	background?: string
+	backgroundHover?: string
+}
 export interface TableGridProps<T, S extends keyof T> {
   data: T[];
 	columns: TableGridColumn<S>[];
@@ -22,7 +27,7 @@ export interface TableGridProps<T, S extends keyof T> {
   onItemClick?: (item: T) => void;
   className?: string;
 	search?: boolean;
-	children: (item: T) => TableGridItem<T, S>
+	children: (item: T) => TableGridItemParams<T, S>
 }
 export const TableGrid = <T, S extends keyof T>({
   data,
@@ -37,7 +42,7 @@ export const TableGrid = <T, S extends keyof T>({
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
   const [pageNum, setPageNum] = useState(1);
 
-	const items: TableGridItem<T, S>[] = data.map(children);
+	const items: TableGridItemParams<T, S>[] = data.map(children);
 	
   const totalPages = (function getTotalPages(): number {
     if (itemsPerPage !== undefined) {
@@ -61,9 +66,9 @@ export const TableGrid = <T, S extends keyof T>({
     return item.label;
   };
 
-  const sortItems = (): TableGridItem<T, S>[] => {
+  const sortItems = (): TableGridItemParams<T, S>[] => {
     if (sortId) {
-      return items.slice().sort((a, b) => {
+      return items.slice().sort(({gridItem: a}, {gridItem: b}) => {
         let first = a;
         let second = b;
         if (sortOrder === "DESC") {
@@ -84,7 +89,7 @@ export const TableGrid = <T, S extends keyof T>({
     return items;
   };
 
-  const paginateItems = (pageItems: TableGridItem<T, S>[]): TableGridItem<T, S>[] => {
+  const paginateItems = (pageItems: TableGridItemParams<T, S>[]): TableGridItemParams<T, S>[] => {
     const pageNumIndexed = pageNum - 1;
     if (itemsPerPage !== undefined) {
       return pageItems.slice(
@@ -131,8 +136,8 @@ export const TableGrid = <T, S extends keyof T>({
           <tbody>
             {sorted.map((item, i) => (
               <tr
-                className={`bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700 ${
-                  onItemClick ? "hover:bg-gray-100 cursor-pointer" : ""
+                className={`${item.background ?? 'bg-gray-50'} border-b dark:bg-gray-800 dark:border-gray-700 ${
+                  onItemClick ? `${item.backgroundHover ?? 'hover:bg-gray-100'} cursor-pointer` : ""
                 }`}
                 key={i}
                 onClick={() => {
@@ -141,7 +146,7 @@ export const TableGrid = <T, S extends keyof T>({
               >
                 {columns.map(({ id }) => (
                   <td className="px-6 py-4" key={id.toString()}>
-                    {getLabel(item[id])}
+                    {getLabel(item.gridItem[id])}
                   </td>
                 ))}
               </tr>

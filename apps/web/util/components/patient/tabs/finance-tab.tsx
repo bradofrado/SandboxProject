@@ -112,15 +112,17 @@ export const FinanceTab: React.FunctionComponent<FinanceTabProps> = ({
 				search
       >
 				{(provider) => ({
-					...provider,
-					status: {
-						compareKey: provider.status,
-						label: <StatusPill status={provider.status} />,
-					},
-					amount: {
-						compareKey: provider.amount,
-						label: formatDollarAmount(provider.amount),
-					},
+					gridItem: {
+							...provider,
+						status: {
+							compareKey: provider.status,
+							label: <StatusPill status={provider.status} />,
+						},
+						amount: {
+							compareKey: provider.amount,
+							label: formatDollarAmount(provider.amount),
+						},
+					}
 				})}
 			</FilterTableGrid>
     </div>

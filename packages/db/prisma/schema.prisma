@@ -24,6 +24,13 @@ enum IntegrationType {
 	smartAdvocate
 }
 
+enum PatientFeedType {
+	comment
+	appointment
+	request
+	sent
+}
+
 model PatientLinking {
 	medicalId					String
 	attorneyId				String
@@ -31,4 +38,13 @@ model PatientLinking {
 	attorneyPatientId String
 
 	@@id([medicalId, medicalPatientId])
+}
+
+model PatientFeed {
+	id String @id @default(cuid())
+	patientId String
+	name String
+	note String
+	type PatientFeedType
+	date DateTime
 }

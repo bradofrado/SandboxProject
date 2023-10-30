@@ -22,12 +22,12 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
 			<div className="border-x min-w-[550px] overflow-auto flex-1 pb-6">
 				<PatientInfo patient={patient}/>
 			</div>
-			{patient.primaryContact ? <div className="flex max-w-[450px] flex-col px-4 pb-6">
+			{/* {patient.primaryContact ? <div className="flex max-w-[450px] flex-col px-4 pb-6">
 				<Header level={2}>Threads</Header>
 				<MessageProvider chatId={patient.id}>
 					{(messages, send) => <ChatBox chatId={patient.id} className="h-full" messages={messages} onSendMessage={send} sendMessagePlaceholder={`Send to ${patient.primaryContact}`} user={{id: '0', name: patient.primaryContact, image: '/braydon.jpeg'}}/>}
 				</MessageProvider>
-			</div> : null}
+			</div> : null} */}
 		</div>
 
 	)
@@ -39,11 +39,13 @@ const PatientInfo: React.FunctionComponent<{patient: Patient}> = ({patient}) => 
       id: 0,
       label: "Status",
       component: <StatusTab patient={patient} />,
+			notification: patient.status === 'Referral' ? 'green' : undefined
     },
     {
       id: 1,
       label: "Documents",
       component: <DocumentsTab patient={patient} />,
+			notification: patient.status === 'Document Requested' ? 'red' : undefined
     },
     {
       id: 2,
@@ -67,7 +69,7 @@ const PatientBio: React.FunctionComponent<{ patient: Patient }> = ({
 }) => {
   return (
     // <Card>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 text-sm">
         <div className="flex gap-8">
           <div className="flex flex-col gap-2">
 						<Header>
