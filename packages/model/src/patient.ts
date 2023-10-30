@@ -21,18 +21,22 @@ export interface Patient extends PatientBase {
 	status: PatientStatusType | undefined;
 }
 
-export type PatientFeedType = 'request' | 'send' | 'appointment' | 'comment' | 'status'
-export interface PatientFeed {
-	id: string,
-  patientId: string;
-  date: Date;
-	note: string;
-	person: {
-		name: string,
-		imageUrl?: string
-	};
-	type: PatientFeedType
-}
+export const patientFeedTypes = ['request', 'send', 'appointment', 'comment', 'status'] as const;
+export const patientFeedTypesSchema = stringUnionSchema(patientFeedTypes);
+
+export type PatientFeedType = typeof patientFeedTypes[number];
+export const patientFeedSchema = z.object({
+	id: z.string(),
+	patientId: z.string(),
+	date: z.date(),
+	note: z.string(),
+	person: z.object({
+		name: z.string(),
+		imageUrl: z.string().optional()
+	}),
+	type: patientFeedTypesSchema
+})
+export type PatientFeed = z.infer<typeof patientFeedSchema>;
 
 export const patientStatuses = [
   "File Setup",

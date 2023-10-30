@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-namespace -- allow*/
-import { injectable, interfaces } from "inversify";
-import { PatientFeed } from "model/src/patient";
+import type { interfaces } from "inversify";
+import { injectable } from "inversify";
+import type { PatientFeed } from "model/src/patient";
 
 export interface PatientFeedRepository {
 	getFeedsForPatient: (patientId: string) => Promise<PatientFeed[]>
+	createFeedForPatient: (patientFeed: PatientFeed) => Promise<PatientFeed>
 }
 
 @injectable()
@@ -12,6 +14,22 @@ export class TestPatientFeedRepository implements PatientFeedRepository {
 		const patientStatus = patientStatuses.filter(status => status.patientId === patientId);
 		return Promise.resolve(patientStatus);
 	}
+
+	public createFeedForPatient(patientFeed: PatientFeed): Promise<PatientFeed> {
+		patientFeed.id = randUID();
+		patientStatuses.push(patientFeed);
+
+		return Promise.resolve(patientFeed);
+	}
+}
+
+const randUID = (chars=10): string => {
+	let uuid = '';
+	for (let i = 0; i < chars; i++) {
+		uuid += "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.random() * 100 % 26];
+	}
+
+	return uuid;
 }
 
 export namespace PatientFeedRepository {

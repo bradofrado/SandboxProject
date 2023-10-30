@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { providerIntegrationSchema } from "model/src/patient";
+import { patientFeedSchema, providerIntegrationSchema } from "model/src/patient";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import 'reflect-metadata'
 import type { MedicalService } from "../services/medical/medical-service";
@@ -30,6 +30,14 @@ export const patientsRouter = createTRPCRouter({
 			const appointments = await ctx.patientFeedRepository.getFeedsForPatient(input.patientId);
 
 			return appointments;
+		}),
+	
+	createFeed: protectedProcedure
+		.input(patientFeedSchema)
+		.mutation(async ({input, ctx}) => {
+			const newFeed = await ctx.patientFeedRepository.createFeedForPatient(input);
+
+			return newFeed;
 		}),
 
 	getCharges: protectedProcedure

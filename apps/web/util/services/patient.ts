@@ -1,3 +1,4 @@
+import { PatientFeed } from "model/src/patient";
 import { api } from "../api";
 
 // type UseQuery = {
@@ -24,6 +25,33 @@ export const useGetPatientStatus = (
 ) => {
   return api.patients.getAppointments.useQuery({patientId})
 };
+
+export const usePatientStatusComment = () => {
+	const query = api.patients.createFeed.useMutation();
+	const client = api.useContext();
+
+	return {
+		...query,
+		mutate: (comment: string, patientId: string) => {
+			const newFeed: PatientFeed = {
+				patientId,
+				id: '',
+				date: new Date(),
+				note: comment,
+				type: 'comment',
+				person: {
+					name: 'Spinal Rehab'
+				}
+			}
+
+			query.mutate(newFeed, {
+				async onSuccess() {
+					await client.patients.getAppointments.invalidate();
+				}
+			});
+		}
+	}
+}
 
 export const useGetPatientDocuments = (
   patientId: string,

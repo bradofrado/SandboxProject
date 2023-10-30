@@ -1,6 +1,7 @@
 import {displayElapsedTime, getClass} from 'model/src/utils';
 import type { PatientFeedType} from 'model/src/patient';
 import { patientStatuses } from 'model/src/patient';
+import { useState } from 'react';
 import {
   CheckCircleSolidIcon
 } from '../core/icons'
@@ -67,11 +68,21 @@ const getFeedDescription = (item: FeedActivity): React.ReactNode => {
 	}
 }
 
+//TODO: Update the time since an activity (ex. 0s, 1s, 2s, 3s, etc.)
 export interface FeedTreeProps {
-	items: FeedActivity[]
+	items: FeedActivity[],
+	onComment: (message: string) => void
 }
-export const FeedTree: React.FunctionComponent<FeedTreeProps> = ({items}) => {
+export const FeedTree: React.FunctionComponent<FeedTreeProps> = ({items, onComment}) => {
   //const [selected, setSelected] = useState(moods[5])
+	const [comment, setComment] = useState('');
+
+	const onCommentClick: React.FormEventHandler = (e): void => {
+		e.preventDefault();
+		//TODO: Add error handling/checking
+		onComment(comment);
+		setComment('');
+	}
 
   return (
     <>
@@ -135,7 +146,7 @@ export const FeedTree: React.FunctionComponent<FeedTreeProps> = ({items}) => {
           className="h-6 w-6 flex-none rounded-full bg-gray-50"
           src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
         />
-        <form action="#" className="relative flex-auto">
+        <form action="#" className="relative flex-auto" onSubmit={onCommentClick}>
           <div className="overflow-hidden rounded-lg pb-12 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-primary">
             <label className="sr-only" htmlFor="comment">
               Add your comment
@@ -145,8 +156,10 @@ export const FeedTree: React.FunctionComponent<FeedTreeProps> = ({items}) => {
               defaultValue=""
               id="comment"
               name="comment"
-              placeholder="Add your comment..."
-              rows={2}
+              onChange={(e) => {setComment(e.target.value)}}
+							placeholder="Add your comment..."
+							rows={2}
+              value={comment}
             />
           </div>
 
@@ -235,7 +248,7 @@ export const FeedTree: React.FunctionComponent<FeedTreeProps> = ({items}) => {
             </div> */}
             <button
               className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-              type="submit"
+							type="submit"
             >
               Comment
             </button>
