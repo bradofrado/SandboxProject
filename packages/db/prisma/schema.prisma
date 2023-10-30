@@ -29,6 +29,7 @@ enum PatientFeedType {
 	appointment
 	request
 	sent
+	status
 }
 
 model PatientLinking {

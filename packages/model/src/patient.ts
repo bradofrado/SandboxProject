@@ -21,7 +21,7 @@ export interface Patient extends PatientBase {
 	status: PatientStatusType | undefined;
 }
 
-export const patientFeedTypes = ['request', 'send', 'appointment', 'comment', 'status'] as const;
+export const patientFeedTypes = ['request', 'sent', 'appointment', 'comment', 'status'] as const;
 export const patientFeedTypesSchema = stringUnionSchema(patientFeedTypes);
 
 export type PatientFeedType = typeof patientFeedTypes[number];

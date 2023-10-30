@@ -10,7 +10,7 @@ import { PatientLinkingRepository, PrismaPatientLinkingRepository } from "../rep
 import { PrismaProviderAccount, ProviderAccountRepository } from "../repository/provider-account";
 import { AttorneyRegistry, TestAttorneyRegistry } from "../services/attorney/attorney-registry";
 import { MedicalRegistry, TestMedicalRegistry } from "../services/medical/medical-registry";
-import { PatientFeedRepository, TestPatientFeedRepository } from "../repository/patient-feed";
+import { PatientFeedRepository, PrismaPatientFeedRepository, TestPatientFeedRepository } from "../repository/patient-feed";
 
 
 
@@ -24,5 +24,5 @@ testContainer.bind<DocumentService>(DocumentService.$).to(TestDocumentService);
 testContainer.bind<PatientService>(PatientService.$).to(TestPatientService);
 testContainer.bind<PatientLinkingRepository>(PatientLinkingRepository.$).to(PrismaPatientLinkingRepository);
 testContainer.bind<ProviderAccountRepository>(ProviderAccountRepository.$).to(PrismaProviderAccount);
-testContainer.bind<PatientFeedRepository>(PatientFeedRepository.$).to(TestPatientFeedRepository);
+testContainer.bind<PatientFeedRepository>(PatientFeedRepository.$).to(PrismaPatientFeedRepository);
 export {testContainer};

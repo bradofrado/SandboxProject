@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace -- allow*/
+import { PrismaClient } from "db/lib/prisma";
 import type { interfaces } from "inversify";
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
 import type { PatientFeed } from "model/src/patient";
 
 export interface PatientFeedRepository {
@@ -20,6 +21,35 @@ export class TestPatientFeedRepository implements PatientFeedRepository {
 		patientStatuses.push(patientFeed);
 
 		return Promise.resolve(patientFeed);
+	}
+}
+
+@injectable()
+export class PrismaPatientFeedRepository implements PatientFeedRepository {
+	constructor(@inject('Prisma') private prisma: PrismaClient) {}
+	public async getFeedsForPatient(patientId: string): Promise<PatientFeed[]> {
+		const feeds = await this.prisma.patientFeed.findMany({
+			where: {
+				patientId
+			}
+		})
+
+		return feeds.map<PatientFeed>(feed => ({...feed, name: undefined, person: {name: feed.name}}));
+	}
+
+	public async createFeedForPatient(patientFeed: PatientFeed): Promise<PatientFeed> {
+		const newFeed = await this.prisma.patientFeed.create({
+			data: {
+				id: undefined,
+				name: patientFeed.person.name,
+				type: patientFeed.type,
+				patientId: patientFeed.patientId,
+				note: patientFeed.note,
+				date: patientFeed.date
+			}
+		});
+
+		return {...newFeed, person: {name: newFeed.name}};
 	}
 }
 
