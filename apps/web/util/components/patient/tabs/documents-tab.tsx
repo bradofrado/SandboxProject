@@ -53,7 +53,7 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
 	};
 
 	const uploadFiles = (files: FileList): void => {
-    upload(files).then(() => alert('Uploaded files!')).catch(() => alert('There was an error with the upload'));
+    upload(patient.id, files).then(() => alert('Uploaded files!')).catch(() => alert('There was an error with the upload'));
   };
 
 	const deleteDocuments = (documents: PatientDocument[]): void => {

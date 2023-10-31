@@ -48,3 +48,14 @@ model PatientFeed {
 	type PatientFeedType
 	date DateTime
 }
+
+
+model Document {
+	id String @id @default(cuid())
+	patientId String
+	name String
+  path String
+  lastUpdate DateTime
+  size Int
+  type String
+}

@@ -21,6 +21,8 @@
     "@clerk/nextjs": "^4.25.3",
     "@trpc/client": "^10.38.3",
     "@trpc/server": "^10.38.3",
+    "@uploadcare/upload-client": "^6.8.0",
+    "aws-sdk": "^2.1484.0",
     "db": "workspace:^",
     "inversify": "^6.0.1",
     "model": "workspace:^",

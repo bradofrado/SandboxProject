@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace -- allow*/
-import { injectable, interfaces } from "inversify";
-import { PatientFeed } from "model/src/patient";
+import type { interfaces } from "inversify";
+import { injectable } from "inversify";
+import type { PatientFeed } from "model/src/patient";
 
 export interface PatientFeedRepository {
 	getFeedsForPatient: (patientId: string) => Promise<PatientFeed[]>

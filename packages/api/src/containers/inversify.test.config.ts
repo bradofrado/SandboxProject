@@ -11,6 +11,7 @@ import { PrismaProviderAccount, ProviderAccountRepository } from "../repository/
 import { AttorneyRegistry, TestAttorneyRegistry } from "../services/attorney/attorney-registry";
 import { MedicalRegistry, TestMedicalRegistry } from "../services/medical/medical-registry";
 import { PatientFeedRepository, TestPatientFeedRepository } from "../repository/patient-feed";
+import { DocumentRepository, PrismaDocumentRepository } from "../repository/document-repository";
 
 
 
@@ -25,4 +26,5 @@ testContainer.bind<PatientService>(PatientService.$).to(TestPatientService);
 testContainer.bind<PatientLinkingRepository>(PatientLinkingRepository.$).to(PrismaPatientLinkingRepository);
 testContainer.bind<ProviderAccountRepository>(ProviderAccountRepository.$).to(PrismaProviderAccount);
 testContainer.bind<PatientFeedRepository>(PatientFeedRepository.$).to(TestPatientFeedRepository);
+testContainer.bind<DocumentRepository>(DocumentRepository.$).to(PrismaDocumentRepository);
 export {testContainer};

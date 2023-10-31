@@ -1,15 +1,18 @@
-import {uploadFileGroup} from '@uploadcare/upload-client'
-
 export const useUploadDocument = () => {
 	return {
 		upload: async (patientId: string, fileList: FileList) => {
 			const files: File[] = [...new Array<number>(fileList.length)].map((_, i) => fileList[i]);
-			const result = await uploadFileGroup(files, {
-				publicKey: process.env.UPLOAD_CARE_PUBLIC_KEY,
-				store: 'auto'
+			const formData = new FormData();
+			formData.append('patientId', patientId);
+			for (const file of files) {
+				formData.append(file.name, file);
+			}
+			await fetch('/api/upload', {
+				method: 'POST',
+				body: formData
 			});
 
-			return result;
+			//return result;
 		}
 	}
 }	
