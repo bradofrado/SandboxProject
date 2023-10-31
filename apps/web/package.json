@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-		"withenv": "dotenv -e ../../.env --",
+    "withenv": "dotenv -e ../../.env --",
     "dev": "pnpm withenv next dev",
     "build": "pnpm withenv next build",
     "start": "pnpm withenv next start",
@@ -19,6 +19,7 @@
     "@trpc/next": "^10.38.3",
     "@trpc/react-query": "^10.38.3",
     "@trpc/server": "^10.38.3",
+    "@uploadcare/upload-client": "^6.8.0",
     "api": "workspace:^",
     "db": "workspace:^",
     "dotenv-cli": "^7.3.0",

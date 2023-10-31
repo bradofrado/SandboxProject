@@ -18,6 +18,7 @@ import type { UniqueIdentifier } from "ui/src/components/core/draggable";
 import { Draggable, DraggableContext, Droppable } from "ui/src/components/core/draggable";
 import {FileUploadArea} from 'ui/src/components/core/file-upload-area';
 import { useGetPatientDocuments } from "../../../services/patient";
+import {useUploadDocument} from '../../../services/document';
 
 interface FileButton {
 	label: string,
@@ -33,6 +34,7 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
   const query = useGetPatientDocuments(patient.id);
 	const [openedFile, setOpenedFile] = useState<PatientDocument | undefined>();
 	const [selectedFiles, setSelectedFiles] = useState<PatientDocument[]>([]);
+	const {upload} = useUploadDocument();
 	const ref = useRef<HTMLDivElement>(null);
 	
 	useClickOutside(ref, () => {
@@ -51,8 +53,7 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
 	};
 
 	const uploadFiles = (files: FileList): void => {
-    //TODO: Implement this behavior
-		alert(`Uploading ${files.length} files`)
+    upload(files).then(() => alert('Uploaded files!')).catch(() => alert('There was an error with the upload'));
   };
 
 	const deleteDocuments = (documents: PatientDocument[]): void => {

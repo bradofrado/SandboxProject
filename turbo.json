@@ -25,5 +25,5 @@
 		"outputs": ["packages/db/lib/generated"]
 	  }
 	},
-	"globalEnv": ["PORT", "DATABASE_URL", "VERCEL_URL", "NODE_ENV"]
+	"globalEnv": ["PORT", "DATABASE_URL", "VERCEL_URL", "NODE_ENV", "UPLOAD_CARE_PUBLIC_KEY"]
 }
