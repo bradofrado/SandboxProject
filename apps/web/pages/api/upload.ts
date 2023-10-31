@@ -28,7 +28,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		await documentService.uploadDocument('', patientId, {name: file.originalFilename || '', type: file.mimetype || 'jpeg', body: buffer, size: file.size})
 
 		} catch(err) {
-			console.log(err);
 			res.status(500).json({});
 			return;
 		}
