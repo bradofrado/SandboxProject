@@ -31,6 +31,11 @@ export namespace PatientService {
  * 6. If we don't, then create an entry by looping through the list of clients and 
  * 		matching up on common data
  */
+// @injectable
+// export class PatientServiceInstance implements PatientService {
+// 	public async getPatient() {}
+// 	public async getPatients() {}
+// }
 @injectable()
 export class TestPatientService implements PatientService {
 	constructor(@inject(MedicalRegistry.$) private medicalRegistry: MedicalRegistry, 
