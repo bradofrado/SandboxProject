@@ -2,7 +2,7 @@ import type { interfaces } from "inversify";
 import { inject, injectable } from "inversify";
 import type { PatientDocument } from "model/src/patient";
 import 'reflect-metadata';
-import type { File, UploadFlowFactory } from "../../storage/storage";
+import type { Encryption, File, Scanner, Storage, UploadFlowFactory } from "../../storage/storage";
 import { UploadCareFlowFactory } from "../../storage/upload-care-storage";
 import { DocumentRepository } from "../../repository/document-repository";
 
@@ -33,37 +33,46 @@ export class TestDocumentService implements DocumentService {
 	}
 
 	public async getDocumentPrivatePath(documentId: string): Promise<string> {
-		const documentPath = await this.documentRepository.getPath(documentId);
-		if (documentPath === undefined) {
-			throw new Error(`Invalid document id for path ${documentId}`)
-		}
-		return documentPath;
+		return this.uploadRequest.download(documentId);
 	}
 }
 
 export class UploadRequest {
-	constructor(private factory: UploadFlowFactory, private documentRepository: DocumentRepository) {}
+	private storage: Storage;
+	private scanner: Scanner;
+	private encryption: Encryption;
+
+	constructor(factory: UploadFlowFactory, private documentRepository: DocumentRepository) {
+		const {storage, scanner, encryption} = factory.getClasses();
+		this.storage = storage;
+		this.scanner = scanner;
+		this.encryption = encryption;
+	}
 
 	public async upload(userId: string, patientId: string, file: File): Promise<string> {
-		const {storage, scanner, encryption} = this.factory.getClasses();
-		
-		if (await scanner.scan(file)) {
+		if (await this.scanner.scan(file)) {
 			throw new Error('Invalid File');
 		}
 
-		const encryptedFile = await encryption.encrypt(userId, file);
+		const encryptedFile = await this.encryption.encrypt(userId, file);
 		const id = randUID();
 		
-		const filePath = await storage.upload({
-			name: file.name,
-			body: encryptedFile.body
-		});
+		const token = await this.storage.upload(encryptedFile);
 
 		const previewPath = `/api/preview/${id}`;
 
-		const document = await this.documentRepository.createDocument({id, patientId, path: filePath, name: file.name, lastUpdate: new Date(), size: file.size, type: 'img'}, previewPath);
+		const document = await this.documentRepository.createDocument({id, patientId, path: previewPath, name: file.name, lastUpdate: new Date(), size: file.size, type: 'img'}, token);
 
 		return document.id;
+	}
+
+	public async download(documentId: string): Promise<string> {
+		const token = await this.documentRepository.getToken(documentId);
+		if (token === undefined) {
+			throw new Error(`Invalid document id for download ${documentId}`);
+		}
+
+		return this.storage.download(token);
 	}
 }
 

@@ -4,9 +4,10 @@ import { inject, injectable } from "inversify";
 import type { PatientDocument } from "model/src/patient";
 
 export interface DocumentRepository {
-	createDocument: (document: PatientDocument, previewPath: string) => Promise<PatientDocument>
+	createDocument: (document: PatientDocument, token: string) => Promise<PatientDocument>
 	getDocuments: (patientId: string) => Promise<PatientDocument[]>
-	getPath: (documentId: string) => Promise<string | undefined>
+	getDocument: (documentId: string) => Promise<PatientDocument | undefined>
+	getToken: (documentId: string) => Promise<string | undefined>
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace -- namespace is ok here
@@ -28,9 +29,12 @@ export class TestDocumentRepository implements DocumentRepository {
 		return Promise.resolve(documents);
 	}
 
-	public getPath(documentId: string): Promise<string | undefined> {
-		const document = patientDocuments.find(doc => doc.id === documentId);
-		return Promise.resolve(document?.path);
+	public getDocument(documentId: string): Promise<PatientDocument | undefined> {
+		return Promise.resolve(patientDocuments.find(doc => doc.id === documentId));
+	}
+
+	public getToken(): Promise<string | undefined> {
+		return Promise.resolve('');
 	}
 }
 
@@ -38,56 +42,62 @@ export class TestDocumentRepository implements DocumentRepository {
 export class PrismaDocumentRepository implements DocumentRepository {
 	constructor(@inject('Prisma') private prisma: PrismaClient) {}
 
-	public async createDocument(document: PatientDocument, previewPath: string): Promise<PatientDocument> {
+	public async createDocument(document: PatientDocument, token: string): Promise<PatientDocument> {
 		const newDocument = await this.prisma.document.create({
-			data: {
-				...document,
-				previewPath
-			}
+			data: {...document, token}
 		})
 
-		return this.prismaToPatientDocument(newDocument);
+		return {
+			id: newDocument.id,
+			name: newDocument.name,
+			lastUpdate: newDocument.lastUpdate,
+			path: newDocument.path,
+			patientId: newDocument.patientId,
+			size: newDocument.size,
+			type: newDocument.type
+		}
 	}
 
 	public async getDocuments(patientId: string): Promise<PatientDocument[]> {
-		const documents = await this.prisma.document.findMany({
+		const document = await this.prisma.document.findMany({
 			where: {
 				patientId
 			}
 		});
 
-		return documents.map(document => this.prismaToPatientDocument(document));
+		return document;
 	} 
 
-	public async getPath(documentId: string): Promise<string | undefined> {
+	public async getDocument(documentId: string): Promise<PatientDocument | undefined> {
 		const document = await this.prisma.document.findUnique({
 			where: {
 				id: documentId
 			}
 		});
 
-		return document?.path;
+		if (document === null) {
+			return undefined;
+		}
+
+		return {
+			id: document.id,
+			name: document.name,
+			lastUpdate: document.lastUpdate,
+			path: document.path,
+			patientId: document.patientId,
+			size: document.size,
+			type: document.type
+		}
 	}
 
-	private prismaToPatientDocument(prismaDoc: {
-			id: string;
-			patientId: string;
-			name: string;
-			previewPath: string;
-			path: string;
-			lastUpdate: Date;
-			size: number;
-			type: "img" | "pdf" | "folder";
-	}): PatientDocument {
-		return {
-			id: prismaDoc.id,
-			patientId: prismaDoc.patientId,
-			name: prismaDoc.name,
-			path: prismaDoc.previewPath,
-			lastUpdate: prismaDoc.lastUpdate,
-			size: prismaDoc.size,
-			type: prismaDoc.type
-		}
+	public async getToken(documentId: string): Promise<string | undefined> {
+		const document = await this.prisma.document.findUnique({
+			where: {
+				id: documentId
+			}
+		});
+
+		return document?.token;
 	}
 }
 

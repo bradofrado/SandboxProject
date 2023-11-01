@@ -1,21 +1,23 @@
 import { uploadFile } from "@uploadcare/upload-client";
-import type { Storage, StorageDocument, UploadFlowFactory, UploadFlowFactoryClasses } from "./storage";
+import type { File, Storage, UploadFlowFactory, UploadFlowFactoryClasses } from "./storage";
 import { NullEncryption, NullScanner } from "./storage";
+
+const HOST = 'https://ucarecdn.com';
 
 export class UploadCareStorage implements Storage {
 	constructor(private publicKey: string) {}
-	public async upload(document: StorageDocument): Promise<string> {
+	public async upload(document: File): Promise<string> {
 		const result = await uploadFile(document.body, {
 			publicKey: this.publicKey,
 			store: 'auto'
 		});
 
-		return result.cdnUrl || '';
+		return result.uuid;
 	}
 
-	// public async download(documentId: string): Promise<StorageDocument> {
-
-	// }
+	public async download(token: string): Promise<string> {
+		return Promise.resolve(`${HOST}/${token}/-/preview/500x500/-/quality/smart/-/format/auto/`);
+	}
 }
 
 

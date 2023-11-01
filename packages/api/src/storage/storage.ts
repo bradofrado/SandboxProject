@@ -9,14 +9,9 @@ export interface File {
 	size: number;
 }
 
-export interface StorageDocument {
-	name: string,
-	body: Buffer
-}
-
 export interface Storage {
-	upload: (document: StorageDocument) => Promise<string>;
-	//download: (documentId: string) => Promise<StorageDocument>
+	upload: (document: File) => Promise<string>;
+	download: (documentId: string) => Promise<string>
 }
 
 export interface Scanner {
@@ -39,7 +34,7 @@ export class NullEncryption implements Encryption {
 }
 
 export class LocalStorage implements Storage {
-	public upload(document: StorageDocument): Promise<string> {
+	public upload(document: File): Promise<string> {
 		return new Promise((resolve, reject) => {
 			const filePath = path.join(process.cwd(), 'public', document.name);
 			fs.writeFile(filePath, document.body, (err) => {
@@ -48,14 +43,14 @@ export class LocalStorage implements Storage {
 					return;
 				}
 
-				resolve(`/${document.name}`);
+				resolve(document.name);
 			});
 		});
 	}
 
-	// public download(documentId: string): Promise<StorageDocument> {
-
-	// }
+	public download(documentId: string): Promise<string> {
+		return Promise.resolve(`/${documentId}`);
+	}
 }
 
 export interface UploadFlowFactoryClasses {

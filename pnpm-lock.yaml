@@ -138,9 +138,6 @@ importers:
       '@uploadcare/upload-client':
         specifier: ^6.8.0
         version: 6.8.0
-      akamai-edgeauth:
-        specifier: ^0.2.0
-        version: 0.2.0
       aws-sdk:
         specifier: ^2.1484.0
         version: 2.1484.0
@@ -3220,10 +3217,6 @@ packages:
       fast-json-stable-stringify: 2.1.0
       json-schema-traverse: 0.4.1
       uri-js: 4.4.1
-
-  /akamai-edgeauth@0.2.0:
-    resolution: {integrity: sha512-jMJFTAjWiVyhqyjDgN3+LkFfqoD6fdMlu0YnUdI/sK50fPY7JLIozsh0u8L1Ltdjgq6xpC0fz5LI9ydLNLnnWA==}
-    dev: false
 
   /ansi-escapes@4.3.2:
     resolution: {integrity: sha512-gKXj5ALrKWQLsYG9jlTRmR/xKluxHV+Z9QEwNIgCfM1/uwPMCuzVVnh5mwTd+OuBZcwSIMbqssNWRm1lE51QaQ==}
