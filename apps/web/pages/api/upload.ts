@@ -1,32 +1,40 @@
-import fs from 'node:fs';
+import type { Stream } from 'node:stream';
 import type { NextApiResponse, NextApiRequest } from "next";
-import type formidable from 'formidable';
-import {Formidable} from 'formidable';
 import { testContainer } from "api/src/containers/inversify.test.config";
 import { DocumentService } from "api/src/services/documents/document-service";
+import busboy from 'busboy';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
+export default function handler(req: NextApiRequest, res: NextApiResponse): void {
 	if (req.method === 'POST') {
 		try {
-		const form = new Formidable({});
-		const [fields, files] = await form.parse(req);
+			const bb = busboy({headers: req.headers});
+			const documentService = testContainer.get<DocumentService>(DocumentService.$);
 
-		if (fields.patientId === undefined) {
-			res.status(400).json({message: 'Invalid body parameters'});
-			return;
-		}
+			let patientId: string | undefined;
+			let filename: string | undefined;
+			let mimeType: string | undefined;
 
-		const [patientId] = fields.patientId;
-		const theFiles = Object.values(files).map(file => file ? file[0] : undefined).filter(file => file !== undefined) as formidable.File[];
-		
-		const documentService = testContainer.get<DocumentService>(DocumentService.$);
+			bb.on('field', (name, val) => {
+				if (name === 'patientId') {
+					patientId = val;
+				}
+			})
 
-		const file = theFiles[0];
-		
-		const buffer = fs.readFileSync(file.filepath);
+			bb.on('file', (name, file, info) => {
+				filename = info.filename;
+				mimeType = info.mimeType;
 
-		await documentService.uploadDocument('', patientId, {name: file.originalFilename || '', type: file.mimetype || 'jpeg', body: buffer, size: file.size})
+				streamToBuffer(file).then(buffer => {
+					if (patientId === undefined) {
+						throw new Error('Invalid patient id value');
+					}
+					void documentService.uploadDocument('', patientId, {name: filename || '', type: mimeType || 'jpeg', body: buffer, size: buffer.length})
+				}).catch((err: Error) => {
+					throw err;
+				});
+			});	
 
+			req.pipe(bb);
 		} catch(err) {
 			res.status(500).json({});
 			return;
@@ -37,10 +45,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	}
 
 	res.status(404).json({});
-	
-	// return new NextResponse(undefined, {
-	// 	status: 200
-	// })
+}
+
+async function streamToBuffer(stream: Stream): Promise<Buffer> {
+	return new Promise<Buffer>((resolve, reject) => {
+			
+			const _buf: Uint8Array[] = [];
+
+			stream.on("data", (chunk: Uint8Array) => _buf.push(chunk));
+			stream.on("end", () => {
+				resolve(Buffer.concat(_buf))
+			});
+			stream.on("error", err => {
+				reject(new Error(`Error converting stream - ${err}`))
+			});
+
+	});
 }
 
 export const config = {

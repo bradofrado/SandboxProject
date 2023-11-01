@@ -44,6 +44,9 @@ importers:
       '@trpc/server':
         specifier: ^10.38.3
         version: 10.38.3
+      '@types/busboy':
+        specifier: ^1.5.2
+        version: 1.5.2
       '@types/formidable':
         specifier: ^3.4.4
         version: 3.4.4
@@ -53,6 +56,9 @@ importers:
       api:
         specifier: workspace:^
         version: link:../../packages/api
+      busboy:
+        specifier: ^1.6.0
+        version: 1.6.0
       db:
         specifier: workspace:^
         version: link:../../packages/db
@@ -2581,6 +2587,12 @@ packages:
     resolution: {integrity: sha512-oyl4jvAfTGX9Bt6Or4H9ni1Z447/tQuxnZsytsCaExKlmJiU8sFgnIBRzJUpKwB5eWn9HuBYlUlVA74q/yN0eQ==}
     dependencies:
       '@types/connect': 3.4.36
+      '@types/node': 20.6.2
+    dev: false
+
+  /@types/busboy@1.5.2:
+    resolution: {integrity: sha512-OYkRy+dkQWwoGch3oyQ9UE08PO1jSte7aBtPemLXAP9evwh7fNAfikWdB2VMeP8syY3H/XvGq+pB38dDvTe06g==}
+    dependencies:
       '@types/node': 20.6.2
     dev: false
 
