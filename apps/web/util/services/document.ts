@@ -7,10 +7,15 @@ export const useUploadDocument = () => {
 			for (const file of files) {
 				formData.append(file.name, file);
 			}
-			await fetch('/api/upload', {
+			const result = await fetch('/api/upload', {
 				method: 'POST',
 				body: formData
 			});
+
+			if (!result.ok) {
+				const {message}: {message: string} = await result.json() as {message: string};
+				throw new Error(message)
+			}
 
 			//return result;
 		}

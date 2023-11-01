@@ -1,42 +1,31 @@
 import type { Stream } from 'node:stream';
+import type { IncomingMessage } from 'node:http';
 import type { NextApiResponse, NextApiRequest } from "next";
 import { testContainer } from "api/src/containers/inversify.test.config";
 import { DocumentService } from "api/src/services/documents/document-service";
 import busboy from 'busboy';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse): void {
+export interface File {
+	body: Buffer;
+	name: string;
+	type: string;
+	size: number;
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
 	if (req.method === 'POST') {
 		try {
-			const bb = busboy({headers: req.headers});
 			const documentService = testContainer.get<DocumentService>(DocumentService.$);
+			
+			const [fields, files] = await parseFormData(req);
 
-			let patientId: string | undefined;
-			let filename: string | undefined;
-			let mimeType: string | undefined;
+			const patientId = fields.patientId;
+			const file = files[0]
+			await documentService.uploadDocument('', patientId, file)
 
-			bb.on('field', (name, val) => {
-				if (name === 'patientId') {
-					patientId = val;
-				}
-			})
-
-			bb.on('file', (name, file, info) => {
-				filename = info.filename;
-				mimeType = info.mimeType;
-
-				streamToBuffer(file).then(buffer => {
-					if (patientId === undefined) {
-						throw new Error('Invalid patient id value');
-					}
-					void documentService.uploadDocument('', patientId, {name: filename || '', type: mimeType || 'jpeg', body: buffer, size: buffer.length})
-				}).catch((err: Error) => {
-					throw err;
-				});
-			});	
-
-			req.pipe(bb);
+			
 		} catch(err) {
-			res.status(500).json({});
+			res.status(500).json({message: `${err}`});
 			return;
 		}
 
@@ -45,6 +34,47 @@ export default function handler(req: NextApiRequest, res: NextApiResponse): void
 	}
 
 	res.status(404).json({});
+}
+
+function parseFormData(req: IncomingMessage): Promise<[Record<string, string>, File[]]> {
+	const bb = busboy({headers: req.headers});
+	const fields: Record<string, string> = {};
+	
+	const promise = new Promise<[Record<string, string>, File[]]>((resolve, reject) => {
+		const filesPromise: Promise<File>[] = [];
+
+		bb.on('field', (name, val) => {
+			fields[name] = val;
+		})
+
+		bb.on('file', (name, file, info) => {
+			filesPromise.push(streamToFile(file, info));
+		});
+
+		bb.on('close', () => {
+			Promise.all(filesPromise).then(files => {
+				resolve([fields, files]);
+			}).catch(err => {
+				reject(err);
+			})
+		});
+	});
+
+	req.pipe(bb);
+
+	return promise;
+}
+
+async function streamToFile(stream: Stream, info: {filename: string, mimeType: string}): Promise<File> {
+	const {filename, mimeType} = info;
+	const buffer = await streamToBuffer(stream);
+
+	return {
+		name: filename,
+		type: mimeType,
+		size: buffer.length,
+		body: buffer
+	}
 }
 
 async function streamToBuffer(stream: Stream): Promise<Buffer> {
