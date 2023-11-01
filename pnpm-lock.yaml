@@ -59,6 +59,9 @@ importers:
       busboy:
         specifier: ^1.6.0
         version: 1.6.0
+      cross-env:
+        specifier: ^7.0.3
+        version: 7.0.3
       db:
         specifier: workspace:^
         version: link:../../packages/db
@@ -135,6 +138,12 @@ importers:
       '@trpc/server':
         specifier: ^10.38.3
         version: 10.38.3
+      '@uploadcare/rest-client':
+        specifier: ^6.8.0
+        version: 6.8.0
+      '@uploadcare/signed-uploads':
+        specifier: ^6.8.0
+        version: 6.8.0
       '@uploadcare/upload-client':
         specifier: ^6.8.0
         version: 6.8.0
@@ -2965,6 +2974,19 @@ packages:
       eslint-visitor-keys: 3.4.3
     dev: true
 
+  /@uploadcare/rest-client@6.8.0:
+    resolution: {integrity: sha512-9JTHrKD5HUtq7s0yh74w2K0bwsduMbCSxnduVaMXygHukU0gnjecXubcRAgMZIiv6qIT2qmnyk0dY4JOulboJQ==}
+    dependencies:
+      blueimp-md5: 2.19.0
+      node-fetch: 2.7.0
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /@uploadcare/signed-uploads@6.8.0:
+    resolution: {integrity: sha512-+MmPIF8mYzRnMi/Cl7PlcoBwxnh01xxNlO9gXRfNzvUNuXoAJp4FyTjqfueghNWLZzsavOOHFb7kWNn6VI4Kew==}
+    dev: false
+
   /@uploadcare/upload-client@6.8.0:
     resolution: {integrity: sha512-8xMxXAhNkUVqIspCcq06httWfxWegESGKwbjyOv6YAL2chr6mZi02YRQ+6KBpBzC3f7bxqMbrwSg3ATfUrlpDQ==}
     engines: {node: '>=16'}
@@ -3505,6 +3527,10 @@ packages:
       readable-stream: 3.6.2
     dev: true
 
+  /blueimp-md5@2.19.0:
+    resolution: {integrity: sha512-DRQrD6gJyy8FbiE4s+bDoXS9hiW3Vbx5uCdwvcCf3zLHL+Iv7LtGHLpr+GZV8rHG8tK766FGYBwRbu8pELTt+w==}
+    dev: false
+
   /bplist-parser@0.2.0:
     resolution: {integrity: sha512-z0M+byMThzQmD9NILRniCUXYsYpjwnlO8N5uCFaCqIOpqRsJCrQL9NK3JsD67CN5a08nF5oIL2bD6loTdHOuKw==}
     engines: {node: '>= 5.10.0'}
@@ -3846,6 +3872,14 @@ packages:
   /create-require@1.1.1:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
     dev: true
+
+  /cross-env@7.0.3:
+    resolution: {integrity: sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==}
+    engines: {node: '>=10.14', npm: '>=6', yarn: '>=1'}
+    hasBin: true
+    dependencies:
+      cross-spawn: 7.0.3
+    dev: false
 
   /cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
@@ -6072,7 +6106,6 @@ packages:
     dependencies:
       whatwg-url: 5.0.0
     dev: false
-    optional: true
 
   /node-plop@0.26.3:
     resolution: {integrity: sha512-Cov028YhBZ5aB7MdMWJEmwyBig43aGL5WT4vdoB28Oitau1zZAcHUn8Sgfk9HM33TqhtLJ9PlM/O0Mv+QpV/4Q==}
@@ -7570,7 +7603,6 @@ packages:
     resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
     requiresBuild: true
     dev: false
-    optional: true
 
   /ts-api-utils@1.0.2(typescript@4.9.5):
     resolution: {integrity: sha512-Cbu4nIqnEdd+THNEsBdkolnOXhg0I8XteoHaEKgvsxpsbWda4IsUut2c187HxywQCvveojow0Dgw/amxtSKVkQ==}
@@ -7939,7 +7971,6 @@ packages:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
     requiresBuild: true
     dev: false
-    optional: true
 
   /webpack-sources@3.2.3:
     resolution: {integrity: sha512-/DyMEOrDgLKKIG0fmvtz+4dUX/3Ghozwgm6iPp8KRhvn+eQf9+Q7GWxVNMk3+uCPWfdXYC4ExGBckIXdFEfH1w==}
@@ -7998,7 +8029,6 @@ packages:
       tr46: 0.0.3
       webidl-conversions: 3.0.1
     dev: false
-    optional: true
 
   /which-boxed-primitive@1.0.2:
     resolution: {integrity: sha512-bwZdv0AKLpplFY2KZRX6TvyuN7ojjr7lwkg6ml0roIy9YeuSr7JS372qlNW18UQYzgYK9ziGcerWqZOmEn9VNg==}

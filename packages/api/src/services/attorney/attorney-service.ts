@@ -1,7 +1,6 @@
 import type { interfaces } from "inversify";
 import { injectable } from "inversify";
 import type {AttorneyClient} from 'model/src/attorney';
-import 'reflect-metadata';
 
 export interface AttorneyService {
 	getClients: (practiceId: string) => Promise<AttorneyClient[]>,

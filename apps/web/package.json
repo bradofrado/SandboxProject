@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "withenv": "dotenv -e ../../.env --",
-    "dev": "pnpm withenv next dev",
+    "dev": "cross-env NODE_OPTIONS=\"--require reflect-metadata\" pnpm withenv next dev",
     "build": "pnpm withenv next build",
     "start": "pnpm withenv next start",
     "lint": "next lint",
@@ -24,6 +24,7 @@
     "@uploadcare/upload-client": "^6.8.0",
     "api": "workspace:^",
     "busboy": "^1.6.0",
+    "cross-env": "^7.0.3",
     "db": "workspace:^",
     "dotenv-cli": "^7.3.0",
     "formidable": "^3.5.1",

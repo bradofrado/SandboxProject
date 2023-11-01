@@ -1,7 +1,6 @@
 import type { interfaces } from "inversify";
 import { inject, injectable } from "inversify";
 import type { PatientDocument } from "model/src/patient";
-import 'reflect-metadata';
 import type { Encryption, File, Scanner, Storage, UploadFlowFactory } from "../../storage/storage";
 import { UploadCareFlowFactory } from "../../storage/upload-care-storage";
 import { DocumentRepository } from "../../repository/document-repository";
@@ -10,6 +9,7 @@ export interface DocumentService {
 	getDocuments: (patientId: string) => Promise<PatientDocument[]>;
 	getDocumentPrivatePath: (documentId: string) => Promise<string>;
 	uploadDocument: (userId: string, patientId: string, document: File) => Promise<string>;
+	deleteDocuments: (documentIds: string[]) => Promise<void>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace -- namespace is ok here
@@ -34,6 +34,10 @@ export class TestDocumentService implements DocumentService {
 
 	public async getDocumentPrivatePath(documentId: string): Promise<string> {
 		return this.uploadRequest.download(documentId);
+	}
+
+	public async deleteDocuments(documentIds: string[]): Promise<void> {
+		await this.uploadRequest.delete(documentIds);
 	}
 }
 
@@ -73,6 +77,25 @@ export class UploadRequest {
 		}
 
 		return this.storage.download(token);
+	}
+
+	public async delete(documentIds: string[]): Promise<void> {
+		const results: Promise<void>[] = [];
+		for (const documentId of documentIds) {
+			results.push(this.deleteSingle(documentId)); 
+		}
+
+		await Promise.all(results);
+	}
+
+	private async deleteSingle(documentId: string): Promise<void> {
+		const token = await this.documentRepository.getToken(documentId);
+		if (token === undefined) {
+			throw new Error(`Invalid document id for download ${documentId}`);
+		}
+
+		await this.storage.delete(token);
+		await this.documentRepository.deleteDocument(documentId);
 	}
 }
 

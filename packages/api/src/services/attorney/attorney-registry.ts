@@ -1,7 +1,6 @@
 import type { interfaces } from "inversify";
 import { inject, injectable } from "inversify";
 import { AttorneyService } from "./attorney-service";
-import 'reflect-metadata'
 
 export interface AttorneyRegistry {
 	getService: (name: string) => AttorneyService

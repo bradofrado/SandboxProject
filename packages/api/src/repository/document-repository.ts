@@ -8,6 +8,7 @@ export interface DocumentRepository {
 	getDocuments: (patientId: string) => Promise<PatientDocument[]>
 	getDocument: (documentId: string) => Promise<PatientDocument | undefined>
 	getToken: (documentId: string) => Promise<string | undefined>
+	deleteDocument: (documentId: string) => Promise<void>
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace -- namespace is ok here
@@ -35,6 +36,15 @@ export class TestDocumentRepository implements DocumentRepository {
 
 	public getToken(): Promise<string | undefined> {
 		return Promise.resolve('');
+	}
+
+	public deleteDocument(documentId: string): Promise<void> {
+		const index = patientDocuments.findIndex(document => document.id === documentId);
+		if (index > -1) {
+			patientDocuments.splice(index);
+		}
+
+		return Promise.resolve();
 	}
 }
 
@@ -98,6 +108,14 @@ export class PrismaDocumentRepository implements DocumentRepository {
 		});
 
 		return document?.token;
+	}
+
+	public async deleteDocument(documentId: string): Promise<void> {
+		await this.prisma.document.delete({
+			where: {
+				id: documentId
+			}
+		})
 	}
 }
 

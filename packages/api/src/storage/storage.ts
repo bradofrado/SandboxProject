@@ -11,7 +11,8 @@ export interface File {
 
 export interface Storage {
 	upload: (document: File) => Promise<string>;
-	download: (documentId: string) => Promise<string>
+	download: (token: string) => Promise<string>;
+	delete: (token: string) => Promise<void>;
 }
 
 export interface Scanner {
@@ -48,8 +49,21 @@ export class LocalStorage implements Storage {
 		});
 	}
 
-	public download(documentId: string): Promise<string> {
-		return Promise.resolve(`/${documentId}`);
+	public download(token: string): Promise<string> {
+		return Promise.resolve(`/${token}`);
+	}
+
+	public delete(token: string): Promise<void> {
+		return new Promise((resolve, reject) => {
+			const filePath = path.join(process.cwd(), 'public', token);
+			fs.unlink(filePath, (err) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve();
+				}
+			});
+		});
 	}
 }
 

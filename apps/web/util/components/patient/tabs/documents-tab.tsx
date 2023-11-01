@@ -8,17 +8,15 @@ import {
   DocumentTextIcon,
   FolderIcon,
   EllipsisHorizontalIcon,
-  UploadIcon,
 } from "ui/src/components/core/icons";
 import { Pill } from "ui/src/components/core/pill";
 import { DocumentViewer } from "ui/src/components/feature/document-viewer/document-viewer";
-import { Button } from "ui/src/components/core/button";
 import { useClickOutside } from "ui/src/hooks/click-outside";
 import type { UniqueIdentifier } from "ui/src/components/core/draggable";
 import { Draggable, DraggableContext, Droppable } from "ui/src/components/core/draggable";
 import {FileUploadArea} from 'ui/src/components/core/file-upload-area';
 import { useGetPatientDocuments } from "../../../services/patient";
-import {useUploadDocument} from '../../../services/document';
+import {useDeleteDocument, useDownloadDocument, useUploadDocument} from '../../../services/document';
 
 interface FileButton {
 	label: string,
@@ -32,9 +30,13 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
   patient,
 }) => {
   const query = useGetPatientDocuments(patient.id);
+	const {download} = useDownloadDocument();
+	const {upload} = useUploadDocument();
+	const {mutate: deleteMutation} = useDeleteDocument();
+
 	const [openedFile, setOpenedFile] = useState<PatientDocument | undefined>();
 	const [selectedFiles, setSelectedFiles] = useState<PatientDocument[]>([]);
-	const {upload} = useUploadDocument();
+	
 	const ref = useRef<HTMLDivElement>(null);
 	
 	useClickOutside(ref, () => {
@@ -56,19 +58,12 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
     upload(patient.id, files).then(() => alert('Uploaded files!')).catch((err) => alert(`There was an error: ${err}`));
   };
 
-	const deleteDocuments = (documents: PatientDocument[]): void => {
-		//TODO: Implement delete documents
-		alert(`Deleting ${documents.map(d => d.name)}`)
+	const deleteDocuments = (_documents: PatientDocument[]): void => {
+		deleteMutation({documentIds: _documents.map(document => document.id)}).then(() => alert('Deleted file!')).catch(() => alert('There was an error deleting the file!'));
 	}
 
-	const exportDocuments = (documents: PatientDocument[]): void => {
-		//TODO: Implement export documents
-		alert(`Exporting ${documents.map(d => d.name)}`)
-	}
-
-	const sendToDocument = (documents: PatientDocument[]): void => {
-		//TODO: Implement send to documents
-		alert(`Sending ${documents.map(d => d.name)}`)
+	const exportDocuments = (_documents: PatientDocument[]): void => {
+		void download(_documents[0].path, _documents[0].name);
 	}
 
 	const moveToFolder = (toMove: PatientDocument[], folder: PatientDocument): void => {
@@ -93,11 +88,11 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
 			action: exportDocuments,
 			shouldShow: (files) => files.length > 0
 		},
-		{
-			label: 'Send To',
-			action: sendToDocument,
-			shouldShow: (files) => files.length > 0
-		}
+		// {
+		// 	label: 'Send To',
+		// 	action: sendToDocument,
+		// 	shouldShow: (files) => files.length > 0
+		// }
 	]
 
 	const selectFile = (document: PatientDocument, selectAll: boolean): void => {
@@ -147,7 +142,6 @@ export const DocumentsTab: React.FunctionComponent<DocumentsTabProps> = ({
 							onSelect={(ctlKey) => {
 								selectFile(document, ctlKey);
 							}}
-							onSendTo={() => {sendToDocument([document])}}
 							selectedId={selectedFiles.includes(document) ? `selected-${selectedFiles.length}` : undefined}
 						/>
 					))}
@@ -174,7 +168,6 @@ interface DocumentLineProps {
   onOpen: () => void;
 	onDelete: () => void;
 	onExport: () => void;
-	onSendTo: () => void;
 	onSelect: (ctlKey: boolean) => void;
 	selectedId: string | undefined;
 }
@@ -183,7 +176,6 @@ const DocumentLine: React.FunctionComponent<DocumentLineProps> = ({
   onOpen,
 	onDelete,
 	onExport,
-	onSendTo,
 	onSelect,
 	selectedId,
 }) => {
@@ -209,7 +201,7 @@ const DocumentLine: React.FunctionComponent<DocumentLineProps> = ({
 				</div>
 				<div className="flex gap-2">
 					<Pill mode="secondary">{displayStorageSpace(document.size)}</Pill>
-					<TridotButtonOptions onDelete={onDelete} onExport={onExport} onSendTo={onSendTo}/>
+					<TridotButtonOptions onDelete={onDelete} onExport={onExport}/>
 				</div>
 			</button>
 		</Draggable>
@@ -227,9 +219,8 @@ const DocumentLine: React.FunctionComponent<DocumentLineProps> = ({
 interface TridotButtonOptionsProps {
 	onDelete: () => void,
 	onExport: () => void,
-	onSendTo: () => void,
 }
-const TridotButtonOptions: React.FunctionComponent<TridotButtonOptionsProps> = ({onDelete, onExport, onSendTo}) => {
+const TridotButtonOptions: React.FunctionComponent<TridotButtonOptionsProps> = ({onDelete, onExport}) => {
   const [isOpen, setIsOpen] = useState(false);
   const TridotButton = (
     <button className="hover:bg-gray-200 rounded-full p-1" type="button">
@@ -259,23 +250,23 @@ const TridotButtonOptions: React.FunctionComponent<TridotButtonOptionsProps> = (
 						onExport();
           }}
         >
-          Export
+          Download
         </DropdownLineItem>
       ),
     },
-    {
-      id: 2,
-      name: (
-        <DropdownLineItem
-          onClick={() => {
-            setIsOpen(false);
-						onSendTo();
-          }}
-        >
-          Send To
-        </DropdownLineItem>
-      ),
-    },
+    // {
+    //   id: 2,
+    //   name: (
+    //     <DropdownLineItem
+    //       onClick={() => {
+    //         setIsOpen(false);
+		// 				onSendTo();
+    //       }}
+    //     >
+    //       Send To
+    //     </DropdownLineItem>
+    //   ),
+    // },
   ];
   return (
     <ListBoxPopover isOpen={isOpen} items={items} setIsOpen={setIsOpen}>

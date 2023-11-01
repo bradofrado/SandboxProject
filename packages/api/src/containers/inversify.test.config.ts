@@ -4,7 +4,6 @@ import type { PrismaClient } from "db/lib/prisma";
 import { MedicalService, TestMedicalService } from "../services/medical/medical-service";
 import { AttorneyService, TestAttorneyService } from "../services/attorney/attorney-service";
 import { DocumentService, TestDocumentService } from "../services/documents/document-service";
-import 'reflect-metadata'
 import { PatientService, TestPatientService } from "../services/patient/patient-service";
 import { PatientLinkingRepository, PrismaPatientLinkingRepository } from "../repository/patient-linking";
 import { PrismaProviderAccount, ProviderAccountRepository } from "../repository/provider-account";
