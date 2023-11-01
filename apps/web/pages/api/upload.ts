@@ -4,6 +4,7 @@ import type { NextApiResponse, NextApiRequest } from "next";
 import { testContainer } from "api/src/containers/inversify.test.config";
 import { DocumentService } from "api/src/services/documents/document-service";
 import busboy from 'busboy';
+import { getServerAuthSession } from 'api/src/auth';
 
 export interface File {
 	body: Buffer;
@@ -15,13 +16,18 @@ export interface File {
 export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
 	if (req.method === 'POST') {
 		try {
+			const session = await getServerAuthSession(req);
+			if (session?.auth === null || session?.auth === undefined) {
+				res.status(400);
+				return;
+			}
 			const documentService = testContainer.get<DocumentService>(DocumentService.$);
 			
 			const [fields, files] = await parseFormData(req);
 
 			const patientId = fields.patientId;
 			const file = files[0]
-			await documentService.uploadDocument('', patientId, file)
+			await documentService.uploadDocument(session.auth.userId, patientId, file)
 
 			
 		} catch(err) {

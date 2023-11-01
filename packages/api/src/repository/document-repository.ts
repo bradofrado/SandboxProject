@@ -1,10 +1,12 @@
 import { PrismaClient } from "db/lib/prisma";
-import { inject, injectable, interfaces } from "inversify";
+import type { interfaces } from "inversify";
+import { inject, injectable } from "inversify";
 import type { PatientDocument } from "model/src/patient";
 
 export interface DocumentRepository {
-	createDocument: (document: PatientDocument) => Promise<PatientDocument>
+	createDocument: (document: PatientDocument, previewPath: string) => Promise<PatientDocument>
 	getDocuments: (patientId: string) => Promise<PatientDocument[]>
+	getPath: (documentId: string) => Promise<string | undefined>
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace -- namespace is ok here
@@ -25,29 +27,68 @@ export class TestDocumentRepository implements DocumentRepository {
 		const documents = patientDocuments.filter(doc => doc.patientId === patientId);
 		return Promise.resolve(documents);
 	}
+
+	public getPath(documentId: string): Promise<string | undefined> {
+		const document = patientDocuments.find(doc => doc.id === documentId);
+		return Promise.resolve(document?.path);
+	}
 }
 
 @injectable()
 export class PrismaDocumentRepository implements DocumentRepository {
 	constructor(@inject('Prisma') private prisma: PrismaClient) {}
 
-	public async createDocument(document: PatientDocument): Promise<PatientDocument> {
+	public async createDocument(document: PatientDocument, previewPath: string): Promise<PatientDocument> {
 		const newDocument = await this.prisma.document.create({
-			data: document
+			data: {
+				...document,
+				previewPath
+			}
 		})
 
-		return newDocument;
+		return this.prismaToPatientDocument(newDocument);
 	}
 
 	public async getDocuments(patientId: string): Promise<PatientDocument[]> {
-		const document = await this.prisma.document.findMany({
+		const documents = await this.prisma.document.findMany({
 			where: {
 				patientId
 			}
 		});
 
-		return document;
+		return documents.map(document => this.prismaToPatientDocument(document));
 	} 
+
+	public async getPath(documentId: string): Promise<string | undefined> {
+		const document = await this.prisma.document.findUnique({
+			where: {
+				id: documentId
+			}
+		});
+
+		return document?.path;
+	}
+
+	private prismaToPatientDocument(prismaDoc: {
+			id: string;
+			patientId: string;
+			name: string;
+			previewPath: string;
+			path: string;
+			lastUpdate: Date;
+			size: number;
+			type: "img" | "pdf" | "folder";
+	}): PatientDocument {
+		return {
+			id: prismaDoc.id,
+			patientId: prismaDoc.patientId,
+			name: prismaDoc.name,
+			path: prismaDoc.previewPath,
+			lastUpdate: prismaDoc.lastUpdate,
+			size: prismaDoc.size,
+			type: prismaDoc.type
+		}
+	}
 }
 
 const patientDocuments: PatientDocument[] = [
