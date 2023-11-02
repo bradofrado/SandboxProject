@@ -1,8 +1,10 @@
-import { providerIntegrationSchema, type Patient, type PatientBase, type ProviderAccount } from "model/src/patient";
+import { providerIntegrationSchema} from "model/src/patient";
+import type { PatientStatusType , Patient, PatientBase, ProviderAccount } from "model/src/patient";
 import type { AttorneyClient } from "model/src/attorney";
 import type { MedicalPatient } from "model/src/medical";
 import type { interfaces } from "inversify";
 import { inject, injectable } from "inversify";
+import { PrismaClient } from "db/lib/prisma";
 import type { AttorneyService } from "../attorney/attorney-service";
 import type { MedicalService } from "../medical/medical-service";
 import type { PatientLinking} from "../../repository/patient-linking";
@@ -20,6 +22,122 @@ export interface PatientService {
 // eslint-disable-next-line @typescript-eslint/no-namespace -- namespace is ok here
 export namespace PatientService {
 	export const $: interfaces.ServiceIdentifier<PatientService> = Symbol('PatientService');
+}
+
+@injectable()
+export class PatientServiceInstance implements PatientService {
+	constructor(@inject('Prisma') private prisma: PrismaClient) {}
+
+	public async getPatient(firmId: string, patientId: string): Promise<Patient | undefined> {
+		const patient = await this.prisma.person.findUnique({
+			where: {
+				person_id: patientId
+			},
+			include: {
+				primaryContact: true,
+				transactions: true,
+				providers: {
+					include: {
+						provider: true
+					}
+				}
+			}
+		});
+
+		if (patient === null) {
+			return undefined;
+		}
+
+		const outstandingBalance = patient.transactions.reduce((prev, curr) => prev + (curr.status === 'UNPAID' ? curr.amount : 0), 0);
+		const primaryContact = `${patient.primaryContact.first_name} ${patient.primaryContact.last_name}`;
+		const lawFirm = patient.providers.find(provider => provider.provider.accountType === 'firm');
+
+		const statusConversion: Record<string, PatientStatusType> = {
+			FILE_SETUP: 'File Setup',	
+			TREATMENT: 'Treatment',
+			DEMAND: 'Demand',
+			NEGOTIATION: 'Negotiation',
+			LITIGATION: 'Litigation',
+			SETTLEMENT: 'Settlement'
+		}
+
+		return {
+			dateOfBirth: patient.date_of_birth,
+			dateOfLoss: patient.date_of_loss ?? undefined,
+			email: patient.email,
+			firstName: patient.first_name,
+			lastName: patient.last_name,
+			id: patient.person_id,
+			incidentType: patient.incident_type ?? undefined,
+			phone: patient.phone_number,
+			notes: '',
+			outstandingBalance,
+			primaryContact,
+			lawFirm: lawFirm?.provider.name ?? undefined,
+			lastUpdateDate: new Date(),
+			status: patient.status ? statusConversion[patient.status] : undefined
+		}
+	}
+	public async getPatients(firmId: string): Promise<Patient[]> {
+		const firm = await this.prisma.providerAccount.findUnique({
+			where: {
+				id: firmId
+			},
+			include: {
+				patients: {
+					include: {
+						patient: {
+							include: {
+								primaryContact: true,
+								transactions: true,
+								providers: {
+									include: {
+										provider: true
+									}
+								}
+							} 
+						}
+					}
+				}
+			}
+		})
+
+		if (firm === null) {
+			return [];
+		}
+
+		return firm.patients.map(({patient}) => {
+			const outstandingBalance = patient.transactions.reduce((prev, curr) => prev + (curr.status === 'UNPAID' ? curr.amount : 0), 0);
+			const primaryContact = `${patient.primaryContact.first_name} ${patient.primaryContact.last_name}`;
+			const lawFirm = patient.providers.find(provider => provider.provider.accountType === 'firm');
+
+			const statusConversion: Record<string, PatientStatusType> = {
+				FILE_SETUP: 'File Setup',	
+				TREATMENT: 'Treatment',
+				DEMAND: 'Demand',
+				NEGOTIATION: 'Negotiation',
+				LITIGATION: 'Litigation',
+				SETTLEMENT: 'Settlement'
+			}
+
+			return {
+				dateOfBirth: patient.date_of_birth,
+				dateOfLoss: patient.date_of_loss ?? undefined,
+				email: patient.email,
+				firstName: patient.first_name,
+				lastName: patient.last_name,
+				id: patient.person_id,
+				incidentType: patient.incident_type ?? undefined,
+				phone: patient.phone_number,
+				notes: '',
+				outstandingBalance,
+				primaryContact,
+				lawFirm: lawFirm?.provider.name ?? undefined,
+				lastUpdateDate: new Date(),
+				status: patient.status ? statusConversion[patient.status] : undefined
+			}
+		})
+	}
 }
 
 /**
@@ -79,7 +197,9 @@ export class TestPatientService implements PatientService {
 				lastUpdateDate: undefined,
 				notes: '',
 				outstandingBalance,
-				status: undefined
+				status: undefined,
+				dateOfLoss: undefined,
+				incidentType: undefined
 			};
 		}
 

@@ -250,7 +250,7 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
 					id,
 					lastName,
 					firstName,
-					lawFirm,
+					lawFirm: lawFirm ? lawFirm :  'Unknown',
 					primaryContact: primaryContact ? primaryContact : '---',
 					lastUpdateDate: {
 						compareKey: lastUpdateDate

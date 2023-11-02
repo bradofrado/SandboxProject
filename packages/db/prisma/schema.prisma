@@ -13,9 +13,8 @@ model ProviderAccount {
 	integration			IntegrationType
 	accountType 		AccountType
 
-	patients			Person[]
-	transactions		Transaction[]
-	transaction			Transaction 		@relation(fields: [id], references: [provider_id])
+	patients			PatientProvider[]
+	transactions			Transaction[]
 }
 
 model PatientProvider {
@@ -23,7 +22,9 @@ model PatientProvider {
 	patient				Person 				@relation(fields: [person_id], references: [person_id])
 
 	provider_id			String
-	provider			ProviderAccount 	@relation(fields: [id], references: [provider_id])
+	provider			ProviderAccount 	@relation(fields: [provider_id], references: [id])
+
+	@@id([person_id, provider_id])
 }
 
 model Transaction {
@@ -31,7 +32,9 @@ model Transaction {
 	provider_id			String
 	patient_id			String
 	status				TransactionStatus 	@default(UNPAID)
-	amount				Money
+	amount				Float
+	providerAccount ProviderAccount @relation(fields: [provider_id], references: [id])
+	person Person @relation(fields: [patient_id], references: [person_id])
 }
 
 model Person {
@@ -39,16 +42,18 @@ model Person {
 	first_name			String
 	last_name			String
 	date_of_birth		DateTime
-	date_of_loss?		DateTime
-	incident_type?		IncidentType
+	date_of_loss		DateTime?
+	incident_type		IncidentType?
 	email				String 				@unique
 	phone_number		String
-	status?				PatientStatus 		@default(FILE_SETUP)
-	policy_limit?		Money
+	status				PatientStatus?
+	policy_limit		Float?
 
-	providers			ProviderAccount[]
-	transactions		Transaction[]
-	transaction			Transaction 		@relation(fields: [person_id], references: [patient_id])
+	providers			PatientProvider[]
+	transactions			Transaction[]
+
+	primaryContactEmail String
+	primaryContact PrimaryContact @relation(fields: [primaryContactEmail], references: [email])
 }
 
 model PrimaryContact {
@@ -58,8 +63,7 @@ model PrimaryContact {
 	email				String 				@unique
 	phone_number		String
 
-	person_contacts		Person[]
-	contact				Person 				@relation(fields: [person_id], references: [patient_id])
+	person_contacts				Person[]
 }
 
 enum AccountType {
@@ -77,6 +81,7 @@ enum PatientFeedType {
 	appointment
 	request
 	sent
+	status
 }
 
 enum IncidentType {

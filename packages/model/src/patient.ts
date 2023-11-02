@@ -6,15 +6,15 @@ export interface PatientBase {
 	firstName: string;
 	lastName: string;
 	dateOfBirth: Date;
-	dateOfLoss: Date;
-	incidentType: string;
 	email: string;
 	phone: string;
 }
 
 export interface Patient extends PatientBase {
   notes: string;
-  lawFirm: string;
+  lawFirm: string | undefined;
+	dateOfLoss: Date | undefined;
+	incidentType: string | undefined;
   primaryContact: string;
   lastUpdateDate: Date | undefined;
   outstandingBalance: number;
