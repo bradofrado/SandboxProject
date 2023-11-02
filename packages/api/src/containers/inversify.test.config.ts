@@ -12,7 +12,7 @@ import { MedicalRegistry, TestMedicalRegistry } from "../services/medical/medica
 import { PatientFeedRepository, TestPatientFeedRepository } from "../repository/patient-feed";
 import { DocumentRepository, PrismaDocumentRepository } from "../repository/document-repository";
 import { EmailService, NodeMailerEmailService } from "../services/email/email-service";
-
+import 'reflect-metadata';
 
 
 const testContainer = new Container();

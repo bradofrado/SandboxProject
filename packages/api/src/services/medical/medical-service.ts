@@ -2,6 +2,7 @@ import type { interfaces } from 'inversify';
 import { injectable } from 'inversify';
 import {type PatientFeed} from 'model/src/patient';
 import type {MedicalPatient, MedicalCharge} from 'model/src/medical';
+import 'reflect-metadata';
 
 export interface MedicalService {
 	getAppointments: (practiceId: string, patientId: string) => Promise<PatientFeed[]>

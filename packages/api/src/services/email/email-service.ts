@@ -1,8 +1,10 @@
-import { injectable, interfaces } from 'inversify';
+import type { interfaces } from 'inversify';
+import { injectable } from 'inversify';
 import type {Transporter} from 'nodemailer';
 import { createTransport} from 'nodemailer';
 import type SMTPTransport from 'nodemailer/lib/smtp-transport';
-import { File } from '../../storage/storage';
+import type { File } from '../../storage/storage';
+import 'reflect-metadata';
 
 export interface MailOptions {
 	to: string,

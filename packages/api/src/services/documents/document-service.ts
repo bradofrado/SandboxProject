@@ -7,6 +7,7 @@ import { DocumentRepository } from "../../repository/document-repository";
 import { AttorneyRegistry } from "../attorney/attorney-registry";
 import { PatientService } from "../patient/patient-service";
 import { ProviderAccountRepository } from "../../repository/provider-account";
+import 'reflect-metadata';
 
 export interface DocumentService {
 	getDocuments: (patientId: string) => Promise<PatientDocument[]>;

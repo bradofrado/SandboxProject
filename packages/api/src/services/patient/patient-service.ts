@@ -10,6 +10,7 @@ import { PatientLinkingRepository } from "../../repository/patient-linking";
 import { ProviderAccountRepository } from "../../repository/provider-account";
 import { AttorneyRegistry } from "../attorney/attorney-registry";
 import { MedicalRegistry } from "../medical/medical-registry";
+import 'reflect-metadata';
 
 export interface PatientService {
 	getPatient: (firmId: string, patientId: string) => Promise<Patient | undefined>

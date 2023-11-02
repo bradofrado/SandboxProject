@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	if (req.method === 'GET') {
 		const session = await getServerAuthSession(req);
 		if (session?.auth === null || session?.auth === undefined) {
-			res.status(400);
+			res.status(401);
 			return;
 		}
 

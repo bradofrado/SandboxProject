@@ -2,6 +2,7 @@ import { PrismaClient } from "db/lib/prisma";
 import type { interfaces } from "inversify";
 import { inject, injectable } from "inversify";
 import type { PatientDocument } from "model/src/patient";
+import 'reflect-metadata';
 
 export interface DocumentRepository {
 	createDocument: (document: PatientDocument, token: string) => Promise<PatientDocument>
