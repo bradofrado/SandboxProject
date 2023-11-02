@@ -4,16 +4,20 @@ import type {AttorneyClient} from 'model/src/attorney';
 import type { File } from "../../storage/storage";
 import { EmailService } from "../email/email-service";
 import 'reflect-metadata';
+import { PatientFeedRepository } from "../../repository/patient-feed";
+import { ProviderAccountRepository } from "../../repository/provider-account";
 
 export interface AttorneyService {
 	getClients: (practiceId: string) => Promise<AttorneyClient[]>,
 	getClient: (practiceId: string, clientId: string) => Promise<AttorneyClient | undefined>
-	exportDocument: (patientId: string, file: File) => Promise<void>
+	exportDocument: (fromUserId: string, patientId: string, file: File) => Promise<void>
 }
 
 @injectable()
 export class TestAttorneyService implements AttorneyService {
-	constructor(@inject(EmailService.$) private emailService: EmailService) {}
+	constructor(@inject(EmailService.$) private emailService: EmailService, 
+	@inject(PatientFeedRepository.$) private patientFeedRepository: PatientFeedRepository,
+	@inject(ProviderAccountRepository.$) private providerAccountRepository: ProviderAccountRepository,) {}
 
 	public async getClients(practiceId: string): Promise<AttorneyClient[]> {
 		return Promise.resolve(clients.filter(client => client.lawFirm === practiceId));
@@ -23,7 +27,36 @@ export class TestAttorneyService implements AttorneyService {
 		return Promise.resolve(clients.find(client => client.id === clientId));
 	}
 
-	public exportDocument(patientId: string, file: File): Promise<void> {
+	public async exportDocument(fromUserId: string, patientId: string): Promise<void> {
+		const medicalAccount = await this.providerAccountRepository.getAccountById(fromUserId);
+	
+		const client = clients.find(c => c.id === patientId);
+		if (client === undefined) {
+			throw new Error('Invalid patient id');
+		}
+
+		client.status = 'File Setup';
+
+		if (medicalAccount === undefined) {
+			throw new Error('Invalid user id');
+		}
+
+		await this.patientFeedRepository.createFeedForPatient({
+			patientId,
+			type: 'sent',
+			date: new Date(),
+			person: {name: medicalAccount.name},
+			note: ''
+		});
+
+		await this.patientFeedRepository.createFeedForPatient({
+			patientId,
+			type: 'status',
+			date: new Date(),
+			person: {name: client.firstName},
+			note: 'File Setup'
+		});
+
 		return Promise.resolve();
 		//await this.emailService.sendMail({to: 'bradofrado@gmail.com', subject: 'File transfer', body: 'Here are the files you have requested', attachments: [file]});
 	}

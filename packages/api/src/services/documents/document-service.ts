@@ -28,7 +28,7 @@ export class TestDocumentService implements DocumentService {
 	constructor(@inject(DocumentRepository.$) private documentRepository: DocumentRepository, 
 		@inject(AttorneyRegistry.$) private attorneyRegistry: AttorneyRegistry, 
 		@inject(PatientService.$) private patientService: PatientService,
-		@inject(ProviderAccountRepository.$) private providerAccountRepository: ProviderAccountRepository) {
+		@inject(ProviderAccountRepository.$) private providerAccountRepository: ProviderAccountRepository,) {
 		this.uploadRequest = new UploadRequest(new UploadCareFlowFactory(), this.documentRepository);
 	}
 	public getDocuments(patientId: string): Promise<PatientDocument[]> {
@@ -41,13 +41,13 @@ export class TestDocumentService implements DocumentService {
 		if (patient === undefined) {
 			throw new Error('Invalid user id or patient id');
 		}
-		const account = await this.providerAccountRepository.getAccount(patient.lawFirm);
-		if (account === undefined) {
+		const attorneyAccount = await this.providerAccountRepository.getAccount(patient.lawFirm);
+		if (attorneyAccount === undefined) {
 			throw new Error('Invalid patient');
 		}
-		const attorneyService = this.attorneyRegistry.getService(account.integration);
+		const attorneyService = this.attorneyRegistry.getService(attorneyAccount.integration);
 
-		await attorneyService.exportDocument(patientId, file);
+		await attorneyService.exportDocument(userId, patientId, file);
 
 		return id;
 	}

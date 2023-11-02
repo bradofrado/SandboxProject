@@ -1,6 +1,7 @@
 import { patientStatuses, type Patient } from "model/src/patient";
 import { StatusTracker } from "ui/src/components/feature/status-tracker";
 import {FeedTree} from 'ui/src/components/feature/feed-tree'
+import { useUser } from "@clerk/nextjs";
 import { useGetPatientStatus, usePatientStatusComment } from "../../../services/patient";
 
 export interface StatusTabProps {
@@ -9,6 +10,7 @@ export interface StatusTabProps {
 export const StatusTab: React.FunctionComponent<StatusTabProps> = ({
   patient,
 }) => {
+	const user = useUser();
   const query = useGetPatientStatus(patient.id);
 	const {mutate} = usePatientStatusComment();
   //if (query.isError || query.isLoading || patientCommentUtils.isLoading || patientCommentUtils.isError) return <>Loading</>;
@@ -27,7 +29,7 @@ export const StatusTab: React.FunctionComponent<StatusTabProps> = ({
         statuses={patientStatuses}
         value={patient.status}
       /> : null}
-      <FeedTree items={appointments} onComment={onComment}/>
+      <FeedTree items={appointments} onComment={onComment} profileUrl={user.user?.imageUrl ?? ''}/>
     </div>
   );
 };

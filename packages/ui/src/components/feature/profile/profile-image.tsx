@@ -4,13 +4,13 @@ export interface ProfileImageProps {
   image: string | undefined;
   className?: string;
 }
-export const ProfileImage = ({ image, className }: ProfileImageProps) => {
+export const ProfileImage: React.FunctionComponent<ProfileImageProps> = ({ image, className }) => {
   return (
     <div className={className}>
       {image ? (
         <img
           alt="profile"
-          className="rounded-full w-full h-full object-cover object-center shadow-lg"
+          className="rounded-full w-full h-full object-cover object-center"
           src={image}
         />
       ) : (

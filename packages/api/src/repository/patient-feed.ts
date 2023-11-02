@@ -6,7 +6,7 @@ import type { PatientFeed } from "model/src/patient";
 
 export interface PatientFeedRepository {
 	getFeedsForPatient: (patientId: string) => Promise<PatientFeed[]>
-	createFeedForPatient: (patientFeed: PatientFeed) => Promise<PatientFeed>
+	createFeedForPatient: (patientFeed: Omit<PatientFeed, 'id'>) => Promise<PatientFeed>
 }
 
 @injectable()
@@ -16,11 +16,11 @@ export class TestPatientFeedRepository implements PatientFeedRepository {
 		return Promise.resolve(patientStatus);
 	}
 
-	public createFeedForPatient(patientFeed: PatientFeed): Promise<PatientFeed> {
-		patientFeed.id = randUID();
-		patientStatuses.push(patientFeed);
+	public createFeedForPatient(patientFeed: Omit<PatientFeed, 'id'>): Promise<PatientFeed> {
+		const newFeed = {...patientFeed, id: randUID()}
+		patientStatuses.push(newFeed);
 
-		return Promise.resolve(patientFeed);
+		return Promise.resolve(newFeed);
 	}
 }
 
@@ -37,10 +37,9 @@ export class PrismaPatientFeedRepository implements PatientFeedRepository {
 		return feeds.map<PatientFeed>(feed => ({...feed, name: undefined, person: {name: feed.name}}));
 	}
 
-	public async createFeedForPatient(patientFeed: PatientFeed): Promise<PatientFeed> {
+	public async createFeedForPatient(patientFeed: Omit<PatientFeed, 'id'>): Promise<PatientFeed> {
 		const newFeed = await this.prisma.patientFeed.create({
 			data: {
-				id: undefined,
 				name: patientFeed.person.name,
 				type: patientFeed.type,
 				patientId: patientFeed.patientId,

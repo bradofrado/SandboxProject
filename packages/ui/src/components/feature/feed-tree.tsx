@@ -5,6 +5,7 @@ import { useState } from 'react';
 import {
   CheckCircleSolidIcon
 } from '../core/icons'
+import { ProfileImage } from './profile/profile-image';
 
 type FeedActivityType = PatientFeedType;
 interface FeedActivityPerson {
@@ -51,7 +52,7 @@ const getFeedDescription = (item: FeedActivity): React.ReactNode => {
 		case 'comment':
 		case 'appointment': return item.note;
 		case 'request': return 'requested documents';
-		case 'send': return 'sent documents';
+		case 'sent': return 'sent documents';
 		case 'status': {
 			const statusIndex = patientStatuses.findIndex(status => status === item.note);
 			if (statusIndex < 0) throw new Error(`Invalid status ${item.note}`);
@@ -71,9 +72,10 @@ const getFeedDescription = (item: FeedActivity): React.ReactNode => {
 //TODO: Update the time since an activity (ex. 0s, 1s, 2s, 3s, etc.)
 export interface FeedTreeProps {
 	items: FeedActivity[],
-	onComment: (message: string) => void
+	onComment: (message: string) => void,
+	profileUrl: string
 }
-export const FeedTree: React.FunctionComponent<FeedTreeProps> = ({items, onComment}) => {
+export const FeedTree: React.FunctionComponent<FeedTreeProps> = ({items, onComment, profileUrl}) => {
   //const [selected, setSelected] = useState(moods[5])
 	const [comment, setComment] = useState('');
 
@@ -121,7 +123,7 @@ export const FeedTree: React.FunctionComponent<FeedTreeProps> = ({items, onComme
             ) : (
               <>
                 <div className="relative flex h-6 w-6 flex-none items-center justify-center bg-white">
-                  {activityItem.type === 'send' ? (
+                  {activityItem.type === 'sent' ? (
                     <CheckCircleSolidIcon aria-hidden="true" className="h-6 w-6 text-primary" />
                   ) : (
                     <div className="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300" />
@@ -141,11 +143,7 @@ export const FeedTree: React.FunctionComponent<FeedTreeProps> = ({items, onComme
 
       {/* New comment form */}
       <div className="mt-6 flex gap-x-3">
-        <img
-          alt=""
-          className="h-6 w-6 flex-none rounded-full bg-gray-50"
-          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-        />
+				<ProfileImage className="h-6 w-6" image={profileUrl}/>
         <form action="#" className="relative flex-auto" onSubmit={onCommentClick}>
           <div className="overflow-hidden rounded-lg pb-12 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-primary">
             <label className="sr-only" htmlFor="comment">
