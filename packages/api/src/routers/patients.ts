@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { providerIntegrationSchema } from "model/src/patient";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import 'reflect-metadata'
 import type { MedicalService } from "../services/medical/medical-service";
 import type { ProviderAccountRepository } from "../repository/provider-account";
 import type { MedicalRegistry } from "../services/medical/medical-registry";

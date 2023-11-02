@@ -10,6 +10,8 @@ import { PrismaProviderAccount, ProviderAccountRepository } from "../repository/
 import { AttorneyRegistry, TestAttorneyRegistry } from "../services/attorney/attorney-registry";
 import { MedicalRegistry, TestMedicalRegistry } from "../services/medical/medical-registry";
 import { PatientFeedRepository, TestPatientFeedRepository } from "../repository/patient-feed";
+import { DocumentRepository, PrismaDocumentRepository } from "../repository/document-repository";
+import { EmailService, NodeMailerEmailService } from "../services/email/email-service";
 import 'reflect-metadata';
 
 
@@ -24,4 +26,7 @@ testContainer.bind<PatientService>(PatientService.$).to(PatientServiceInstance);
 testContainer.bind<PatientLinkingRepository>(PatientLinkingRepository.$).to(PrismaPatientLinkingRepository);
 testContainer.bind<ProviderAccountRepository>(ProviderAccountRepository.$).to(PrismaProviderAccount);
 testContainer.bind<PatientFeedRepository>(PatientFeedRepository.$).to(TestPatientFeedRepository);
+testContainer.bind<DocumentRepository>(DocumentRepository.$).to(PrismaDocumentRepository);
+testContainer.bind<EmailService>(EmailService.$).to(NodeMailerEmailService);
+
 export {testContainer};

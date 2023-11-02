@@ -18,7 +18,6 @@ import { clerkClient } from "@clerk/nextjs";
 import type { AuthContext } from "model/src/auth";
 import { DocumentService} from "./services/documents/document-service";
 import { testContainer } from "./containers/inversify.test.config";
-import 'reflect-metadata'
 import { PatientService } from "./services/patient/patient-service";
 import { MedicalRegistry } from "./services/medical/medical-registry";
 import { AttorneyRegistry } from "./services/attorney/attorney-registry";
