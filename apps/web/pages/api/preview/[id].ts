@@ -20,7 +20,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		const documentService = testContainer.get<DocumentService>(DocumentService.$);
 		const path = await documentService.getDocumentPrivatePath(id);
 		
-		res.redirect(path);
+		
+		const result = await fetch(path, {
+			method: 'GET',
+		})
+		result.headers.forEach((value, key) => {
+			res.setHeader(key, value);
+		})
+		res.send(Buffer.from(await result.arrayBuffer()));
+
 		return;
 	}
   
