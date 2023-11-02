@@ -1,7 +1,7 @@
 import { uploadFile } from "@uploadcare/upload-client";
-import { deleteFile, UploadcareSimpleAuthSchema } from "@uploadcare/rest-client";
 import type { File, Storage, UploadFlowFactory, UploadFlowFactoryClasses } from "./storage";
 import { NullEncryption, NullScanner } from "./storage";
+import fetch from 'node-fetch';
 
 const HOST = 'https://ucarecdn.com';
 
@@ -21,12 +21,12 @@ export class UploadCareStorage implements Storage {
 	}
 
 	public async delete(token: string): Promise<void> {
-		const authSchema = new UploadcareSimpleAuthSchema({
-			publicKey: this.publicKey,
-			secretKey: this.privateKey,
-		});
-		await deleteFile({uuid: token}, {
-			authSchema
+		await fetch(`https://api.uploadcare.com/files/${token}/storage/`, {
+			method: 'DELETE',
+			headers: {
+				'Accept': 'application/vnd.uploadcare-v0.7+json',
+				'Authorization': `Uploadcare.Simple ${this.publicKey}:${this.privateKey}`
+			}
 		});
 	}
 }

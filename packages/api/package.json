@@ -29,6 +29,7 @@
     "db": "workspace:^",
     "inversify": "^6.0.1",
     "model": "workspace:^",
+    "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.7",
     "reflect-metadata": "^0.1.13",
     "soap": "^1.0.0",
