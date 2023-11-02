@@ -23,8 +23,9 @@ export class TestAttorneyService implements AttorneyService {
 		return Promise.resolve(clients.find(client => client.id === clientId));
 	}
 
-	public async exportDocument(patientId: string, file: File): Promise<void> {
-		await this.emailService.sendMail({to: 'bradofrado@gmail.com', subject: 'File transfer', body: 'Here are the files you have requested', attachments: [file]});
+	public exportDocument(patientId: string, file: File): Promise<void> {
+		return Promise.resolve();
+		//await this.emailService.sendMail({to: 'bradofrado@gmail.com', subject: 'File transfer', body: 'Here are the files you have requested', attachments: [file]});
 	}
 }
 
