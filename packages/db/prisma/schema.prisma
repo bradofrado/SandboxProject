@@ -8,10 +8,62 @@ datasource db {
 }
 
 model ProviderAccount {
-	id					String @id @default(cuid())
-	name				String @unique
-	integration	IntegrationType
-	accountType AccountType
+	id					String 				@id @default(cuid())
+	name				String 				@unique
+	integration			IntegrationType
+	accountType 		AccountType
+
+	patients			PatientProvider[]
+	transactions			Transaction[]
+}
+
+model PatientProvider {
+	person_id			String
+	patient				Person 				@relation(fields: [person_id], references: [person_id])
+
+	provider_id			String
+	provider			ProviderAccount 	@relation(fields: [provider_id], references: [id])
+
+	@@id([person_id, provider_id])
+}
+
+model Transaction {
+	transaction_id		String 				@id @default(cuid())
+	provider_id			String
+	patient_id			String
+	status				TransactionStatus 	@default(UNPAID)
+	amount				Float
+	providerAccount ProviderAccount @relation(fields: [provider_id], references: [id])
+	person Person @relation(fields: [patient_id], references: [person_id])
+}
+
+model Person {
+	person_id			String 				@id @default(cuid())
+	first_name			String
+	last_name			String
+	date_of_birth		DateTime
+	date_of_loss		DateTime?
+	incident_type		IncidentType?
+	email				String 				@unique
+	phone_number		String
+	status				PatientStatus?
+	policy_limit		Float?
+
+	providers			PatientProvider[]
+	transactions			Transaction[]
+
+	primaryContactEmail String
+	primaryContact PrimaryContact @relation(fields: [primaryContactEmail], references: [email])
+}
+
+model PrimaryContact {
+	patient_id			String
+	first_name			String
+	last_name			String
+	email				String 				@unique
+	phone_number		String
+
+	person_contacts				Person[]
 }
 
 enum AccountType {
@@ -29,13 +81,34 @@ enum PatientFeedType {
 	appointment
 	request
 	sent
+	status
 }
 
+enum IncidentType {
+	AUTO
+	WORKERS_COMP
+}
+
+enum PatientStatus {
+	FILE_SETUP
+	TREATMENT
+	DEMAND
+	NEGOTIATION
+	LITIGATION
+	SETTLEMENT
+}
+
+enum TransactionStatus {
+	PAID
+	UNPAID
+}
+
+// This table is only necessary for integrations
 model PatientLinking {
 	medicalId					String
-	attorneyId				String
-	medicalPatientId 	String
-	attorneyPatientId String
+	attorneyId					String
+	medicalPatientId 			String
+	attorneyPatientId 			String
 
 	@@id([medicalId, medicalPatientId])
 }

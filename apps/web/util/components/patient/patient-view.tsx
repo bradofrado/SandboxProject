@@ -79,9 +79,9 @@ const PatientBio: React.FunctionComponent<{ patient: Patient }> = ({
               <Label label="DOB" sameLine>
                 {displayDate(patient.dateOfBirth)}
               </Label>
-              <Label label="DOL" sameLine>
+              {patient.dateOfLoss !== undefined ? <Label label="DOL" sameLine>
                 {displayDate(patient.dateOfLoss)}
-              </Label>
+              </Label> : null}
             </div>
             <Label label="Law Firm" sameLine>
               {patient.lawFirm}

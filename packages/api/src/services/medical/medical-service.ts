@@ -44,10 +44,10 @@ const patients: MedicalPatient[] = [
     firstName: "Maria",
     lastName: "Abarca",
     dateOfBirth: new Date(),
-    dateOfLoss: new Date(),
+    //dateOfLoss: new Date(),
     email: "maria.abarca@gmail.com",
     phone: "(801) 999-9999",
-    incidentType: "Auto",
+    //incidentType: "Auto",
 		lawFirm: 'Siegfried and Jensen'
   },
 	{
@@ -55,10 +55,10 @@ const patients: MedicalPatient[] = [
     firstName: "Abe",
     lastName: "Emmanuel",
     dateOfBirth: new Date(),
-    dateOfLoss: new Date(),
+    //dateOfLoss: new Date(),
     email: "maria.abarca@gmail.com",
     phone: "(801) 999-9999",
-    incidentType: "Auto",
+    //incidentType: "Auto",
 		lawFirm: 'Siegfried and Jensen',
   },
   {
@@ -66,10 +66,10 @@ const patients: MedicalPatient[] = [
     firstName: "Layne",
     lastName: "Abbott",
     dateOfBirth: new Date(),
-    dateOfLoss: new Date(),
+    //dateOfLoss: new Date(),
     email: "maria.abarca@gmail.com",
     phone: "(801) 999-9999",
-    incidentType: "Auto",
+    //incidentType: "Auto",
 		lawFirm: 'Good Guys Law'
   },
   {
@@ -77,10 +77,10 @@ const patients: MedicalPatient[] = [
     firstName: "Ola",
     lastName: "Abdullatif",
     dateOfBirth: new Date(),
-    dateOfLoss: new Date(),
+    //dateOfLoss: new Date(),
     email: "maria.abarca@gmail.com",
     phone: "(801) 999-9999",
-    incidentType: "Auto",
+    //incidentType: "Auto",
 		lawFirm: 'Flickenger and Sutterfield'
   },
   {
@@ -88,10 +88,10 @@ const patients: MedicalPatient[] = [
     firstName: "Claudia",
     lastName: "Acero",
     dateOfBirth: new Date(),
-    dateOfLoss: new Date(),
+    //dateOfLoss: new Date(),
     email: "maria.abarca@gmail.com",
     phone: "(801) 999-9999",
-    incidentType: "Auto",
+    //incidentType: "Auto",
 		lawFirm: 'Siegfried and Jensen'
   },
 ];
