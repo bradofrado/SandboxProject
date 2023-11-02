@@ -1,20 +1,29 @@
 import type { interfaces } from "inversify";
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
 import type {AttorneyClient} from 'model/src/attorney';
+import { File } from "../../storage/storage";
+import { EmailService } from "../email/email-service";
 
 export interface AttorneyService {
 	getClients: (practiceId: string) => Promise<AttorneyClient[]>,
 	getClient: (practiceId: string, clientId: string) => Promise<AttorneyClient | undefined>
+	exportDocument: (patientId: string, file: File) => Promise<void>
 }
 
 @injectable()
 export class TestAttorneyService implements AttorneyService {
+	constructor(@inject(EmailService.$) private emailService: EmailService) {}
+
 	public async getClients(practiceId: string): Promise<AttorneyClient[]> {
 		return Promise.resolve(clients.filter(client => client.lawFirm === practiceId));
 	}
 
 	public async getClient(practiceId: string, clientId: string): Promise<AttorneyClient | undefined> {
 		return Promise.resolve(clients.find(client => client.id === clientId));
+	}
+
+	public async exportDocument(patientId: string, file: File): Promise<void> {
+		await this.emailService.sendMail({to: 'bradofrado@gmail.com', subject: 'File transfer', body: 'Here are the files you have requested', attachments: [file]});
 	}
 }
 

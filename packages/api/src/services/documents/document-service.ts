@@ -4,6 +4,9 @@ import type { PatientDocument } from "model/src/patient";
 import type { Encryption, File, Scanner, Storage, UploadFlowFactory } from "../../storage/storage";
 import { UploadCareFlowFactory } from "../../storage/upload-care-storage";
 import { DocumentRepository } from "../../repository/document-repository";
+import { AttorneyRegistry } from "../attorney/attorney-registry";
+import { PatientService } from "../patient/patient-service";
+import { ProviderAccountRepository } from "../../repository/provider-account";
 
 export interface DocumentService {
 	getDocuments: (patientId: string) => Promise<PatientDocument[]>;
@@ -21,15 +24,31 @@ export namespace DocumentService {
 export class TestDocumentService implements DocumentService {
 	private uploadRequest: UploadRequest;
 	
-	constructor(@inject(DocumentRepository.$) private documentRepository: DocumentRepository) {
+	constructor(@inject(DocumentRepository.$) private documentRepository: DocumentRepository, 
+		@inject(AttorneyRegistry.$) private attorneyRegistry: AttorneyRegistry, 
+		@inject(PatientService.$) private patientService: PatientService,
+		@inject(ProviderAccountRepository.$) private providerAccountRepository: ProviderAccountRepository) {
 		this.uploadRequest = new UploadRequest(new UploadCareFlowFactory(), this.documentRepository);
 	}
 	public getDocuments(patientId: string): Promise<PatientDocument[]> {
 		return this.documentRepository.getDocuments(patientId);
 	}
 
-	public uploadDocument(userId: string, patientId: string, file: File): Promise<string> {
-		return this.uploadRequest.upload(userId, patientId, file);
+	public async uploadDocument(userId: string, patientId: string, file: File): Promise<string> {
+		const id = await this.uploadRequest.upload(userId, patientId, file);
+		const patient = await this.patientService.getPatient(userId, patientId);
+		if (patient === undefined) {
+			throw new Error('Invalid user id or patient id');
+		}
+		const account = await this.providerAccountRepository.getAccount(patient.lawFirm);
+		if (account === undefined) {
+			throw new Error('Invalid patient');
+		}
+		const attorneyService = this.attorneyRegistry.getService(account.integration);
+
+		await attorneyService.exportDocument(patientId, file);
+
+		return id;
 	}
 
 	public async getDocumentPrivatePath(documentId: string): Promise<string> {
