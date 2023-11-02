@@ -41,6 +41,9 @@ export class TestDocumentService implements DocumentService {
 		if (patient === undefined) {
 			throw new Error('Invalid user id or patient id');
 		}
+		if (!patient.lawFirm) {
+			throw new Error('No law firm!');
+		}
 		const account = await this.providerAccountRepository.getAccount(patient.lawFirm);
 		if (account === undefined) {
 			throw new Error('Invalid patient');
