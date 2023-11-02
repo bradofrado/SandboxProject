@@ -49,3 +49,20 @@ model PatientFeed {
 	type PatientFeedType
 	date DateTime
 }
+
+enum DocumentType {
+	img
+	pdf
+	folder
+}
+
+model Document {
+	id String @id @default(cuid())
+	patientId String
+	name String
+  path String
+	token String
+  lastUpdate DateTime
+  size Int
+  type DocumentType
+}

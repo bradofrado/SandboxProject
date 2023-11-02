@@ -4,6 +4,7 @@ import { Button } from "./button";
 import { ChevronDownIcon, type IconComponent } from "./icons";
 import { CheckboxInput } from "./input";
 import { Popover } from "./popover";
+import { PolymorphicComponentProps } from "../../types/polymorphics";
 
 export type ListBoxPopoverProps<T> = {
   items: DropdownItem<T>[];
@@ -124,22 +125,20 @@ export const Dropdown = <T,>({
 
 export interface DropdownLineItemProps {
   selected?: boolean;
-  onClick: () => void;
   children: React.ReactNode;
 }
-export const DropdownLineItem: React.FunctionComponent<
-  DropdownLineItemProps
-> = ({ selected, onClick, children }) => {
-  return (
-    <button
-      className={`${
+export const DropdownLineItem = <C extends React.ElementType>({ selected, children, as, ...rest }:  PolymorphicComponentProps<C, DropdownLineItemProps>) => {
+  const Component = as || 'button';
+	const restProps = Component === 'button' ? {type: 'button', ...rest} : rest;
+	return (
+    <Component
+			{...restProps}
+			className={`${
         selected ? "bg-primary-light" : "text-gray-900"
       } group flex w-full items-center rounded-md p-2 text-sm cursor-pointer hover:bg-gray-100 [&>*]:flex-1`}
-      onClick={onClick}
-      type="button"
     >
       {children}
-    </button>
+    </Component>
   );
 };
 

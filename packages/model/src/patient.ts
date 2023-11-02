@@ -49,6 +49,7 @@ export const patientStatuses = [
 export type PatientStatusType = (typeof patientStatuses)[number] | 'Referral' | 'Document Requested';
 
 export interface PatientDocument {
+	id: string;
   patientId: string;
   name: string;
   path: string;

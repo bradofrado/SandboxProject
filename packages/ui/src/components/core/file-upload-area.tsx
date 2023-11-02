@@ -59,6 +59,7 @@ export const FileUploadArea: React.FunctionComponent<FileUploadAreaProps> = ({
           id="dropzone-file"
           onChange={onChange}
           type="file"
+					multiple
         />
       </label>
       {dragActive ? (
