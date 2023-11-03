@@ -1,12 +1,12 @@
-import { PatientBase, PatientStatusType } from "./patient";
+import { IncidentType, PatientBase, PatientStatusType } from "./patient";
 
 export interface AttorneyClient extends PatientBase {
 	dateOfLoss: Date,
-	incidentType: string,
+	incidentType: IncidentType,
 	lawFirm: string;
 	medicalProvider: string;
 	primaryContact: string;
 	status: PatientStatusType | undefined;
 	lastUpdateDate: Date | undefined;
-	limit: number
+	policyLimit: number
 }

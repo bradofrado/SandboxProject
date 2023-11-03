@@ -5,6 +5,8 @@ import type { Patient } from "model/src/patient";
 import { PatientViewId } from "./patient/patient-view";
 import type { PatientGridFilter} from "./patient/patients-grid";
 import { PatientsGrid } from "./patient/patients-grid";
+import { Button } from "ui/src/components/core/button";
+import { api } from "../api";
 
 export interface PatientViewProps {
   id?: string;
@@ -19,6 +21,7 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
 	setFilter
 }) => {
   const router = useRouter();
+	const {mutate} = api.patients.testGetRequests.useMutation();
   const onPatientClick = (_id: string | undefined): void => {
     void router.push(
       _id !== undefined ? `/patients/${_id}` : "/patients",
@@ -26,9 +29,13 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
       { shallow: true },
     );
   };
+	const onRequest = () => {
+		mutate();
+	}
   return (
     <div className="flex flex-col gap-2 pl-4 pr-2 pt-6">
       <Header level={2}>Patients</Header>
+			<Button className="w-fit" onClick={onRequest}>Request</Button>
       <PatientsGrid
         currPatient={id}
         filter={filter}

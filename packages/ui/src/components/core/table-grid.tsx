@@ -4,6 +4,7 @@ import { ChevronSwitch } from "./chevron-switch";
 import { Input } from "./input";
 import type { FilterChildren, FilterItem } from "./filter-button";
 import { FilterButton } from "./filter-button";
+import { Button } from "./button";
 
 export type TableGridItemValue =
   | string

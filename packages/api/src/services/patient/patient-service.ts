@@ -4,6 +4,7 @@ import type { AttorneyClient } from "model/src/attorney";
 import type { MedicalPatient } from "model/src/medical";
 import type { interfaces } from "inversify";
 import { inject, injectable } from "inversify";
+import type { PatientStatus, Prisma} from "db/lib/prisma";
 import { PrismaClient } from "db/lib/prisma";
 import type { AttorneyService } from "../attorney/attorney-service";
 import type { MedicalService } from "../medical/medical-service";
@@ -17,12 +18,26 @@ import 'reflect-metadata';
 export interface PatientService {
 	getPatient: (firmId: string, patientId: string) => Promise<Patient | undefined>
 	getPatients: (firmId: string) => Promise<Patient[]>
+	createPatient: (accountId: string, patient: Patient, primaryContact: {email: string, phone: string, firstName: string, lastName: string}) => Promise<Patient>
+	createProviderForPatient: (patientId: string, provider: ProviderAccount) => Promise<ProviderAccount>
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace -- namespace is ok here
 export namespace PatientService {
 	export const $: interfaces.ServiceIdentifier<PatientService> = Symbol('PatientService');
 }
+
+const personArgs = {
+	include: {
+		primaryContact: true,
+		transactions: true,
+		providers: {
+			include: {
+				provider: true
+			}
+		}
+	}
+} satisfies Prisma.PersonDefaultArgs
 
 @injectable()
 export class PatientServiceInstance implements PatientService {
@@ -33,26 +48,102 @@ export class PatientServiceInstance implements PatientService {
 			where: {
 				person_id: patientId
 			},
-			include: {
-				primaryContact: true,
-				transactions: true,
-				providers: {
-					include: {
-						provider: true
-					}
-				}
-			}
+			...personArgs
 		});
 
 		if (patient === null) {
 			return undefined;
 		}
 
+		return this.prismaToPatient(patient);
+	}
+
+	public async getPatients(firmId: string): Promise<Patient[]> {
+		const firm = await this.prisma.providerAccount.findUnique({
+			where: {
+				id: firmId
+			},
+			include: {
+				patients: {
+					include: {
+						patient: personArgs
+					}
+				}
+			}
+		})
+
+		if (firm === null) {
+			return [];
+		}
+
+		return firm.patients.map(({patient}) => this.prismaToPatient(patient))
+	}
+
+	public async createPatient(accountId: string, patient: Patient, primaryContact: {email: string, phone: string, firstName: string, lastName: string}): Promise<Patient> {
+		const newPatient = await this.prisma.person.create({
+			data: {
+				date_of_birth: patient.dateOfBirth,
+				date_of_loss: patient.dateOfLoss,
+				email: patient.email,
+				first_name: patient.firstName,
+				last_name: patient.lastName,
+				phone_number: patient.phone,
+				policy_limit: patient.policyLimit,
+				incident_type: patient.incidentType,
+				primaryContact: {
+					create: {
+						email: primaryContact.email,
+						phone_number: primaryContact.phone,
+						first_name: primaryContact.firstName,
+						last_name: primaryContact.lastName
+					}
+				},
+				providers: {
+					create: {
+						provider: {
+							connect: {
+								id: accountId
+							}
+						},
+					}
+				}
+			},
+			...personArgs
+		})
+
+		return this.prismaToPatient(newPatient);
+	}
+
+	public async createProviderForPatient(patientId: string, provider: ProviderAccount): Promise<ProviderAccount> {
+		const newAccount = await this.prisma.patientProvider.create({
+			data: {
+				patient: {
+					connect: {
+						person_id: patientId
+					}
+				},
+				provider: {
+					create: {
+						name: provider.name,
+						integration: provider.integration,
+						accountType: provider.accountType
+					}
+				}
+			},
+			include: {
+				provider: true
+			}
+		});
+
+		return newAccount.provider;
+	}
+
+	private prismaToPatient(patient: Prisma.PersonGetPayload<typeof personArgs>): Patient {
 		const outstandingBalance = patient.transactions.reduce((prev, curr) => prev + (curr.status === 'UNPAID' ? curr.amount : 0), 0);
 		const primaryContact = `${patient.primaryContact.first_name} ${patient.primaryContact.last_name}`;
 		const lawFirm = patient.providers.find(provider => provider.provider.accountType === 'firm');
 
-		const statusConversion: Record<string, PatientStatusType> = {
+		const statusConversion: Record<PatientStatus, PatientStatusType> = {
 			FILE_SETUP: 'File Setup',	
 			TREATMENT: 'Treatment',
 			DEMAND: 'Demand',
@@ -70,6 +161,7 @@ export class PatientServiceInstance implements PatientService {
 			id: patient.person_id,
 			incidentType: patient.incident_type ?? undefined,
 			phone: patient.phone_number,
+			policyLimit: patient.policy_limit ?? undefined,
 			notes: '',
 			outstandingBalance,
 			primaryContact,
@@ -77,66 +169,6 @@ export class PatientServiceInstance implements PatientService {
 			lastUpdateDate: new Date(),
 			status: patient.status ? statusConversion[patient.status] : undefined
 		}
-	}
-	public async getPatients(firmId: string): Promise<Patient[]> {
-		const firm = await this.prisma.providerAccount.findUnique({
-			where: {
-				id: firmId
-			},
-			include: {
-				patients: {
-					include: {
-						patient: {
-							include: {
-								primaryContact: true,
-								transactions: true,
-								providers: {
-									include: {
-										provider: true
-									}
-								}
-							} 
-						}
-					}
-				}
-			}
-		})
-
-		if (firm === null) {
-			return [];
-		}
-
-		return firm.patients.map(({patient}) => {
-			const outstandingBalance = patient.transactions.reduce((prev, curr) => prev + (curr.status === 'UNPAID' ? curr.amount : 0), 0);
-			const primaryContact = `${patient.primaryContact.first_name} ${patient.primaryContact.last_name}`;
-			const lawFirm = patient.providers.find(provider => provider.provider.accountType === 'firm');
-
-			const statusConversion: Record<string, PatientStatusType> = {
-				FILE_SETUP: 'File Setup',	
-				TREATMENT: 'Treatment',
-				DEMAND: 'Demand',
-				NEGOTIATION: 'Negotiation',
-				LITIGATION: 'Litigation',
-				SETTLEMENT: 'Settlement'
-			}
-
-			return {
-				dateOfBirth: patient.date_of_birth,
-				dateOfLoss: patient.date_of_loss ?? undefined,
-				email: patient.email,
-				firstName: patient.first_name,
-				lastName: patient.last_name,
-				id: patient.person_id,
-				incidentType: patient.incident_type ?? undefined,
-				phone: patient.phone_number,
-				notes: '',
-				outstandingBalance,
-				primaryContact,
-				lawFirm: lawFirm?.provider.name ?? undefined,
-				lastUpdateDate: new Date(),
-				status: patient.status ? statusConversion[patient.status] : undefined
-			}
-		})
 	}
 }
 
@@ -149,11 +181,6 @@ export class PatientServiceInstance implements PatientService {
  * 6. If we don't, then create an entry by looping through the list of clients and 
  * 		matching up on common data
  */
-// @injectable
-// export class PatientServiceInstance implements PatientService {
-// 	public async getPatient() {}
-// 	public async getPatients() {}
-// }
 @injectable()
 export class TestPatientService implements PatientService {
 	constructor(@inject(MedicalRegistry.$) private medicalRegistry: MedicalRegistry, 
@@ -199,7 +226,8 @@ export class TestPatientService implements PatientService {
 				outstandingBalance,
 				status: undefined,
 				dateOfLoss: undefined,
-				incidentType: undefined
+				incidentType: undefined,
+				policyLimit: undefined
 			};
 		}
 
@@ -217,7 +245,7 @@ export class TestPatientService implements PatientService {
 			...medicalPatient,
 			...attorneyClient,
 			notes: '',
-			outstandingBalance
+			outstandingBalance,
 		}
 	}
 

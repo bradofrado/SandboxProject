@@ -52,15 +52,14 @@ model Person {
 	providers			PatientProvider[]
 	transactions			Transaction[]
 
-	primaryContactEmail String
-	primaryContact PrimaryContact @relation(fields: [primaryContactEmail], references: [email])
+	primaryContact PrimaryContact @relation(fields: [person_id], references: [id])
 }
 
 model PrimaryContact {
-	patient_id			String
+	id			String @id @default(cuid())
 	first_name			String
 	last_name			String
-	email				String 				@unique
+	email				String
 	phone_number		String
 
 	person_contacts				Person[]

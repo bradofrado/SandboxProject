@@ -1,0 +1,21 @@
+<html>
+	<head></head>
+	<body>
+		<h1>Smart Advocate</h1>
+		<button onclick="requestDocument()">Request Document</button>
+		<button onclick="getRequests()">Get Requests</button>
+	</body>
+	<script>
+		function requestDocument() {
+			fetch('http://localhost:8080/request', {
+				method: 'POST'
+			})
+		}
+
+		function getRequests() {
+			fetch('http://localhost:8080/requests', {
+				method: 'GET'
+			}).then(response => response.json()).then(json => console.log(json))
+		}
+	</script>
+</html>

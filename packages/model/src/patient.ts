@@ -10,15 +10,17 @@ export interface PatientBase {
 	phone: string;
 }
 
+export type IncidentType = 'AUTO' | 'WORKERS_COMP';
 export interface Patient extends PatientBase {
   notes: string;
   lawFirm: string | undefined;
 	dateOfLoss: Date | undefined;
-	incidentType: string | undefined;
+	incidentType: IncidentType | undefined;
   primaryContact: string;
   lastUpdateDate: Date | undefined;
   outstandingBalance: number;
 	status: PatientStatusType | undefined;
+	policyLimit: number | undefined;
 }
 
 export type PatientFeedType = 'request' | 'send' | 'appointment' | 'comment' | 'status'
@@ -71,6 +73,7 @@ export const firmIntegrations = ['smartAdvocate'] as const;
 export type ProviderIntegration = typeof providerIntegrations[number];
 export type FirmIntegration = typeof firmIntegrations[number];
 export type IntegrationType = ProviderIntegration | FirmIntegration;
+export const firmIntegrationSchema = stringUnionSchema(firmIntegrations);
 export const providerIntegrationSchema = stringUnionSchema(providerIntegrations);
 export const integrationTypeSchema = stringUnionSchema((providerIntegrations as readonly IntegrationType[]).concat(firmIntegrations));
 
