@@ -24,9 +24,7 @@ export const FormTwoColumn: React.FunctionComponent<FormTwoColumnProps> = ({item
       </div>
 
       {showButtons ? <div className="mt-6 flex items-center justify-end gap-x-6">
-        <button className="text-sm font-semibold leading-6 text-gray-900" onClick={onCancel} type="button">
-          Cancel
-        </button>
+        <Button mode="none" onClick={onCancel}>Cancel</Button>
 				<Button mode='primary' type="submit">Save</Button>
       </div> : null}
     </form>

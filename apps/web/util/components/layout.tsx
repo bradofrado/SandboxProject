@@ -5,18 +5,15 @@ import {
 import type { ProfileItem, SidePanelItems } from "ui/src/components/core/side-panel";
 import { SideNavComponent } from "ui/src/components/feature/navigation/sidenav";
 import {ModalProvider} from 'ui/src/components/core/modal';
-import {ClerkProvider, UserButton, useUser} from '@clerk/nextjs';
-import { Header } from "ui/src/components/core/header";
+import {useUser} from '@clerk/nextjs';
 
 export const Layout: React.FunctionComponent<React.PropsWithChildren> = ({
   children,
 }) => {
   return (
-		<ClerkProvider>
 			<ModalProvider>
 				<SideNav className="top-20">{children}</SideNav>
 			</ModalProvider>
-		</ClerkProvider>
   );
 };
 
@@ -60,16 +57,16 @@ const SideNav: React.FunctionComponent<SideNavProps> = ({
   );
 };
 
-const ProfileButton: React.FunctionComponent = () => {
-	const {isLoaded, isSignedIn, user} = useUser();
-	if (!isLoaded || !isSignedIn) {
-		return null;
-	}
+// const ProfileButton: React.FunctionComponent = () => {
+// 	const {isLoaded, isSignedIn, user} = useUser();
+// 	if (!isLoaded || !isSignedIn) {
+// 		return null;
+// 	}
 
-	return (
-		<div className="flex flex-col items-center gap-2">
-			<Header level={3}>{user.fullName}</Header>
-			<UserButton afterSignOutUrl="/"/>
-		</div>
-	)
-}
+// 	return (
+// 		<div className="flex flex-col items-center gap-2">
+// 			<Header level={3}>{user.fullName}</Header>
+// 			<UserButton afterSignOutUrl="/"/>
+// 		</div>
+// 	)
+// }

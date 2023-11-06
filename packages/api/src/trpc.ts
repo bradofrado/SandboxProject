@@ -23,6 +23,8 @@ import { MedicalRegistry } from "./services/medical/medical-registry";
 import { AttorneyRegistry } from "./services/attorney/attorney-registry";
 import { ProviderAccountRepository } from "./repository/provider-account";
 import { PatientFeedRepository } from "./repository/patient-feed";
+import { EmailService } from "./services/email/email-service";
+
 
 /**
  * 1. CONTEXT
@@ -44,6 +46,7 @@ export interface TRPCContext {
 	patientService: PatientService,
 	providerAccountRepository: ProviderAccountRepository,
 	patientFeedRepository: PatientFeedRepository,
+	emailService: EmailService,
 	auth: AuthContext
 }
 
@@ -66,6 +69,7 @@ const createInnerTRPCContext = ({container, auth}: CreateContextOptions): TRPCCo
 		patientService: container.get<PatientService>(PatientService.$),
 		providerAccountRepository: container.get<ProviderAccountRepository>(ProviderAccountRepository.$),
 		patientFeedRepository: container.get<PatientFeedRepository>(PatientFeedRepository.$),
+		emailService: container.get<EmailService>(EmailService.$),
 		auth
   };
 };
@@ -84,7 +88,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions): Promise
 	const container = testContainer;
 	const {userId} = getAuth(req);
 	const user = userId ? await clerkClient.users.getUser(userId) : undefined;
-	const ourAuth = !userId || !user ? null : {userId, user: {id: user.id, name: `${user.firstName} ${user.lastName}`, image: user.imageUrl}}
+	const ourAuth = !userId || !user ? null : {userId, user: {id: user.id, name: `${user.firstName} ${user.lastName}`, image: user.imageUrl, email: user.emailAddresses[0].emailAddress}}
 
 	return createInnerTRPCContext({container, auth: ourAuth});
 };

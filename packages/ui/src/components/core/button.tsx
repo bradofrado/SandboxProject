@@ -1,10 +1,10 @@
 import React from "react";
 import type { PolymorphicComponentProps } from "../../types/polymorphics";
 
-export type ButtonType = "primary" | "secondary" | "other";
+export type ButtonType = "primary" | "secondary" | "other" | "none";
 type ButtonProps =
   | {
-      mode?: "primary" | "secondary";
+      mode?: Exclude<ButtonType, "other">;
       className?: string;
       backgroundColor?: string;
     }
@@ -30,11 +30,13 @@ export const Button = <T extends React.ElementType>({
     primary: "bg-primary text-white hover:bg-primary/80 fill-white",
     secondary: "hover:bg-gray-50",
     other: `text-secondary hover:opacity-80`,
+		none: `text-sm font-semibold leading-6 text-gray-900`
   };
   const style = mode === "other" ? { backgroundColor } : undefined;
-  const _class = `${className || ""} ${
+  const _class = mode !== 'none' ? `${className || ""} ${
     buttonClasses[mode]
-  } inline-flex justify-center rounded-md px-2.5 py-1.5 text-sm font-medium border focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75`;
+  } inline-flex justify-center rounded-md px-2.5 py-1.5 text-sm font-medium border focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75`
+	: `${buttonClasses[mode]} ${className}`;
   return (
     <Component className={_class} style={style} type="button" {...rest}>
       {children}

@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --concurrency=11",
     "lint": "turbo run lint",
     "format": "turbo run format",
 		"compose": "docker compose -f devops/docker-compose.yml -p my-app up --build -d",

@@ -138,6 +138,12 @@ importers:
       '@trpc/server':
         specifier: ^10.38.3
         version: 10.38.3
+      '@types/imap':
+        specifier: ^0.8.39
+        version: 0.8.39
+      '@types/mailparser':
+        specifier: ^3.4.3
+        version: 3.4.3
       '@types/nodemailer':
         specifier: ^6.4.13
         version: 6.4.13
@@ -156,9 +162,15 @@ importers:
       db:
         specifier: workspace:^
         version: link:../db
+      imap:
+        specifier: ^0.8.19
+        version: 0.8.19
       inversify:
         specifier: ^6.0.1
         version: 6.0.1
+      mailparser:
+        specifier: ^3.6.5
+        version: 3.6.5
       model:
         specifier: workspace:^
         version: link:../model

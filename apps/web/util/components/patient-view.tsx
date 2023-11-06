@@ -7,6 +7,7 @@ import type { PatientGridFilter} from "./patient/patients-grid";
 import { PatientsGrid } from "./patient/patients-grid";
 import { Button } from "ui/src/components/core/button";
 import { api } from "../api";
+import { useState } from "react";
 
 export interface PatientViewProps {
   id?: string;
@@ -22,6 +23,7 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
 }) => {
   const router = useRouter();
 	const {mutate} = api.patients.testGetRequests.useMutation();
+	const [messages, setMessages] = useState<string[] | undefined>();
   const onPatientClick = (_id: string | undefined): void => {
     void router.push(
       _id !== undefined ? `/patients/${_id}` : "/patients",
@@ -30,13 +32,18 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
     );
   };
 	const onRequest = () => {
-		mutate();
+		mutate(undefined, {
+			onSuccess(data) {
+				setMessages(data.map(message => message.sentEmail.subject));
+			}
+		});
 	}
   return (
     <div className="flex flex-col gap-2 pl-4 pr-2 pt-6">
       <Header level={2}>Patients</Header>
-			<Button className="w-fit" onClick={onRequest}>Request</Button>
-      <PatientsGrid
+			<Button className="w-fit" onClick={onRequest}>Scrape</Button>
+      {messages ? messages.map(message => <p key={message}>{message}</p>) : null}
+			<PatientsGrid
         currPatient={id}
         filter={filter}
         onPatientClick={onPatientClick}

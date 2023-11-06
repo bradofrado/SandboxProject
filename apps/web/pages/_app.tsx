@@ -4,6 +4,7 @@ import "ui/styles.css";
 import React, { useState } from "react";
 import { api } from "../util/api";
 import type { PatientGridFilter } from "../util/components/patient/patients-grid";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
 	const [filter, setFilter] = useState<PatientGridFilter>({
@@ -21,7 +22,9 @@ const MyApp: AppType = ({ Component, pageProps }) => {
 				<link href="https://rsms.me/inter/inter.css" rel="stylesheet"/>
       </Head>
       <main className="flex min-h-screen flex-col">
-				<Component {...pageProps} filter={filter} setFilter={setFilter}/>
+				<ClerkProvider>
+					<Component {...pageProps} filter={filter} setFilter={setFilter}/>
+				</ClerkProvider>
       </main>
     </>
   );

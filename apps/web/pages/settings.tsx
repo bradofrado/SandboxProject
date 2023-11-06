@@ -7,10 +7,14 @@ import type { ProviderAccount } from "model/src/patient";
 import { Layout } from "../util/components/layout";
 import { AccountTypeForm } from "../util/components/setup/setup-form";
 import { useGetProviderAccount, useUpdateProviderAccount } from "../util/services/provider-account";
+import { Button } from "ui/src/components/core/button";
+import { useClerk } from "@clerk/nextjs";
 
 const SettingsPage: NextPage = () => {
 	const query = useGetProviderAccount();
 	const {mutate, ...updateUtils} = useUpdateProviderAccount();
+	const {signOut} = useClerk();
+
 	if (query.isLoading || query.isError || query.data === null || updateUtils.isLoading || updateUtils.isError) {
 		return <>Loading</>;
 	}
@@ -20,7 +24,10 @@ const SettingsPage: NextPage = () => {
 	}
 
 	return (
-		<SettingsForm initialAccount={query.data} key={JSON.stringify(query.data)} onSave={onSave} />
+		<Layout>
+			<Button className="px-4 pt-8" mode="none" onClick={() => signOut()}>Sign Out</Button>
+			<SettingsForm initialAccount={query.data} key={JSON.stringify(query.data)} onSave={onSave} />
+		</Layout>
 	)
 }
 
@@ -72,11 +79,9 @@ const SettingsForm: React.FunctionComponent<SettingsFormProps> = ({onSave: onSav
 		}
 	]
 	return (
-		<Layout>
-			<div className="px-4 sm:px-6 py-16 lg:px-8">
-				<FormTwoColumn items={items} onCancel={onCancel} onSubmit={onSave} showButtons={isDirty}/>
-			</div>
-		</Layout>
+		<div className="px-4 sm:px-6 py-16 lg:px-8">
+			<FormTwoColumn items={items} onCancel={onCancel} onSubmit={onSave} showButtons={isDirty}/>
+		</div>
 	)
 }
 

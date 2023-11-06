@@ -5,6 +5,8 @@ import { createTransport} from 'nodemailer';
 import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 import type { File } from '../../storage/storage';
 import 'reflect-metadata';
+import type { ScrapedEmail} from './email-scraper';
+import { getEmails } from './email-scraper';
 
 export interface MailOptions {
 	to: string,
@@ -15,6 +17,7 @@ export interface MailOptions {
 
 export interface EmailService {
 	sendMail: (options: MailOptions) => Promise<void>
+	getMessages: (userEmail: string, accessToken: string) => Promise<ScrapedEmail[]>
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace -- namespace is ok here
@@ -44,5 +47,15 @@ export class NodeMailerEmailService implements EmailService {
 			html: body, 
 			attachments: attachments?.map(file => ({content: file.body, filename: file.name, contentType: file.type}))
 		})
+	}
+
+	public async getMessages(userEmail: string, accessToken: string): Promise<ScrapedEmail[]> {
+		try {
+			const emails = await getEmails(userEmail, accessToken);
+			return emails;
+		} catch(err) {
+			console.log(err);
+			return []
+		}
 	}
 }
