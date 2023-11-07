@@ -13,6 +13,8 @@ import { PatientFeedRepository, TestPatientFeedRepository } from "../repository/
 import { DocumentRepository, PrismaDocumentRepository } from "../repository/document-repository";
 import { EmailService, NodeMailerEmailService } from "../services/email/email-service";
 import 'reflect-metadata';
+import { DocumentRequestService, TestDocumentRequestService } from "../services/documents/document-request-service";
+import { PatientTrackingService, TestPatientTrackingService } from "../services/patient/patient-tracking-service";
 
 
 const testContainer = new Container();
@@ -23,10 +25,12 @@ testContainer.bind<MedicalService>(MedicalService.$).to(TestMedicalService);
 testContainer.bind<AttorneyService>(AttorneyService.$).to(SmartAdvocateService);
 testContainer.bind<DocumentService>(DocumentService.$).to(TestDocumentService);
 testContainer.bind<PatientService>(PatientService.$).to(PatientServiceInstance);
+testContainer.bind<PatientTrackingService>(PatientTrackingService.$).to(TestPatientTrackingService);
 testContainer.bind<PatientLinkingRepository>(PatientLinkingRepository.$).to(PrismaPatientLinkingRepository);
 testContainer.bind<ProviderAccountRepository>(ProviderAccountRepository.$).to(PrismaProviderAccount);
 testContainer.bind<PatientFeedRepository>(PatientFeedRepository.$).to(TestPatientFeedRepository);
 testContainer.bind<DocumentRepository>(DocumentRepository.$).to(PrismaDocumentRepository);
 testContainer.bind<EmailService>(EmailService.$).to(NodeMailerEmailService);
+testContainer.bind<DocumentRequestService>(DocumentRequestService.$).to(TestDocumentRequestService);
 
 export {testContainer};

@@ -57,6 +57,7 @@ export class TestAttorneyService implements AttorneyService {
 
 	public getRequests(_: string): Promise<DocumentRequest[]> {
 		//await fetch()
+		return Promise.resolve([]);
 	}
 }
 

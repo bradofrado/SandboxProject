@@ -1,6 +1,7 @@
 import type {Stream} from 'node:stream';
 import Imap from 'imap';
 import {simpleParser} from 'mailparser';
+import { Contact } from 'model/src/patient';
 
 const buildXOAuth2Token = (user: string, accessToken: string): string => Buffer
     .from([`user=${user}`, `auth=Bearer ${accessToken}`, '', '']
@@ -10,11 +11,6 @@ const buildXOAuth2Token = (user: string, accessToken: string): string => Buffer
 export interface Attachment {
 	content: Buffer,
 	filename: string
-}
-
-export interface Contact {
-	name: string;
-	email: string;
 }
 
 export interface ScrapedEmail {
@@ -33,12 +29,15 @@ export interface ScrapedEmail {
 
 export const getEmails = (userId: string, accessToken: string): Promise<ScrapedEmail[]> => {
 	const imapConfig = {
-		xoauth2: buildXOAuth2Token(userId, accessToken),
-		host: process.env.IMAP_HOST || '',
+		//xoauth2: buildXOAuth2Token(userId, accessToken),
+		user: 'bradofrado@gmail.com',
+		password: 'uazkrgfcxhdfmlro',
+		host: 'imap.gmail.com',//process.env.IMAP_HOST || '',
 		port: 993,
 		tls: true,
 		tlsOptions: {
 			rejectUnauthorized: false,
+			//servername: 'outlook.office365.com'
 		}
 	};
 
@@ -67,10 +66,12 @@ export const getEmails = (userId: string, accessToken: string): Promise<ScrapedE
 										attachments: attachments.map(attachment => ({content: attachment.content, filename: attachment.filename || ''})), 
 										date,
 										from: {
+											id: '',
 											name: from.value[0].name,
 											email: from.value[0].address || ''
 										},
 										to: {
+											id: '',
 											name: to.value[0].name,
 											email: to.value[0].address || ''
 										},
@@ -105,7 +106,7 @@ export const getEmails = (userId: string, accessToken: string): Promise<ScrapedE
 		imap.once('ready', async () => {
 			//imap.getBoxes((err, mailboxes) => {
 			// 	console.log(mailboxes);
-				emails = emails.concat(await openBox('Sent', imap))
+				emails = emails.concat(await openBox('[Gmail]/Sent Mail', imap))
 				emails = emails.concat(await openBox('INBOX', imap));
 
 				//Add the necessary reply email objects

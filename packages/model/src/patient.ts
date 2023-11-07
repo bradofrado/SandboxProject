@@ -15,12 +15,44 @@ export interface Patient extends PatientBase {
   notes: string;
   lawFirm: string | undefined;
 	dateOfLoss: Date | undefined;
+	requests?: DocumentRequest[];
 	incidentType: IncidentType | undefined;
   primaryContact: string;
   lastUpdateDate: Date | undefined;
   outstandingBalance: number;
 	status: PatientStatusType | undefined;
 	policyLimit: number | undefined;
+}
+
+export interface PatientRequest {
+	id: string;
+	firstName: string;
+	lastName: string;
+	dateOfBirth: Date;
+	dateOfLoss: Date;
+	requests: DocumentRequest[];
+}
+
+export interface DocumentRequest {
+	id: string,
+	sentEmail: Email,
+	patient: PatientRequest,
+	replies: Email[]
+}
+
+export interface Contact {
+	id: string;
+	name: string;
+	email: string;
+}
+export interface Email {
+	id: string,
+	date: Date,
+	from: Contact,
+	to: Contact,
+	attachments: string[],
+	text: string,
+	subject: string,
 }
 
 export type PatientFeedType = 'request' | 'send' | 'appointment' | 'comment' | 'status'

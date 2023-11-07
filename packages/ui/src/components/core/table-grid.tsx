@@ -4,11 +4,10 @@ import { ChevronSwitch } from "./chevron-switch";
 import { Input } from "./input";
 import type { FilterChildren, FilterItem } from "./filter-button";
 import { FilterButton } from "./filter-button";
-import { Button } from "./button";
 
 export type TableGridItemValue =
   | string
-  | { compareKey: string | number; label: React.ReactNode, background?: string };
+  | { compareKey: string | number; label: React.ReactNode };
 export type TableGridItem<T, S extends keyof T = keyof T> = {[Key in S]: TableGridItemValue};
 export interface TableGridColumn<S> {
   id: S;
@@ -17,18 +16,20 @@ export interface TableGridColumn<S> {
 export type TableGridFooter<S extends string | number | symbol> = Record<S, React.ReactNode>
 export interface TableGridItemParams<T, S extends keyof T> {
 	gridItem: TableGridItem<T, S>, 
-	background?: string
-	backgroundHover?: string
+	background?: string,
+	backgroundHover?: string,
+	extraContent?: React.ReactNode
 }
+export type FilterFunction<T> = {[P in keyof T]?: (key: T[P]) => boolean;}
 export interface TableGridProps<T, S extends keyof T> {
   data: T[];
 	columns: TableGridColumn<S>[];
   itemsPerPage?: number;
   footer?: TableGridFooter<S> | ((data: T[]) => TableGridFooter<S>);
-  onItemClick?: (item: T) => void;
+  onItemClick?: (item: T, index: number) => void;
   className?: string;
 	search?: boolean;
-	children: (item: T) => TableGridItemParams<T, S>
+	children: (item: T, index: number) => TableGridItemParams<T, S>
 }
 export const TableGrid = <T, S extends keyof T>({
   data,
@@ -109,8 +110,8 @@ export const TableGrid = <T, S extends keyof T>({
     setSortOrder(newSortOrder);
   };
 
-  const onRowClick = (item: T): void => {
-    onItemClick && onItemClick(item);
+  const onRowClick = (item: T, index: number): void => {
+    onItemClick && onItemClick(item, index);
   };
 
   const sorted = paginateItems(sortItems());
@@ -136,21 +137,24 @@ export const TableGrid = <T, S extends keyof T>({
           </thead>
           <tbody>
             {sorted.map((item, i) => (
-              <tr
-                className={`${item.background ?? 'bg-gray-50'} border-b dark:bg-gray-800 dark:border-gray-700 ${
-                  onItemClick ? `${item.backgroundHover ?? 'hover:bg-gray-100'} cursor-pointer` : ""
-                }`}
-                key={i}
-                onClick={() => {
-                  onRowClick(data[i]);
-                }}
-              >
-                {columns.map(({ id }) => (
-                  <td className="px-6 py-4" key={id.toString()}>
-                    {getLabel(item.gridItem[id])}
-                  </td>
-                ))}
-              </tr>
+							<>
+								<tr
+									className={`${item.background ?? 'bg-gray-50'} border-b dark:bg-gray-800 dark:border-gray-700 ${
+										onItemClick ? `${item.backgroundHover ?? 'hover:bg-gray-100'} cursor-pointer` : ""
+									}`}
+									key={i}
+									onClick={() => {
+										onRowClick(data[i], i);
+									}}
+								>
+									{columns.map(({ id }) => (
+										<td className="px-6 py-4" key={id.toString()}>
+											{getLabel(item.gridItem[id])}
+										</td>
+									))}
+								</tr>
+								{item.extraContent !== undefined ? <tr><td colSpan={columns.length}>{item.extraContent}</td></tr> : null}
+							</>	
             ))}
             {footer ? (
               <tr className="bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700">
@@ -203,7 +207,7 @@ export type FilterTableGridProps<TFilter, TTable extends Record<string, unknown>
 	items: FilterItem<TFilter>[],
 	onChange: (items: FilterItem<TFilter>[]) => void,
 	getFilterContent: FilterChildren<TFilter>,
-	filterFunctions: {[P in keyof TTable]?: (key: TTable[P]) => boolean;}
+	filterFunctions: FilterFunction<TTable>,
 	filterKeys: (keyof TTable)[],
 } & TableGridProps<TTable, TTableKey>
 

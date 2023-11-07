@@ -24,6 +24,8 @@ import { AttorneyRegistry } from "./services/attorney/attorney-registry";
 import { ProviderAccountRepository } from "./repository/provider-account";
 import { PatientFeedRepository } from "./repository/patient-feed";
 import { EmailService } from "./services/email/email-service";
+import { DocumentRequestService } from "./services/documents/document-request-service";
+import { PatientTrackingService } from "./services/patient/patient-tracking-service";
 
 
 /**
@@ -44,9 +46,11 @@ export interface TRPCContext {
 	attorneyRegistry: AttorneyRegistry,
 	documentService: DocumentService,
 	patientService: PatientService,
+	patientTrackingService: PatientTrackingService,
 	providerAccountRepository: ProviderAccountRepository,
 	patientFeedRepository: PatientFeedRepository,
 	emailService: EmailService,
+	documentRequestService: DocumentRequestService,
 	auth: AuthContext
 }
 
@@ -67,9 +71,11 @@ const createInnerTRPCContext = ({container, auth}: CreateContextOptions): TRPCCo
 		attorneyRegistry: container.get<AttorneyRegistry>(AttorneyRegistry.$),
 		documentService: container.get<DocumentService>(DocumentService.$),
 		patientService: container.get<PatientService>(PatientService.$),
+		patientTrackingService: container.get<PatientTrackingService>(PatientTrackingService.$),
 		providerAccountRepository: container.get<ProviderAccountRepository>(ProviderAccountRepository.$),
 		patientFeedRepository: container.get<PatientFeedRepository>(PatientFeedRepository.$),
 		emailService: container.get<EmailService>(EmailService.$),
+		documentRequestService: container.get<DocumentRequestService>(DocumentRequestService.$),
 		auth
   };
 };

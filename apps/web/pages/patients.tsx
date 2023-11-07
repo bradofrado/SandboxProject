@@ -4,11 +4,11 @@ import { Layout } from "../util/components/layout";
 import { PatientView } from "../util/components/patient-view";
 import {
   defaultGetServerProps,
-  requireAuth,
+  requireRoute,
 } from "../util/protected-routes-hoc";
 import type { PatientGridFilter } from "../util/components/patient/patients-grid";
 
-export const getServerSideProps = requireAuth(defaultGetServerProps);
+export const getServerSideProps = requireRoute({redirect: '/tracking', check: () => true})(defaultGetServerProps);
 
 const Patients: NextPage<{filter: PatientGridFilter, setFilter: (filter: PatientGridFilter) => void}> = ({filter, setFilter}) => {
   const query = useGetPatients();

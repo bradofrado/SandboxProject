@@ -1,5 +1,5 @@
 import { providerIntegrationSchema} from "model/src/patient";
-import type { PatientStatusType , Patient, PatientBase, ProviderAccount } from "model/src/patient";
+import type { PatientStatusType , Patient, PatientBase, ProviderAccount, DocumentRequest, PatientRequest } from "model/src/patient";
 import type { AttorneyClient } from "model/src/attorney";
 import type { MedicalPatient } from "model/src/medical";
 import type { interfaces } from "inversify";
@@ -182,10 +182,11 @@ export class PatientServiceInstance implements PatientService {
  * 		matching up on common data
  */
 @injectable()
-export class TestPatientService implements PatientService {
+export class IntegrationPatientService implements PatientService {
 	constructor(@inject(MedicalRegistry.$) private medicalRegistry: MedicalRegistry, 
 		@inject(AttorneyRegistry.$) private attorneyRegistry: AttorneyRegistry, @inject(PatientLinkingRepository.$) private patientLinkingRepository: PatientLinkingRepository,
 		@inject(ProviderAccountRepository.$) private providerAccountRepository: ProviderAccountRepository) {}
+	
 	public async getPatients(firmId: string): Promise<Patient[]> {
 		const medicalService = await this.getMedicalService(firmId);
 		const patients = await medicalService.getPatients(firmId);
@@ -198,6 +199,13 @@ export class TestPatientService implements PatientService {
 		const patient = await medicalService.getPatient(firmId, patientId);
 
 		return patient ? this.getPatientFromMedical(patient, firmId, medicalService) : undefined;
+	}
+
+	public createPatient(accountId: string, patient: Patient, primaryContact: { email: string; phone: string; firstName: string; lastName: string; }): Promise<Patient> {
+		return Promise.resolve(patient);
+	}
+	public createProviderForPatient(patientId: string, provider: ProviderAccount): Promise<ProviderAccount> {
+		return Promise.resolve(provider);
 	}
 
 	private async getMedicalService(medicalId: string): Promise<MedicalService> {
