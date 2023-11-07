@@ -13,7 +13,7 @@ import { PatientFeedRepository, TestPatientFeedRepository } from "../repository/
 import { DocumentRepository, PrismaDocumentRepository } from "../repository/document-repository";
 import { EmailService, NodeMailerEmailService } from "../services/email/email-service";
 import 'reflect-metadata';
-import { DocumentRequestService, TestDocumentRequestService } from "../services/documents/document-request-service";
+import { DocumentRequestService, ScraperDocumentRequestService, TestDocumentRequestService } from "../services/documents/document-request-service";
 import { PatientTrackingService, TestPatientTrackingService } from "../services/patient/patient-tracking-service";
 
 
@@ -31,6 +31,6 @@ testContainer.bind<ProviderAccountRepository>(ProviderAccountRepository.$).to(Pr
 testContainer.bind<PatientFeedRepository>(PatientFeedRepository.$).to(TestPatientFeedRepository);
 testContainer.bind<DocumentRepository>(DocumentRepository.$).to(PrismaDocumentRepository);
 testContainer.bind<EmailService>(EmailService.$).to(NodeMailerEmailService);
-testContainer.bind<DocumentRequestService>(DocumentRequestService.$).to(TestDocumentRequestService);
+testContainer.bind<DocumentRequestService>(DocumentRequestService.$).to(ScraperDocumentRequestService);
 
 export {testContainer};

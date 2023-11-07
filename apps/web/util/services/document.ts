@@ -1,3 +1,4 @@
+import { AttachmentJSON } from "api/src/services/email/email-scraper";
 import { api } from "../api";
 
 export const useUploadDocument = () => {
@@ -30,6 +31,22 @@ export const useDownloadDocument = () => {
 	}
 }
 
+export const useDownloadDocumentRequest = () => {
+	return {
+		download: async (documentId: string): Promise<void> => {
+			const result = await fetch(`/api/download-request/${documentId}`);
+			if (result.ok) {
+				const attachments = await result.json() as AttachmentJSON[];
+				for (const attachment of attachments) {
+					downloadBlob(new Blob([Buffer.from(attachment.content.data)]), attachment.filename);
+				}
+			} else {
+				throw new Error('There was an error in the response');
+			}
+		}
+	}	
+}
+
 export const useDeleteDocument = () => {
 	const query = api.documents.deleteDocument.useMutation();
 	const client = api.useContext();
@@ -46,22 +63,26 @@ async function downloadFile(path: string, filename: string): Promise<void> {
 	const result = await fetch(path, {method: 'GET'});
 	const blob = await result.blob();
 	
+	downloadBlob(blob, filename);
+}
+
+function downloadBlob(blob: Blob, filename: string): void {
 	// Create an object URL for the blob object
-  const url = URL.createObjectURL(blob);
-	
-  const a = document.createElement('a');
+	const url = URL.createObjectURL(blob);
+		
+	const a = document.createElement('a');
 
-  a.href = url;
-  a.download = filename || 'download';
+	a.href = url;
+	a.download = filename || 'download';
 
-  const clickHandler = (): void => {
-    setTimeout(() => {
-      URL.revokeObjectURL(url);
-      removeEventListener('click', clickHandler);
-    }, 150);
-  };
+	const clickHandler = (): void => {
+		setTimeout(() => {
+			URL.revokeObjectURL(url);
+			removeEventListener('click', clickHandler);
+		}, 150);
+	};
 
-  a.addEventListener('click', clickHandler, false);
+	a.addEventListener('click', clickHandler, false);
 
-  a.click();
+	a.click();
 }

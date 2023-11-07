@@ -1,13 +1,17 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { clerkClient } from "@clerk/nextjs";
 import type { interfaces } from "inversify";
 import { inject, injectable } from "inversify";
 import type { DocumentRequest, Email, PatientRequest } from "model/src/patient";
-import type { ScrapedEmail } from "../email/email-scraper";
+import type { Attachment, ScrapedEmail } from "../email/email-scraper";
 import { EmailService } from "../email/email-service";
 import { _documentRequests } from "../patient/patient-tracking-service";
+import fetch from 'node-fetch';
 
 export interface DocumentRequestService {
 	getRequests: (userId: string, userEmail: string) => Promise<DocumentRequest[]>
+	downloadDocumentRequest: (documentRequestId: string, userId: string, userEmail: string) => Promise<Attachment[]>
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace -- namespace is ok here
@@ -19,6 +23,15 @@ export namespace DocumentRequestService {
 export class TestDocumentRequestService implements DocumentRequestService {
 	public getRequests(): Promise<DocumentRequest[]> {
 		return Promise.resolve<DocumentRequest[]>(_documentRequests);
+	}
+
+	public async downloadDocumentRequest(): Promise<Attachment[]> {
+		const response = await fetch('http://localhost:3000/pdf-file.pdf', {method: 'GET'});
+
+		return [{
+			content: Buffer.from(await response.arrayBuffer()),
+			filename: 'pdf-file.pdf'
+		}]
 	}
 }
 
@@ -81,7 +94,7 @@ export class ScraperDocumentRequestService implements DocumentRequestService {
 						date: currEmail.date,
 						from: currEmail.from,
 						to: currEmail.to,
-						attachments: [],//currEmail.attachments,
+						attachments: currEmail.attachments.map(att => att.filename),
 						text: currEmail.text,
 						subject: currEmail.subject
 					});
@@ -97,13 +110,24 @@ export class ScraperDocumentRequestService implements DocumentRequestService {
 						date: email.date,
 						from: email.from,
 						to: email.to,
-						attachments: [],//email.attachments,
+						attachments: email.attachments.map(att => att.filename),
 						text: email.text,
 						subject: email.subject
 					}
 				});
 			}
 		}
+		console.log(documentRequests);
 		return documentRequests;
+	}
+
+	public async downloadDocumentRequest(documentRequestId: string, userId: string, userEmail: string): Promise<Attachment[]> {
+		const accessToken = await clerkClient.users.getUserOauthAccessToken(userId, 'oauth_microsoft');
+		const email = await this.emailService.getMessage(documentRequestId, userEmail, accessToken[0].token);
+		if (email === undefined) {
+			throw new Error(`Cannot find email with id ${documentRequestId}`);
+		}
+
+		return email.attachments;
 	}
 }
