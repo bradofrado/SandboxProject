@@ -2,9 +2,9 @@ import { type AppType } from "next/app";
 import Head from "next/head";
 import "ui/styles.css";
 import React, { useState } from "react";
+import { ClerkProvider } from "@clerk/nextjs";
 import { api } from "../util/api";
 import type { PatientGridFilter } from "../util/components/patient/patients-grid";
-import { ClerkProvider } from "@clerk/nextjs";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
 	const [filter, setFilter] = useState<PatientGridFilter>({

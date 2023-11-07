@@ -1,6 +1,6 @@
 import type { RecordType } from "model/src/core/utils";
 import type { DocumentRequest, PatientRequest } from "model/src/patient";
-import { displayDate } from "model/src/utils";
+import { compare, displayDate, displayTime } from "model/src/utils";
 import { useState } from "react";
 import { Button } from "ui/src/components/core/button";
 import type { FilterChildren, FilterItem } from "ui/src/components/core/filter-button"
@@ -13,6 +13,7 @@ interface RequestFilter {
 };
 
 interface RequestItem {
+	id: string;
 	provider: string;
 	date: Date;
 	opened: boolean;
@@ -26,7 +27,7 @@ export interface PatientRequestGridProps {
 }
 export const PatientRequestGrid: React.FunctionComponent<PatientRequestGridProps> = ({patients, onDownloadAttachments}) => {
 	const [filter, setFilter] = useState<RequestFilter>({provider: undefined});
-	const [selectedPatient, setSelectedPatient] = useState<number | undefined>();
+	const [selectedPatient, setSelectedPatient] = useState<string | undefined>();
 	const filterItems: FilterItem<RequestFilter>[] = [
 		// {
 		// 	id: 'provider',
@@ -90,30 +91,48 @@ export const PatientRequestGrid: React.FunctionComponent<PatientRequestGridProps
 	];
 
 	const filterKeys: (keyof PatientRequest)[] = [
-		'firstName', 'lastName'
+		'firstName', 'lastName', 'dateOfBirth', 'dateOfLoss'
 	];
 	const data: RecordType<PatientRequest>[] = patients;
 
-	const onItemClick = (_: PatientRequest, index: number): void => {
-		if (selectedPatient !== index) {
-			setSelectedPatient(index);
+	const onItemClick = (item: PatientRequest): void => {
+		if (selectedPatient !== item.id) {
+			setSelectedPatient(item.id);
 		} else {
 			setSelectedPatient(undefined);
 		}
 	}
 
+	const sortOptions = [
+		{
+			id: '0', name: 'Most Recent Request', 
+			sortFunc(items: PatientRequest[]): PatientRequest[] {
+				return items.slice().sort((a, b) => {
+					const d1 = a.requests.slice().sort((ra, rb) => compare(ra.sentEmail.date, rb.sentEmail.date));
+					const d2 = b.requests.slice().sort((ra, rb) => compare(ra.sentEmail.date, rb.sentEmail.date));
+					if (d1.length === 0 || d2.length === 0) {
+						return compare(d2.length, d1.length);
+					}
+
+					return compare(d1[0].sentEmail.date, d2[0].sentEmail.date);
+				});
+			}
+		}
+	]
+
 	return (
-		<FilterTableGrid columns={columns} data={data} filterFunctions={filterFunctions} filterKeys={filterKeys} getFilterContent={getFilterContent} items={filterItems} onChange={onChange} onItemClick={onItemClick} search>
-			{(item, i) => ({
+		<FilterTableGrid columns={columns} data={data} filterFunctions={filterFunctions} filterKeys={filterKeys} getFilterContent={getFilterContent} items={filterItems} onChange={onChange} onItemClick={onItemClick} search sortOptions={sortOptions}>
+			{(item) => ({
+				id: item.id,
 				gridItem: {
-					id: '---',
+					id: item.id,
 					firstName: item.firstName,
 					lastName: item.lastName,
 					dateOfBirth: displayDate(item.dateOfBirth),
 					dateOfLoss: displayDate(item.dateOfLoss),
 					requests: '---'
 				},
-				extraContent: selectedPatient === i ? <RequestGrid onDownloadAttachments={onDownloadAttachments} requestItems={patients[i].requests}/> : undefined
+				extraContent: selectedPatient === item.id ? <RequestGrid onDownloadAttachments={onDownloadAttachments} requestItems={patients.find(patient => patient.id === item.id)?.requests || []}/> : undefined
 			})}
 		</FilterTableGrid>
 	)
@@ -157,14 +176,16 @@ export const RequestGrid: React.FunctionComponent<RequestGridProps> = ({requestI
 			label: 'Received?'
 		}
 	];
-	const items: RequestItem[] = requestItems.map(request => ({provider: request.sentEmail.to.name, date: request.sentEmail.date, opened: false, received: request.replies.some(reply => reply.attachments.length > 0), response: request.replies.length > 0}))
+	const items: RequestItem[] = requestItems.map(request => ({id: request.id, provider: request.sentEmail.to.name, date: request.sentEmail.date, opened: false, received: request.replies.some(reply => reply.attachments.length > 0), response: request.replies.length > 0}))
 
 	return (
 		<TableGrid columns={columns} data={items}>
 			{(item, i) => ({
+				id: item.id,
 				gridItem: {
+					id: '----',
 					provider: item.provider,
-					date: displayDate(item.date),
+					date: `${displayDate(item.date)} - ${displayTime(item.date)}`,
 					opened: displayBoolean(item.opened),
 					response: displayBoolean(item.response),
 					received: {

@@ -32,6 +32,14 @@ export const AddIcon: IconComponent = ({ className, ...props }) => {
   );
 };
 
+export const BarsArrowDownIcon: IconComponent = (props) => {
+	return (
+		<svg {...props} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+			<path d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25" strokeLinecap="round" strokeLinejoin="round" />
+		</svg>
+	)
+}
+
 export const EditIcon: IconComponent = ({ className, ...props }) => {
   return (
     <svg

@@ -11,13 +11,13 @@ const TrackingPage: NextPage = () => {
 
   const items = query.data;
 
-	const onDownloadAttachments = (item: DocumentRequest): void => {
+	const onDownloadAttachments = (_: DocumentRequest): void => {
 
 	}
 	
 	return (
 		<div className="flex flex-col gap-2 pl-4 pr-2 pt-6">
-      <Header level={2} className="text-center">Medical Records and Bills Tracker</Header>
+      <Header className="text-center" level={2}>Medical Records and Bills Tracker</Header>
 			<PatientRequestGrid onDownloadAttachments={onDownloadAttachments} patients={items}/>
 		</div>
 	)

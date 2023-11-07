@@ -206,6 +206,7 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
         >
 					{(patient) => {
 						return {
+							id: patient.id,
 							gridItem: {
 								id: patient.id,
 								name: {
@@ -246,6 +247,7 @@ export const PatientsGrid: React.FunctionComponent<PatientsGridProps> = ({
         outstandingBalance,
         status,
       }) => ({
+				id,
         gridItem: {
 					id,
 					lastName,

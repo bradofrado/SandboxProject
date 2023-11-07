@@ -103,6 +103,35 @@ export const _documentRequests: DocumentRequest[] = [
 		},
 		replies: []
 	},
+	{
+		id: '2',
+		patient: {
+			id: '0',
+			firstName: 'Maria',
+			lastName: 'Abarca',
+			dateOfBirth: new Date('12/09/1999'),
+			dateOfLoss: new Date('1/3/2015'),
+			requests: []
+		},
+		sentEmail: {
+			to: {
+				id: '2',
+				name: 'Intermountain',
+				email: 'intermountain@rehab.com'
+			},
+			from: {
+				id: '1',
+				name: 'Heidi',
+				email: 'heidi@craigswapp.com'
+			},
+			text: 'I am requesting stuff',
+			subject: 'Medical Requests',
+			date: new Date('11/5/2023'),
+			id: '0',
+			attachments: []
+		},
+		replies: []
+	},
 ]
 
 const patients: PatientRequest[] = [

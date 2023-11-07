@@ -4,6 +4,8 @@ import { ChevronSwitch } from "./chevron-switch";
 import { Input } from "./input";
 import type { FilterChildren, FilterItem } from "./filter-button";
 import { FilterButton } from "./filter-button";
+import { Dropdown, DropdownItem, ListBox } from "./dropdown";
+import { BarsArrowDownIcon } from "./icons";
 
 export type TableGridItemValue =
   | string
@@ -15,6 +17,7 @@ export interface TableGridColumn<S> {
 }
 export type TableGridFooter<S extends string | number | symbol> = Record<S, React.ReactNode>
 export interface TableGridItemParams<T, S extends keyof T> {
+	id: string,
 	gridItem: TableGridItem<T, S>, 
 	background?: string,
 	backgroundHover?: string,
@@ -111,6 +114,7 @@ export const TableGrid = <T, S extends keyof T>({
   };
 
   const onRowClick = (item: T, index: number): void => {
+		console.log(item);
     onItemClick && onItemClick(item, index);
   };
 
@@ -136,15 +140,16 @@ export const TableGrid = <T, S extends keyof T>({
             </tr>
           </thead>
           <tbody>
-            {sorted.map((item, i) => (
+            {sorted.map((item) => (
 							<>
 								<tr
 									className={`${item.background ?? 'bg-gray-50'} border-b dark:bg-gray-800 dark:border-gray-700 ${
 										onItemClick ? `${item.backgroundHover ?? 'hover:bg-gray-100'} cursor-pointer` : ""
 									}`}
-									key={i}
+									key={item.id}
 									onClick={() => {
-										onRowClick(data[i], i);
+										const index = items.indexOf(item);
+										onRowClick(data[index], index);
 									}}
 								>
 									{columns.map(({ id }) => (
@@ -153,7 +158,7 @@ export const TableGrid = <T, S extends keyof T>({
 										</td>
 									))}
 								</tr>
-								{item.extraContent !== undefined ? <tr><td colSpan={columns.length}>{item.extraContent}</td></tr> : null}
+								{item.extraContent !== undefined ? <tr key={`${item.id}-extra`}><td colSpan={columns.length}>{item.extraContent}</td></tr> : null}
 							</>	
             ))}
             {footer ? (
@@ -209,29 +214,50 @@ export type FilterTableGridProps<TFilter, TTable extends Record<string, unknown>
 	getFilterContent: FilterChildren<TFilter>,
 	filterFunctions: FilterFunction<TTable>,
 	filterKeys: (keyof TTable)[],
+	sortOptions?: {id: string, name: string, sortFunc: (items: TTable[]) => TTable[]}[]
 } & TableGridProps<TTable, TTableKey>
 
-export const FilterTableGrid = <TFilter, TTable extends Record<string, unknown>, TTableKey extends keyof TTable>({search, items, onChange, getFilterContent, filterFunctions, filterKeys, ...tableProps}: FilterTableGridProps<TFilter, TTable, TTableKey>): JSX.Element => {
+export const FilterTableGrid = <TFilter, TTable extends Record<string, unknown>, TTableKey extends keyof TTable>({search, items, onChange, getFilterContent, filterFunctions, filterKeys, sortOptions, ...tableProps}: FilterTableGridProps<TFilter, TTable, TTableKey>): JSX.Element => {
 	const [searchKey, setSearchKey] = useState<string | undefined>();
+	const [sortId, setSortId] = useState<string | undefined>();
 	const filteredData = searchItems(
     filterItems<TTable, TTableKey>(tableProps.data, filterFunctions),
     searchKey,
     filterKeys,
   );
+	const sortItems = (_items: TTable[]): TTable[] => {
+		if (sortId === undefined || sortOptions === undefined) {
+			return _items;
+		}
+
+		const option = sortOptions.find(sortOption => sortOption.id === sortId);
+		if (option === undefined) {
+			return _items;
+		}
+
+		return option.sortFunc(_items);
+	}
+
+	const onSortChange = (item: {id: string}): void => {
+		setSortId(item.id);
+	}
 	return (
 		<div className="flex flex-col gap-2">
-			<div className="flex w-fit gap-2">
-				{search ? <Input
+			<div className="flex gap-2">
+				{search ? <div className="w-fit"><Input
 					className="h-8"
 					onChange={setSearchKey}
 					placeholder="Search"
 					value={searchKey}
-				/> : null}
+				/></div> : null}
 				<FilterButton items={items} onChange={onChange}>
 					{getFilterContent}
 				</FilterButton>
+				{sortOptions !== undefined ? <div className="w-fit">
+					<Dropdown beforeIcon={BarsArrowDownIcon} initialValue={sortId} items={sortOptions} onChange={onSortChange} chevron={false}> Sort</Dropdown>
+					</div> : null}
 			</div>
-			<TableGrid {...tableProps} data={filteredData}/>
+			<TableGrid {...tableProps} data={sortItems(filteredData)}/>
 		</div>
 	)
 }
