@@ -1,4 +1,5 @@
 const { PrismaPlugin } = require("@prisma/nextjs-monorepo-workaround-plugin");
+const path = require('path');
 
 module.exports = {
   reactStrictMode: true,
@@ -13,4 +14,10 @@ module.exports = {
 	  });
     return config;
   },
+  experimental: {
+		// Only run the plugin in development mode
+		swcPlugins: [
+			['harmony-ai-plugin', {rootDir: path.join(__dirname, '../..')}]
+		]
+	},
 };
