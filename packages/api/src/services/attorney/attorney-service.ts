@@ -55,8 +55,9 @@ export class TestAttorneyService implements AttorneyService {
 		//await this.emailService.sendMail({to: 'bradofrado@gmail.com', subject: 'File transfer', body: 'Here are the files you have requested', attachments: [file]});
 	}
 
-	public getRequests(_: string): Promise<DocumentRequest[]> {
+	public async getRequests(_: string): Promise<DocumentRequest[]> {
 		//await fetch()
+		return [];
 	}
 }
 

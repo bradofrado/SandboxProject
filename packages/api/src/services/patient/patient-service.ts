@@ -182,7 +182,7 @@ export class PatientServiceInstance implements PatientService {
  * 		matching up on common data
  */
 @injectable()
-export class TestPatientService implements PatientService {
+export class TestPatientService {
 	constructor(@inject(MedicalRegistry.$) private medicalRegistry: MedicalRegistry, 
 		@inject(AttorneyRegistry.$) private attorneyRegistry: AttorneyRegistry, @inject(PatientLinkingRepository.$) private patientLinkingRepository: PatientLinkingRepository,
 		@inject(ProviderAccountRepository.$) private providerAccountRepository: ProviderAccountRepository) {}
