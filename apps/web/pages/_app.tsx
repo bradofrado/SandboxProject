@@ -24,7 +24,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       <main className="flex min-h-screen flex-col">
 				<Component {...pageProps} filter={filter} setFilter={setFilter}/>
       </main>
-      <HarmonySetup repositoryId="asdf"/>
+      <HarmonySetup repositoryId="182557e0-f7ad-481a-9b9e-5980c1881e28"/>
     </>
   );
 };

@@ -72,11 +72,11 @@ importers:
         specifier: ^3.5.1
         version: 3.5.1
       harmony-ai-editor:
-        specifier: ^0.1.14
-        version: 0.1.14(dayjs@1.11.10)(hotkeys-js@3.13.5)(react-dom@18.2.0)(react-reconciler@0.29.0)(react@18.2.0)(tsc-alias@1.8.8)(zod@3.22.4)
+        specifier: ^0.7.21
+        version: 0.7.21(dayjs@1.11.10)(hotkeys-js@3.13.5)(react-dom@18.2.0)(react-reconciler@0.29.0)(react@18.2.0)(tsc-alias@1.8.8)(zod@3.22.4)
       harmony-ai-plugin:
-        specifier: ^0.1.4
-        version: 0.1.4
+        specifier: ^0.1.6
+        version: 0.1.6
       next:
         specifier: ^13.4.19
         version: 13.4.19(react-dom@18.2.0)(react@18.2.0)
@@ -5458,8 +5458,8 @@ packages:
       uglify-js: 3.17.4
     dev: true
 
-  /harmony-ai-editor@0.1.14(dayjs@1.11.10)(hotkeys-js@3.13.5)(react-dom@18.2.0)(react-reconciler@0.29.0)(react@18.2.0)(tsc-alias@1.8.8)(zod@3.22.4):
-    resolution: {integrity: sha512-VtmYHdQYibmIw5w7PnBHKcGnbIJi9h263Wp1hmON3JuWv8hx/D+C/z55yz/bLqeP9CTDnJTQLDX6faOt9h4goQ==}
+  /harmony-ai-editor@0.7.21(dayjs@1.11.10)(hotkeys-js@3.13.5)(react-dom@18.2.0)(react-reconciler@0.29.0)(react@18.2.0)(tsc-alias@1.8.8)(zod@3.22.4):
+    resolution: {integrity: sha512-k/7x3Dyd6+HwzqvNiXyGpNUgDRoPwle+yp1KNVyVTLKDd78ug0xbD1OHD9uCi2FJf9khtXbsU5f+NcUxi9c0iQ==}
     peerDependencies:
       dayjs: ^1.11.10
       hotkeys-js: ^3.13.2
@@ -5478,8 +5478,8 @@ packages:
       zod: 3.22.4
     dev: false
 
-  /harmony-ai-plugin@0.1.4:
-    resolution: {integrity: sha512-H4WNq0OOOAXurRPvf78fFb2RZNP+wxQDVljAHRj+MU5wzrN0IvBi8Ddxek+sqytJ8QYEmvuIp51hUuQPg/c1RA==}
+  /harmony-ai-plugin@0.1.6:
+    resolution: {integrity: sha512-NNWm6b5ogLHU592Kba+98hHBN96QU5QOw4z5UwmJnIHic7tZEwhG5BtHkkQuQSFCX1XyeuTko2ke3Kkf6VFtHg==}
     dev: false
 
   /has-bigints@1.0.2:
