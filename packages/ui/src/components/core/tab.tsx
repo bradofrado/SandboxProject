@@ -32,7 +32,7 @@ export const TabControl: React.FunctionComponent<TabControlProps> = ({
   return (
     <div className={className}>
       <div className="text-sm font-medium text-center border-b border-gray-200 dark:text-gray-400 dark:border-gray-700">
-        <ul className="flex flex-wrap -mb-px font-semibold text-2xl">
+        <ul className="flex flex-wrap font-semibold text-2xl mb-0">
           {items.map((item, i) => (
             <li className="mr-2" key={i}>
 							<NotificationDot color={item.notification}>

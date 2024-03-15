@@ -20,7 +20,7 @@ export const PatientView: React.FunctionComponent<PatientViewProps> = ({
 }) => {
   return (
 		<div className={`flex h-full ${mulish.className}`}>
-			<div className="border-x min-w-[550px] overflow-auto flex-1 pb-6">
+			<div className="border-x min-w-[550px] overflow-auto flex-1 pb-6 __className_aaf875">
 				<PatientInfo patient={patient}/>
 			</div>
 			{/* {patient.primaryContact ? <div className="flex max-w-[450px] flex-col px-4 pb-6">
@@ -56,8 +56,8 @@ const PatientInfo: React.FunctionComponent<{patient: Patient}> = ({patient}) => 
   ];
 
   return (
-    <div className="flex flex-col gap-16">
-      <div className="flex gap-4 px-4 w-full h-[200px] justify-between">
+    <div className="flex flex-col gap-[9px] pb-[118px]">
+      <div className="flex px-4 w-full justify-between h-[136px] gap-0 pl-3.5 pr-0 pb-0">
         <PatientBio patient={patient} />
       </div>
       <TabControl items={tabItems} />
@@ -70,11 +70,11 @@ const PatientBio: React.FunctionComponent<{ patient: Patient }> = ({
 }) => {
   return (
       <>
-          <div className="flex flex-col justify-between w-[300px]">
+          <div className="flex flex-col justify-between gap-1 w-[299px] mb-0.5">
 						<Header>
 							{patient.firstName} {patient.lastName}
 						</Header>
-            <div className="flex gap-2">
+            <div className="flex gap-2 mt-0">
               <Label label="DAO:" sameLine>
                 {displayDate(patient.dateOfBirth)}
               </Label>
@@ -86,7 +86,7 @@ const PatientBio: React.FunctionComponent<{ patient: Patient }> = ({
               {patient.incidentType}
             </Label>
           </div>
-          <div className="flex flex-col justify-between">
+          <div className="flex flex-col justify-between gap-[3px] ml-[-7px] pt-0">
 						<div className="flex items-center gap-4">
 							{patient.status ? <>
 								<div className="rounded-full bg-[#2EEA41] w-4 h-4"/>
