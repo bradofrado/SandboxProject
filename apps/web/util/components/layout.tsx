@@ -7,6 +7,7 @@ import { SideNavComponent } from "ui/src/components/feature/navigation/sidenav";
 import {ModalProvider} from 'ui/src/components/core/modal';
 import {ClerkProvider, UserButton, useUser} from '@clerk/nextjs';
 import { Header } from "ui/src/components/core/header";
+import { inter } from "../fonts";
 
 export const Layout: React.FunctionComponent<React.PropsWithChildren> = ({
   children,
@@ -42,10 +43,10 @@ const SideNav: React.FunctionComponent<SideNavProps> = ({
 	const {user} = useUser();
   const items: SidePanelItems[] = [
     {
-      label: "Patients",
+      label: "Clients",
       icon: UserIcon,
-      href: "/patients",
-			current: router.asPath.includes("patients")
+      href: "/clients",
+			current: router.asPath.includes("clients")
     },
   ];
 	const profileItem: ProfileItem | undefined = user ? {
@@ -54,7 +55,7 @@ const SideNav: React.FunctionComponent<SideNavProps> = ({
 		href: "/settings"
 	} : undefined;
   return (
-    <SideNavComponent className={className} items={items} profileItem={profileItem} title="Nexa">
+    <SideNavComponent className={className} titleClassName={inter.className} items={items} profileItem={profileItem} title="Nexa">
       {children}
     </SideNavComponent>
   );
