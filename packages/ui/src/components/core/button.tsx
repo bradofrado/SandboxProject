@@ -36,7 +36,7 @@ export const Button = <T extends React.ElementType>({
     buttonClasses[mode]
   } inline-flex justify-center rounded-md px-2.5 py-1.5 text-sm font-medium border focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75`;
   return (
-    <Component className={_class} style={style} type="button" {...rest}>
+    <Component /** ml-0 mr-[113px] mt-0.5 */ className={_class} style={style} type="button" {...rest}>
       {children}
     </Component>
   );
