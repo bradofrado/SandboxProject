@@ -23,7 +23,7 @@ export const SideNavComponent: React.FunctionComponent<
 				onExpand(false);
 			}}
 			profileItem={profileItem}
-			title={title}
+			title={"Client Soft"}
 		>
 			{children}
 		</SidePanel>

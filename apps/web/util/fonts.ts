@@ -23,7 +23,7 @@ const alegreya = Alegreya({
     subsets: ['latin']
 });
 
-const montserrat = Montserrat({
+export const montserrat = Montserrat({
     subsets: ['latin']
 });
 
