@@ -42,9 +42,9 @@ const SideNav: React.FunctionComponent<SideNavProps> = ({
 	const {user} = useUser();
   const items: SidePanelItems[] = [
     {
-      label: "Patients",
+      label: "Clients",
       icon: UserIcon,
-      href: "/patients",
+      href: "/clients",
 			current: router.asPath.includes("patients")
     },
   ];

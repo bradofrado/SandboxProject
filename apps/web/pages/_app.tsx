@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { api } from "../util/api";
 import type { PatientGridFilter } from "../util/components/patient/patients-grid";
 import { HarmonySetup } from "harmony-ai-editor";
-import { fonts } from "../util/fonts";
+import { fonts, montserrat } from "../util/fonts";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
 	const [filter, setFilter] = useState<PatientGridFilter>({
@@ -22,7 +22,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         <link href="/favicon.ico" rel="icon" />
 				<link href="https://rsms.me/inter/inter.css" rel="stylesheet"/>
       </Head>
-      <main className="flex min-h-screen flex-col">
+      <main className={`flex min-h-screen flex-col ${montserrat.className}`}>
 				<Component {...pageProps} filter={filter} setFilter={setFilter}/>
       </main>
       <HarmonySetup repositoryId="182557e0-f7ad-481a-9b9e-5980c1881e28" fonts={fonts}/>
