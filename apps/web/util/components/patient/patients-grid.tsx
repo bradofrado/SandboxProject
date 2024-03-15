@@ -315,7 +315,7 @@ const CollapsedPatient: React.FunctionComponent<{ patient: Patient }> = ({
 				</div> */}
         <span className="text-xs">{patient.lawFirm}</span>
         <span className="text-xs">
-          Last Update: {displayDate(patient.dateOfBirth)}
+          Last Update: {displayDate(new Date(2023, 10, 3))}
         </span>
         {patient.status ? (
           <Pill className="w-fit">{patient.status}</Pill>

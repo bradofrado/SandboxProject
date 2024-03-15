@@ -55,8 +55,8 @@ const PatientInfo: React.FunctionComponent<{patient: Patient}> = ({patient}) => 
   ];
 
   return (
-    <div className="flex flex-col gap-8 flex-wrap">
-      <div className="flex gap-4 px-4">
+    <div className="flex flex-col gap-16">
+      <div className="flex gap-4 px-4 w-full h-[200px] justify-between">
         <PatientBio patient={patient} />
       </div>
       <TabControl items={tabItems} />
@@ -68,30 +68,25 @@ const PatientBio: React.FunctionComponent<{ patient: Patient }> = ({
   patient,
 }) => {
   return (
-    // <Card>
-      <div className="flex flex-col gap-4 text-sm">
-        <div className="flex gap-8">
-          <div className="flex flex-col gap-2">
+      <>
+          <div className="flex flex-col justify-between w-[300px]">
 						<Header>
 							{patient.firstName} {patient.lastName}
 						</Header>
             <div className="flex gap-2">
-              <Label label="DOB" sameLine>
+              <Label label="DAO:" sameLine>
                 {displayDate(patient.dateOfBirth)}
               </Label>
-              {patient.dateOfLoss !== undefined ? <Label label="DOL" sameLine>
-                {displayDate(patient.dateOfLoss)}
-              </Label> : null}
             </div>
-            <Label label="Law Firm" sameLine>
+            <Label label="Company Name:" sameLine>
               {patient.lawFirm}
             </Label>
-            <Label label="Incident Type" sameLine>
+            <Label label="Account Type:" sameLine>
               {patient.incidentType}
             </Label>
           </div>
-          <div className="flex flex-col gap-2">
-						<div className="flex items-center gap-2">
+          <div className="flex flex-col justify-between">
+						<div className="flex items-center gap-4">
 							{patient.status ? <>
 								<div className="rounded-full bg-[#2EEA41] w-4 h-4"/>
 								<Header level={3}>Treating</Header>
@@ -100,17 +95,15 @@ const PatientBio: React.FunctionComponent<{ patient: Patient }> = ({
 								<Header level={3}>Not Treating</Header>
 							</>}
 						</div>
-            <Label label="Email" sameLine>
+            <Label label="Email:" sameLine>
               <a href={`mailto:${patient.email}`}>{patient.email}</a>
             </Label>
-            <Label label="Phone" sameLine>
+            <Label label="Phone:" sameLine>
               <a href={`tel:${patient.phone}`}>{patient.phone}</a>
             </Label>
-            <Button className="mr-auto">Message</Button>
+            <Button className="ml-auto">Message</Button>
           </div>
-        </div>
-      </div>
-    // </Card>
+        </>
   );
 };
 
@@ -130,6 +123,9 @@ export const PatientViewId: React.FunctionComponent<{ id: string }> = ({
   if (!patient) {
     return <Header>Invalid Patient {id}</Header>;
   }
+
+  patient.lawFirm = "Hansen Auto Group";
+  patient.incidentType = "Enterprise" as 'AUTO';
 
   return <PatientView key={patient.id} patient={patient} />;
 };

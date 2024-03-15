@@ -72,8 +72,8 @@ importers:
         specifier: ^3.5.1
         version: 3.5.1
       harmony-ai-editor:
-        specifier: ^0.7.21
-        version: 0.7.21(dayjs@1.11.10)(hotkeys-js@3.13.5)(react-dom@18.2.0)(react-reconciler@0.29.0)(react@18.2.0)(tsc-alias@1.8.8)(zod@3.22.4)
+        specifier: ^0.9.21
+        version: 0.9.21(dayjs@1.11.10)(hotkeys-js@3.13.5)(react-dom@18.2.0)(react-reconciler@0.29.0)(react@18.2.0)(tsc-alias@1.8.8)(zod@3.22.4)
       harmony-ai-plugin:
         specifier: ^0.1.6
         version: 0.1.6
@@ -5458,8 +5458,8 @@ packages:
       uglify-js: 3.17.4
     dev: true
 
-  /harmony-ai-editor@0.7.21(dayjs@1.11.10)(hotkeys-js@3.13.5)(react-dom@18.2.0)(react-reconciler@0.29.0)(react@18.2.0)(tsc-alias@1.8.8)(zod@3.22.4):
-    resolution: {integrity: sha512-k/7x3Dyd6+HwzqvNiXyGpNUgDRoPwle+yp1KNVyVTLKDd78ug0xbD1OHD9uCi2FJf9khtXbsU5f+NcUxi9c0iQ==}
+  /harmony-ai-editor@0.9.21(dayjs@1.11.10)(hotkeys-js@3.13.5)(react-dom@18.2.0)(react-reconciler@0.29.0)(react@18.2.0)(tsc-alias@1.8.8)(zod@3.22.4):
+    resolution: {integrity: sha512-6S8VC0wq/DknaqkBsEA52oT33hO9daxYC06j9dzTFvWMGQSxwi/Tsm6oUCcpT6IXp5ULqTUkb/dlqRBm/8vRLQ==}
     peerDependencies:
       dayjs: ^1.11.10
       hotkeys-js: ^3.13.2

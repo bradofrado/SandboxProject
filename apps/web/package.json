@@ -28,7 +28,7 @@
     "db": "workspace:^",
     "dotenv-cli": "^7.3.0",
     "formidable": "^3.5.1",
-    "harmony-ai-editor": "^0.7.21",
+    "harmony-ai-editor": "^0.9.21",
     "harmony-ai-plugin": "^0.1.6",
     "next": "^13.4.19",
     "raw-loader": "^4.0.2",

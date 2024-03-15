@@ -10,7 +10,7 @@ export const Label: React.FunctionComponent<LabelProps> = ({ children, className
         sameLine ? "flex items-center" : ""
       }`}
     >
-      <label className="block text-sm font-medium leading-6 text-gray-900">{label}{sameLine ? ':' : ''}</label>
+      <label className="block text-sm font-medium leading-6 text-gray-900">{label}</label>
       <div className={`${sameLine ? "ml-2" : "mt-2"} `}>{children}</div>
     </div>
   );

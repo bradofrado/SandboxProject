@@ -13,7 +13,7 @@ export const getServerSideProps = requireAuth(defaultGetServerProps);
 const Patients: NextPage<{filter: PatientGridFilter, setFilter: (filter: PatientGridFilter) => void}> = ({filter, setFilter}) => {
   const query = useGetPatients();
 
-  if (query.isError || query.isLoading) return <>Loading</>;
+  if (query.isError || query.isLoading) return <></>;
 
   const items = query.data;
 

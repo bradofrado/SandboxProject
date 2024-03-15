@@ -5,6 +5,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { getClass } from 'model/src/utils';
 import type { IconComponent } from './icons';
 import { Bars3Icon, XMarkIcon } from './icons';
+import { Header } from './header';
 
 export interface SidePanelItems {
   label: string;
@@ -89,12 +90,12 @@ export const SidePanel: React.FunctionComponent<SidePanelProps> = ({
                   {/* Sidebar component, swap this element with another sidebar if you like */}
                   <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 py-2">
                     {title ? <div className="flex h-16 shrink-0 items-center">
-                      <img
+                      {/* <img
                         alt="Your Company"
                         className="h-8 w-auto"
                         src="/logo.png"
-                      />
-											{/* <Header className="" level={2}>{title}</Header> */}
+                      /> */}
+                      <Header className="" level={2}>{title}</Header>
                     </div> : null}
                     <nav className="flex flex-1 flex-col">
                       <ul className="flex flex-1 flex-col gap-y-7">
@@ -138,12 +139,12 @@ export const SidePanel: React.FunctionComponent<SidePanelProps> = ({
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 py-2">
             {title ? <div className="flex h-16 shrink-0 items-center">
-              <img
+              {/* <img
                 alt="Your Company"
                 className="h-8 w-auto"
                 src="/logo.png"
-              />
-							{/* <Header level={2}>{title}</Header> */}
+              /> */}
+							<Header level={2}>{title}</Header>
             </div> : null}
             <nav className="flex flex-1 flex-col">
               <ul className="flex flex-1 flex-col gap-y-7">
