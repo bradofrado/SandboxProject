@@ -56,8 +56,8 @@ const PatientInfo: React.FunctionComponent<{patient: Patient}> = ({patient}) => 
   ];
 
   return (
-    <div className="flex flex-col gap-16">
-      <div className="flex gap-4 px-4 w-full h-[200px] justify-between">
+    <div className="flex flex-col gap-16 gap-y-4">
+      <div className="flex gap-4 px-4 w-full h-auto justify-start">
         <PatientBio patient={patient} />
       </div>
       <TabControl items={tabItems} />
@@ -70,12 +70,12 @@ const PatientBio: React.FunctionComponent<{ patient: Patient }> = ({
 }) => {
   return (
       <>
-          <div className="flex flex-col justify-between w-[300px]">
+          <div className="flex flex-col w-[300px] gap-y-1 justify-start">
 						<Header>
 							{patient.firstName} {patient.lastName}
 						</Header>
             <div className="flex gap-2">
-              <Label label="DAO:" sameLine>
+              <Label label="Date of Operation:" sameLine>
                 {displayDate(patient.dateOfBirth)}
               </Label>
             </div>
@@ -86,7 +86,7 @@ const PatientBio: React.FunctionComponent<{ patient: Patient }> = ({
               {patient.incidentType}
             </Label>
           </div>
-          <div className="flex flex-col justify-between">
+          <div className="flex flex-col gap-y-1 justify-start">
 						<div className="flex items-center gap-4">
 							{patient.status ? <>
 								<div className="rounded-full bg-[#2EEA41] w-4 h-4"/>
@@ -99,7 +99,7 @@ const PatientBio: React.FunctionComponent<{ patient: Patient }> = ({
             <Label label="Email:" sameLine>
               <a href={`mailto:${patient.email}`}>{patient.email}</a>
             </Label>
-            <Label label="Phone:" sameLine>
+            <Label label="Phone Number::" sameLine>
               <a href={`tel:${patient.phone}`}>{patient.phone}</a>
             </Label>
             <Button className="ml-auto">Message</Button>
