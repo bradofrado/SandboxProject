@@ -18,8 +18,15 @@ export const StatusTab: React.FunctionComponent<StatusTabProps> = ({
     <div className="flex flex-col gap-4 py-2 pr-2">
       {patient.primaryContact ? <StatusTracker
         className="px-2 pb-2"
-        statuses={patientStatuses}
-        value={patient.status}
+        statuses={[
+          "File Setup",
+          "Case Analysis",
+          "Deal Offered",
+          "In Negotiation",
+          "Offer Finalized",
+          "Wire Transferred",
+        ] as const}
+        value={'In Negotiation'}
       /> : null}
       <FeedTree items={appointments}/>
     </div>

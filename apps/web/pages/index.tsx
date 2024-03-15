@@ -5,7 +5,7 @@ import {
 	requireRoute,
 } from "../util/protected-routes-hoc";
 
-export const getServerSideProps = requireRoute({redirect: '/patients', check: () => true})(defaultGetServerProps);
+export const getServerSideProps = requireRoute({redirect: '/clients', check: () => true})(defaultGetServerProps);
 
 const Home: NextPage = () => {
   return <Layout />;

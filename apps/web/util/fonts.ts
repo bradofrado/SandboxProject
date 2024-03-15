@@ -7,7 +7,7 @@ interface Font {
 	font: NextFont
 }
 
-const inter = Inter({
+export const inter = Inter({
     subsets: ['latin']
 });
 const roboto = Roboto({
@@ -23,7 +23,7 @@ const alegreya = Alegreya({
     subsets: ['latin']
 });
 
-const montserrat = Montserrat({
+export const montserrat = Montserrat({
     subsets: ['latin']
 });
 
@@ -37,7 +37,7 @@ const poppins = Poppins({
     weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900']
 })
 
-const mulish = Mulish({
+export const mulish = Mulish({
     subsets: ['latin']
 });
 
