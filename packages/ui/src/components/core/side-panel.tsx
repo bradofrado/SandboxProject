@@ -209,7 +209,7 @@ export const SidePanel: React.FunctionComponent<SidePanelProps> = ({
           </a> : null}
         </div>
 
-        <main className="lg:pl-60">
+        <main className="lg:pl-60 __className_aaf875">
           <div className="" onClick={onBodyClick}>{children}</div>
         </main>
       </div>

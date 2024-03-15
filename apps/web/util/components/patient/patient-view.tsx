@@ -55,8 +55,8 @@ const PatientInfo: React.FunctionComponent<{patient: Patient}> = ({patient}) => 
   ];
 
   return (
-    <div className="flex flex-col gap-16">
-      <div className="flex gap-4 px-4 w-full h-[200px] justify-between">
+    <div className="flex flex-col gap-[7px] pb-[120px]">
+      <div className="flex px-4 justify-between gap-0 h-[135px] w-[1412px] pl-3.5 pr-0 pb-0">
         <PatientBio patient={patient} />
       </div>
       <TabControl items={tabItems} />
@@ -69,12 +69,12 @@ const PatientBio: React.FunctionComponent<{ patient: Patient }> = ({
 }) => {
   return (
       <>
-          <div className="flex flex-col justify-between w-[300px]">
+          <div className="flex flex-col w-[300px] justify-between gap-0 mb-3">
 						<Header>
 							{patient.firstName} {patient.lastName}
 						</Header>
             <div className="flex gap-2">
-              <Label label="DAO:" sameLine>
+              <Label label="Address Date:" sameLine>
                 {displayDate(patient.dateOfBirth)}
               </Label>
             </div>
@@ -85,7 +85,7 @@ const PatientBio: React.FunctionComponent<{ patient: Patient }> = ({
               {patient.incidentType}
             </Label>
           </div>
-          <div className="flex flex-col justify-between">
+          <div className="flex flex-col justify-center gap-1.5 -ml-2">
 						<div className="flex items-center gap-4">
 							{patient.status ? <>
 								<div className="rounded-full bg-[#2EEA41] w-4 h-4"/>
