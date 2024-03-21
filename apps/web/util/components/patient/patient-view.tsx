@@ -70,7 +70,7 @@ const PatientBio: React.FunctionComponent<{ patient: Patient }> = ({
 }) => {
   return (
       <>
-          <div className="flex flex-col justify-between w-[300px]">
+          <div className="flex flex-col w-[300px] justify-center gap-[11px]">
 						<Header>
 							{patient.firstName} {patient.lastName}
 						</Header>
