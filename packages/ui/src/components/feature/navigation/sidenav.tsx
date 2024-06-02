@@ -24,7 +24,7 @@ export const SideNavComponent: React.FunctionComponent<
 				onExpand(false);
 			}}
 			profileItem={profileItem}
-			title={"Client Soft"}
+			title={"Nexa"}
       titleClassName={titleClassName}
 		>
 			{children}

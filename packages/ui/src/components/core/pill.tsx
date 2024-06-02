@@ -20,7 +20,7 @@ export const Pill: React.FunctionComponent<PillProps> = ({
     <div
       className={`${
         className || ""
-      } ${background} flex items-center rounded-full px-3 py-1 text-xs font-semibold leading-5`}
+      } ${background}flex items-center rounded-full px-3 py-1 text-xs font-semibold leading-5 2xl:text-[#3760DAFF]`}
     >
       {children}
     </div>
